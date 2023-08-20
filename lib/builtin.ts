@@ -1,53 +1,105 @@
+import { presetDefault } from '../plugins/preset-default'
+import * as addAttributesToSVGElement from '../plugins/addAttributesToSVGElement'
+import * as addClassesToSVGElement from '../plugins/addClassesToSVGElement'
+import * as cleanupAttrs from '../plugins/cleanupAttrs'
+import * as cleanupEnableBackground from '../plugins/cleanupEnableBackground'
+import * as cleanupIds from '../plugins/cleanupIds'
+import * as cleanupListOfValues from '../plugins/cleanupListOfValues'
+import * as cleanupNumericValues from '../plugins/cleanupNumericValues'
+import * as collapseGroups from '../plugins/collapseGroups'
+import * as convertColors from '../plugins/convertColors'
+import * as convertEllipseToCircle from '../plugins/convertEllipseToCircle'
+import * as convertPathData from '../plugins/convertPathData'
+import * as convertShapeToPath from '../plugins/convertShapeToPath'
+import * as convertStyleToAttrs from '../plugins/convertStyleToAttrs'
+import * as convertTransform from '../plugins/convertTransform'
+import * as inlineStyles from '../plugins/inlineStyles'
+import * as mergePaths from '../plugins/mergePaths'
+import * as mergeStyles from '../plugins/mergeStyles'
+import * as minifyStyles from '../plugins/minifyStyles'
+import * as moveElemsAttrsToGroup from '../plugins/moveElemsAttrsToGroup'
+import * as moveGroupAttrsToElems from '../plugins/moveGroupAttrsToElems'
+import * as prefixIds from '../plugins/prefixIds'
+import * as removeAttributesBySelector from '../plugins/removeAttributesBySelector'
+import * as removeAttrs from '../plugins/removeAttrs'
+import * as removeComments from '../plugins/removeComments'
+import * as removeDesc from '../plugins/removeDesc'
+import * as removeDimensions from '../plugins/removeDimensions'
+import * as removeDoctype from '../plugins/removeDoctype'
+import * as removeEditorsNSData from '../plugins/removeEditorsNSData'
+import * as removeElementsByAttr from '../plugins/removeElementsByAttr'
+import * as removeEmptyAttrs from '../plugins/removeEmptyAttrs'
+import * as removeEmptyContainers from '../plugins/removeEmptyContainers'
+import * as removeEmptyText from '../plugins/removeEmptyText'
+import * as removeHiddenElems from '../plugins/removeHiddenElems'
+import * as removeMetadata from '../plugins/removeMetadata'
+import * as removeNonInheritableGroupAttrs from '../plugins/removeNonInheritableGroupAttrs'
+import * as removeOffCanvasPaths from '../plugins/removeOffCanvasPaths'
+import * as removeRasterImages from '../plugins/removeRasterImages'
+import * as removeScriptElement from '../plugins/removeScriptElement'
+import * as removeStyleElement from '../plugins/removeStyleElement'
+import * as removeTitle from '../plugins/removeTitle'
+import * as removeUnknownsAndDefaults from '../plugins/removeUnknownsAndDefaults'
+import * as removeUnusedNS from '../plugins/removeUnusedNS'
+import * as removeUselessDefs from '../plugins/removeUselessDefs'
+import * as removeUselessStrokeAndFill from '../plugins/removeUselessStrokeAndFill'
+import * as removeViewBox from '../plugins/removeViewBox'
+import * as removeXMLNS from '../plugins/removeXMLNS'
+import * as removeXMLProcInst from '../plugins/removeXMLProcInst'
+import * as reusePaths from '../plugins/reusePaths'
+import * as sortAttrs from '../plugins/sortAttrs'
+import * as sortDefsChildren from '../plugins/sortDefsChildren'
+
 export const builtin = [
-  require('../plugins/preset-default'),
-  require('../plugins/addAttributesToSVGElement'),
-  require('../plugins/addClassesToSVGElement'),
-  require('../plugins/cleanupAttrs'),
-  require('../plugins/cleanupEnableBackground'),
-  require('../plugins/cleanupIds'),
-  require('../plugins/cleanupListOfValues'),
-  require('../plugins/cleanupNumericValues'),
-  require('../plugins/collapseGroups'),
-  require('../plugins/convertColors'),
-  require('../plugins/convertEllipseToCircle'),
-  require('../plugins/convertPathData'),
-  require('../plugins/convertShapeToPath'),
-  require('../plugins/convertStyleToAttrs'),
-  require('../plugins/convertTransform'),
-  require('../plugins/mergeStyles'),
-  require('../plugins/inlineStyles'),
-  require('../plugins/mergePaths'),
-  require('../plugins/minifyStyles'),
-  require('../plugins/moveElemsAttrsToGroup'),
-  require('../plugins/moveGroupAttrsToElems'),
-  require('../plugins/prefixIds'),
-  require('../plugins/removeAttributesBySelector'),
-  require('../plugins/removeAttrs'),
-  require('../plugins/removeComments'),
-  require('../plugins/removeDesc'),
-  require('../plugins/removeDimensions'),
-  require('../plugins/removeDoctype'),
-  require('../plugins/removeEditorsNSData'),
-  require('../plugins/removeElementsByAttr'),
-  require('../plugins/removeEmptyAttrs'),
-  require('../plugins/removeEmptyContainers'),
-  require('../plugins/removeEmptyText'),
-  require('../plugins/removeHiddenElems'),
-  require('../plugins/removeMetadata'),
-  require('../plugins/removeNonInheritableGroupAttrs'),
-  require('../plugins/removeOffCanvasPaths'),
-  require('../plugins/removeRasterImages'),
-  require('../plugins/removeScriptElement'),
-  require('../plugins/removeStyleElement'),
-  require('../plugins/removeTitle'),
-  require('../plugins/removeUnknownsAndDefaults'),
-  require('../plugins/removeUnusedNS'),
-  require('../plugins/removeUselessDefs'),
-  require('../plugins/removeUselessStrokeAndFill'),
-  require('../plugins/removeViewBox'),
-  require('../plugins/removeXMLNS'),
-  require('../plugins/removeXMLProcInst'),
-  require('../plugins/reusePaths'),
-  require('../plugins/sortAttrs'),
-  require('../plugins/sortDefsChildren'),
+  presetDefault,
+  addAttributesToSVGElement,
+  addClassesToSVGElement,
+  cleanupAttrs,
+  cleanupEnableBackground,
+  cleanupIds,
+  cleanupListOfValues,
+  cleanupNumericValues,
+  collapseGroups,
+  convertColors,
+  convertEllipseToCircle,
+  convertPathData,
+  convertShapeToPath,
+  convertStyleToAttrs,
+  convertTransform,
+  mergeStyles,
+  inlineStyles,
+  mergePaths,
+  minifyStyles,
+  moveElemsAttrsToGroup,
+  moveGroupAttrsToElems,
+  prefixIds,
+  removeAttributesBySelector,
+  removeAttrs,
+  removeComments,
+  removeDesc,
+  removeDimensions,
+  removeDoctype,
+  removeEditorsNSData,
+  removeElementsByAttr,
+  removeEmptyAttrs,
+  removeEmptyContainers,
+  removeEmptyText,
+  removeHiddenElems,
+  removeMetadata,
+  removeNonInheritableGroupAttrs,
+  removeOffCanvasPaths,
+  removeRasterImages,
+  removeScriptElement,
+  removeStyleElement,
+  removeTitle,
+  removeUnknownsAndDefaults,
+  removeUnusedNS,
+  removeUselessDefs,
+  removeUselessStrokeAndFill,
+  removeViewBox,
+  removeXMLNS,
+  removeXMLProcInst,
+  reusePaths,
+  sortAttrs,
+  sortDefsChildren,
 ];

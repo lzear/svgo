@@ -1,42 +1,42 @@
 import { createPreset } from '../lib/svgo/plugins';
 
-import removeDoctype from './removeDoctype';
-import removeXMLProcInst from './removeXMLProcInst';
-import removeComments from './removeComments';
-import removeMetadata from './removeMetadata';
-import removeEditorsNSData from './removeEditorsNSData';
-import cleanupAttrs from './cleanupAttrs';
-import mergeStyles from './mergeStyles';
-import inlineStyles from './inlineStyles';
-import minifyStyles from './minifyStyles';
-import cleanupIds from './cleanupIds';
-import removeUselessDefs from './removeUselessDefs';
-import cleanupNumericValues from './cleanupNumericValues';
-import convertColors from './convertColors';
-import removeUnknownsAndDefaults from './removeUnknownsAndDefaults';
-import removeNonInheritableGroupAttrs from './removeNonInheritableGroupAttrs';
-import removeUselessStrokeAndFill from './removeUselessStrokeAndFill';
-import removeViewBox from './removeViewBox';
-import cleanupEnableBackground from './cleanupEnableBackground';
-import removeHiddenElems from './removeHiddenElems';
-import removeEmptyText from './removeEmptyText';
-import convertShapeToPath from './convertShapeToPath';
-import convertEllipseToCircle from './convertEllipseToCircle';
-import moveElemsAttrsToGroup from './moveElemsAttrsToGroup';
-import moveGroupAttrsToElems from './moveGroupAttrsToElems';
-import collapseGroups from './collapseGroups';
-import convertPathData from './convertPathData';
-import convertTransform from './convertTransform';
-import removeEmptyAttrs from './removeEmptyAttrs';
-import removeEmptyContainers from './removeEmptyContainers';
-import mergePaths from './mergePaths';
-import removeUnusedNS from './removeUnusedNS';
-import sortAttrs from './sortAttrs';
-import sortDefsChildren from './sortDefsChildren';
-import removeTitle from './removeTitle';
-import removeDesc from './removeDesc';
+import * as removeDoctype from './removeDoctype';
+import * as removeXMLProcInst from './removeXMLProcInst';
+import * as removeComments from './removeComments';
+import * as removeMetadata from './removeMetadata';
+import * as removeEditorsNSData from './removeEditorsNSData';
+import * as cleanupAttrs from './cleanupAttrs';
+import * as mergeStyles from './mergeStyles';
+import * as inlineStyles from './inlineStyles';
+import * as minifyStyles from './minifyStyles';
+import * as cleanupIds from './cleanupIds';
+import * as removeUselessDefs from './removeUselessDefs';
+import * as cleanupNumericValues from './cleanupNumericValues';
+import * as convertColors from './convertColors';
+import * as removeUnknownsAndDefaults from './removeUnknownsAndDefaults';
+import * as removeNonInheritableGroupAttrs from './removeNonInheritableGroupAttrs';
+import * as removeUselessStrokeAndFill from './removeUselessStrokeAndFill';
+import * as removeViewBox from './removeViewBox';
+import * as cleanupEnableBackground from './cleanupEnableBackground';
+import * as removeHiddenElems from './removeHiddenElems';
+import * as removeEmptyText from './removeEmptyText';
+import * as convertShapeToPath from './convertShapeToPath';
+import * as convertEllipseToCircle from './convertEllipseToCircle';
+import * as moveElemsAttrsToGroup from './moveElemsAttrsToGroup';
+import * as moveGroupAttrsToElems from './moveGroupAttrsToElems';
+import * as collapseGroups from './collapseGroups';
+import * as convertPathData from './convertPathData';
+import * as convertTransform from './convertTransform';
+import * as removeEmptyAttrs from './removeEmptyAttrs';
+import * as removeEmptyContainers from './removeEmptyContainers';
+import * as mergePaths from './mergePaths';
+import * as removeUnusedNS from './removeUnusedNS';
+import * as sortAttrs from './sortAttrs';
+import * as sortDefsChildren from './sortDefsChildren';
+import * as removeTitle from './removeTitle';
+import * as removeDesc from './removeDesc';
 
-const presetDefault = createPreset({
+export const presetDefault = createPreset({
   name: 'preset-default',
   plugins: [
     removeDoctype,
