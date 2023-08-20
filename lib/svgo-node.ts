@@ -12,7 +12,7 @@ const importConfig = async (configFile) => {
   // to workaround this for some users .cjs extension is loaded
   // exclusively with require
   if (configFile.endsWith('.cjs')) {
-    config = require(configFile);
+    config = await import(configFile);
   } else {
     // dynamic import expects file url instead of path and may fail
     // when windows path is provided
