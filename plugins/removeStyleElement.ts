@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeStyleElement';
-exports.description = 'removes <style> element (disabled by default)';
+export const name = 'removeStyleElement';
+export const description = 'removes <style> element (disabled by default)';
 
 /**
  * Remove <style>.
@@ -14,7 +14,7 @@ exports.description = 'removes <style> element (disabled by default)';
  *
  * @type {import('./plugins-types').Plugin<'removeStyleElement'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     element: {
       enter: (node, parentNode) => {

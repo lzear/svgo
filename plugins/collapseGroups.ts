@@ -6,8 +6,8 @@
 
 import { inheritableAttrs, elemsGroups } from './_collections';
 
-exports.name = 'collapseGroups';
-exports.description = 'collapses useless groups';
+export const name = 'collapseGroups';
+export const description = 'collapses useless groups';
 
 /**
  * @type {(node: XastNode, name: string) => boolean}
@@ -51,7 +51,7 @@ const hasAnimatedAttr = (node, name) => {
  *
  * @type {import('./plugins-types').Plugin<'collapseGroups'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     element: {
       exit: (node, parentNode) => {

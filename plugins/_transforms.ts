@@ -14,7 +14,7 @@ const regNumericValues = /[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?/g;
  *
  * @type {(transformString: string) => Array<TransformItem>}
  */
-exports.transform2js = (transformString) => {
+export const transform2js = (transformString) => {
   // JS representation of the transform data
   /**
    * @type {Array<TransformItem>}
@@ -56,7 +56,7 @@ exports.transform2js = (transformString) => {
  *
  * @type {(transforms: Array<TransformItem>) => TransformItem}
  */
-exports.transformsMultiply = (transforms) => {
+export const transformsMultiply = (transforms) => {
   // convert transforms objects to the matrices
   const matrixData = transforms.map((transform) => {
     if (transform.name === 'matrix') {
@@ -156,7 +156,7 @@ const mth = {
  *
  * @type {(transform: TransformItem, params: TransformParams) => Array<TransformItem>}
  */
-exports.matrixToTransform = (transform, params) => {
+export const matrixToTransform = (transform, params) => {
   let floatPrecision = params.floatPrecision;
   let data = transform.data;
   let transforms = [];
@@ -306,7 +306,7 @@ const transformToMatrix = (transform) => {
  *   transform: Array<number>
  * ) => Array<number>}
  */
-exports.transformArc = (cursor, arc, transform) => {
+export const transformArc = (cursor, arc, transform) => {
   const x = arc[5] - cursor[0];
   const y = arc[6] - cursor[1];
   let a = arc[0];

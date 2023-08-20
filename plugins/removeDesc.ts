@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeDesc';
-exports.description = 'removes <desc>';
+export const name = 'removeDesc';
+export const description = 'removes <desc>';
 
 const standardDescs = /^(Created with|Created using)/;
 
@@ -18,7 +18,7 @@ const standardDescs = /^(Created with|Created using)/;
  *
  * @type {import('./plugins-types').Plugin<'removeDesc'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const { removeAny = true } = params;
   return {
     element: {

@@ -6,8 +6,8 @@ import {
   presentationNonInheritableGroupAttrs,
 } from './_collections';
 
-exports.name = 'removeNonInheritableGroupAttrs';
-exports.description =
+export const name = 'removeNonInheritableGroupAttrs';
+export const description =
   'removes non-inheritable group’s presentational attributes';
 
 /**
@@ -17,7 +17,7 @@ exports.description =
  *
  * @type {import('./plugins-types').Plugin<'removeNonInheritableGroupAttrs'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     element: {
       enter: (node) => {

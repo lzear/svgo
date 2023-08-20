@@ -1,2 +1,2 @@
 export * from 'unknown-module';
-module.exports = {};
+export default {};

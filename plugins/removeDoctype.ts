@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeDoctype';
-exports.description = 'removes doctype declaration';
+export const name = 'removeDoctype';
+export const description = 'removes doctype declaration';
 
 /**
  * Remove DOCTYPE declaration.
@@ -29,7 +29,7 @@ exports.description = 'removes doctype declaration';
  *
  * @type {import('./plugins-types').Plugin<'removeDoctype'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     doctype: {
       enter: (node, parentNode) => {

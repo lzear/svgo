@@ -11,8 +11,8 @@ import {
   matrixToTransform,
 } from './_transforms';
 
-exports.name = 'convertTransform';
-exports.description = 'collapses multiple transformations and optimizes it';
+export const name = 'convertTransform';
+export const description = 'collapses multiple transformations and optimizes it';
 
 /**
  * Convert matrices to the short aliases,
@@ -26,7 +26,7 @@ exports.description = 'collapses multiple transformations and optimizes it';
  *
  * @type {import('./plugins-types').Plugin<'convertTransform'>}
  */
-exports.fn = (_root, params) => {
+export const fn = (_root, params) => {
   const {
     convertToShorts = true,
     // degPrecision = 3, // transformPrecision (or matrix precision) - 2 by default

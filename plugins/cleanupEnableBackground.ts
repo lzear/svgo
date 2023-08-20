@@ -2,8 +2,8 @@
 
 import { visit } from '../lib/xast';
 
-exports.name = 'cleanupEnableBackground';
-exports.description =
+export const name = 'cleanupEnableBackground';
+export const description =
   'remove or cleanup enable-background attribute when possible';
 
 /**
@@ -20,7 +20,7 @@ exports.description =
  *
  * @type {import('./plugins-types').Plugin<'cleanupEnableBackground'>}
  */
-exports.fn = (root) => {
+export const fn = (root) => {
   const regEnableBackground =
     /^new\s0\s0\s([-+]?\d*\.?\d+([eE][-+]?\d+)?)\s([-+]?\d*\.?\d+([eE][-+]?\d+)?)$/;
 

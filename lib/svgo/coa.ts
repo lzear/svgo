@@ -14,7 +14,7 @@ const regSVGFile = /\.svg$/i;
  * Synchronously check if path is a directory. Tolerant to errors like ENOENT.
  * @param {string} path
  */
-function checkIsDir(path) {
+export function checkIsDir(path) {
   try {
     return fs.lstatSync(path).isDirectory();
   } catch (e) {
@@ -22,7 +22,7 @@ function checkIsDir(path) {
   }
 }
 
-module.exports = function makeProgram(program) {
+function makeProgram(program) {
   program
     .name(PKG.name)
     .description(PKG.description, {
@@ -77,6 +77,8 @@ module.exports = function makeProgram(program) {
     .option('--no-color', 'Output plain text without color')
     .action(action);
 };
+
+export default makeProgram;
 
 async function action(args, opts, command) {
   var input = opts.input || args;
@@ -519,5 +521,3 @@ function showAvailablePlugins() {
     .join('\n');
   console.log('Currently available plugins:\n' + list);
 }
-
-module.exports.checkIsDir = checkIsDir;

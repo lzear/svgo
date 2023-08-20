@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeScriptElement';
-exports.description = 'removes <script> elements (disabled by default)';
+export const name = 'removeScriptElement';
+export const description = 'removes <script> elements (disabled by default)';
 
 /**
  * Remove <script>.
@@ -14,7 +14,7 @@ exports.description = 'removes <script> elements (disabled by default)';
  *
  * @type {import('./plugins-types').Plugin<'removeScriptElement'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     element: {
       enter: (node, parentNode) => {

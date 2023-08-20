@@ -81,7 +81,7 @@ const entities = {
  *
  * @type {(data: XastRoot, config: StringifyOptions) => string}
  */
-const stringifySvg = (data, userOptions = {}) => {
+export const stringifySvg = (data, userOptions = {}) => {
   /**
    * @type {Options}
    */
@@ -118,7 +118,6 @@ const stringifySvg = (data, userOptions = {}) => {
   }
   return svg;
 };
-exports.stringifySvg = stringifySvg;
 
 /**
  * @type {(node: XastParent, config: Options, state: State) => string}

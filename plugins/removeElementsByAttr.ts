@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeElementsByAttr';
-exports.description =
+export const name = 'removeElementsByAttr';
+export const description =
   'removes arbitrary elements by ID or className (disabled by default)';
 
 /**
@@ -39,7 +39,7 @@ exports.description =
  *
  * @type {import('./plugins-types').Plugin<'removeElementsByAttr'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const ids =
     params.id == null ? [] : Array.isArray(params.id) ? params.id : [params.id];
   const classes =

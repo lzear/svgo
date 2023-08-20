@@ -11,8 +11,8 @@ import {
 } from "./_collections";
 
 
-exports.name = 'removeUnknownsAndDefaults';
-exports.description =
+export const name = 'removeUnknownsAndDefaults';
+export const description =
   'removes unknown elements content and attributes, removes attrs with default values';
 
 // resolve all groups references
@@ -95,7 +95,7 @@ for (const [name, config] of Object.entries(elems)) {
  *
  * @type {import('./plugins-types').Plugin<'removeUnknownsAndDefaults'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const {
     unknownContent = true,
     unknownAttrs = true,

@@ -7,8 +7,8 @@
 import { detachNodeFromParent } from '../lib/xast';
 import { elemsGroups } from './_collections';
 
-exports.name = 'removeUselessDefs';
-exports.description = 'removes elements in <defs> without id';
+export const name = 'removeUselessDefs';
+export const description = 'removes elements in <defs> without id';
 
 /**
  * Removes content of defs and properties that aren't rendered directly without ids.
@@ -17,7 +17,7 @@ exports.description = 'removes elements in <defs> without id';
  *
  * @type {import('./plugins-types').Plugin<'removeUselessDefs'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     element: {
       enter: (node, parentNode) => {

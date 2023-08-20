@@ -7,8 +7,8 @@
 import { visitSkip } from '../lib/xast';
 import { referencesProps } from './_collections';
 
-exports.name = 'cleanupIds';
-exports.description = 'removes unused IDs and minifies used';
+export const name = 'cleanupIds';
+export const description = 'removes unused IDs and minifies used';
 
 const regReferencesUrl = /\burl\((["'])?#(.+?)\1\)/;
 const regReferencesHref = /^#(.+?)$/;
@@ -125,7 +125,7 @@ const getIdString = (arr) => {
  *
  * @type {import('./plugins-types').Plugin<'cleanupIds'>}
  */
-exports.fn = (_root, params) => {
+export const fn = (_root, params) => {
   const {
     remove = true,
     minify = true,

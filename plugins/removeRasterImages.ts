@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeRasterImages';
-exports.description = 'removes raster images (disabled by default)';
+export const name = 'removeRasterImages';
+export const description = 'removes raster images (disabled by default)';
 
 /**
  * Remove raster images references in <image>.
@@ -14,7 +14,7 @@ exports.description = 'removes raster images (disabled by default)';
  *
  * @type {import('./plugins-types').Plugin<'removeRasterImages'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     element: {
       enter: (node, parentNode) => {

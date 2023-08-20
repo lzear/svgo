@@ -1,6 +1,6 @@
 'use strict';
 
-exports.builtin = [
+export const builtin = [
   require('../plugins/preset-default'),
   require('../plugins/addAttributesToSVGElement'),
   require('../plugins/addClassesToSVGElement'),

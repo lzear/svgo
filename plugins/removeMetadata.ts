@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeMetadata';
-exports.description = 'removes <metadata>';
+export const name = 'removeMetadata';
+export const description = 'removes <metadata>';
 
 /**
  * Remove <metadata>.
@@ -14,7 +14,7 @@ exports.description = 'removes <metadata>';
  *
  * @type {import('./plugins-types').Plugin<'removeMetadata'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     element: {
       enter: (node, parentNode) => {

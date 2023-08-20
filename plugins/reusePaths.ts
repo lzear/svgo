@@ -6,8 +6,8 @@
  * @typedef {import('../lib/types').XastNode} XastNode
  */
 
-exports.name = 'reusePaths';
-exports.description =
+export const name = 'reusePaths';
+export const description =
   'Finds <path> elements with the same d, fill, and ' +
   'stroke, and converts them to <use> elements ' +
   'referencing a single <path> def.';
@@ -20,7 +20,7 @@ exports.description =
  *
  * @type {import('./plugins-types').Plugin<'reusePaths'>}
  */
-exports.fn = () => {
+export const fn = () => {
   /**
    * @type {Map<string, Array<XastElement>>}
    */

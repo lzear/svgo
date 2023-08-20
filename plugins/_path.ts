@@ -17,7 +17,7 @@ var prevCtrlPoint;
  *
  * @type {(path: XastElement) => Array<PathDataItem>}
  */
-const path2js = (path) => {
+export const path2js = (path) => {
   // @ts-ignore legacy
   if (path.pathJS) return path.pathJS;
   /**
@@ -36,7 +36,6 @@ const path2js = (path) => {
   path.pathJS = pathData;
   return pathData;
 };
-exports.path2js = path2js;
 
 /**
  * Convert relative Path data to absolute.
@@ -181,7 +180,7 @@ const convertRelativeToAbsolute = (data) => {
  *
  * @type {(path: XastElement, data: Array<PathDataItem>, params: Js2PathParams) => void}
  */
-exports.js2path = function (path, data, params) {
+export const js2path = function (path, data, params) {
   // @ts-ignore legacy
   path.pathJS = data;
 
@@ -226,7 +225,7 @@ function set(dest, source) {
  *
  * @type {(path1: Array<PathDataItem>, path2: Array<PathDataItem>) => boolean}
  */
-exports.intersects = function (path1, path2) {
+export const intersects = function (path1, path2) {
   // Collect points of every subpath.
   const points1 = gatherPoints(convertRelativeToAbsolute(path1));
   const points2 = gatherPoints(convertRelativeToAbsolute(path2));

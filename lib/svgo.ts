@@ -47,7 +47,7 @@ const resolvePluginConfig = (plugin) => {
   return null;
 };
 
-const optimize = (input, config) => {
+export const optimize = (input, config) => {
   if (config == null) {
     config = {};
   }
@@ -91,4 +91,3 @@ const optimize = (input, config) => {
     data: output,
   };
 };
-exports.optimize = optimize;

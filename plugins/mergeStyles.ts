@@ -7,8 +7,8 @@
 
 import { visitSkip, detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'mergeStyles';
-exports.description = 'merge multiple style elements into one';
+export const name = 'mergeStyles';
+export const description = 'merge multiple style elements into one';
 
 /**
  * Merge multiple style elements into one.
@@ -17,7 +17,7 @@ exports.description = 'merge multiple style elements into one';
  *
  * @type {import('./plugins-types').Plugin<'mergeStyles'>}
  */
-exports.fn = () => {
+export const fn = () => {
   /**
    * @type {null | XastElement}
    */

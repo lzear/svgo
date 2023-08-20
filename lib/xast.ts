@@ -18,34 +18,30 @@ const cssSelectOptions = {
 /**
  * @type {(node: XastNode, selector: string) => Array<XastChild>}
  */
-const querySelectorAll = (node, selector) => {
+export const querySelectorAll = (node, selector) => {
   return selectAll(selector, node, cssSelectOptions);
 };
-exports.querySelectorAll = querySelectorAll;
 
 /**
  * @type {(node: XastNode, selector: string) => null | XastChild}
  */
-const querySelector = (node, selector) => {
+export const querySelector = (node, selector) => {
   return selectOne(selector, node, cssSelectOptions);
 };
-exports.querySelector = querySelector;
 
 /**
  * @type {(node: XastChild, selector: string) => boolean}
  */
-const matches = (node, selector) => {
+export const matches = (node, selector) => {
   return is(node, selector, cssSelectOptions);
 };
-exports.matches = matches;
 
-const visitSkip = Symbol();
-exports.visitSkip = visitSkip;
+export const visitSkip = Symbol();
 
 /**
  * @type {(node: XastNode, visitor: Visitor, parentNode?: any) => void}
  */
-const visit = (node, visitor, parentNode) => {
+export const visit = (node, visitor, parentNode) => {
   const callbacks = visitor[node.type];
   if (callbacks && callbacks.enter) {
     // @ts-ignore hard to infer
@@ -74,13 +70,11 @@ const visit = (node, visitor, parentNode) => {
     callbacks.exit(node, parentNode);
   }
 };
-exports.visit = visit;
 
 /**
  * @type {(node: XastChild, parentNode: XastParent) => void}
  */
-const detachNodeFromParent = (node, parentNode) => {
+export const detachNodeFromParent = (node, parentNode) => {
   // avoid splice to not break for loops
   parentNode.children = parentNode.children.filter((child) => child !== node);
 };
-exports.detachNodeFromParent = detachNodeFromParent;

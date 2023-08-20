@@ -1,7 +1,7 @@
 'use strict';
 
-exports.name = 'removeUnusedNS';
-exports.description = 'removes unused namespaces declaration';
+export const name = 'removeUnusedNS';
+export const description = 'removes unused namespaces declaration';
 
 /**
  * Remove unused namespaces declaration from svg element
@@ -11,7 +11,7 @@ exports.description = 'removes unused namespaces declaration';
  *
  * @type {import('./plugins-types').Plugin<'removeUnusedNS'>}
  */
-exports.fn = () => {
+export const fn = () => {
   /**
    * @type {Set<string>}
    */

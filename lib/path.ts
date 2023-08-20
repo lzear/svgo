@@ -137,7 +137,7 @@ const readNumber = (string, cursor) => {
 /**
  * @type {(string: string) => Array<PathDataItem>}
  */
-const parsePathData = (string) => {
+export const parsePathData = (string) => {
   /**
    * @type {Array<PathDataItem>}
    */
@@ -240,12 +240,11 @@ const parsePathData = (string) => {
   }
   return pathData;
 };
-exports.parsePathData = parsePathData;
 
 /**
  * @type {(number: number, precision?: number) => string}
  */
-const stringifyNumber = (number, precision) => {
+export const stringifyNumber = (number, precision) => {
   if (precision != null) {
     const ratio = 10 ** precision;
     number = Math.round(number * ratio) / ratio;
@@ -304,7 +303,7 @@ const stringifyArgs = (command, args, precision, disableSpaceAfterFlags) => {
 /**
  * @type {(options: StringifyPathDataOptions) => string}
  */
-const stringifyPathData = ({ pathData, precision, disableSpaceAfterFlags }) => {
+export const stringifyPathData = ({ pathData, precision, disableSpaceAfterFlags }) => {
   // combine sequence of the same commands
   let combined = [];
   for (let i = 0; i < pathData.length; i += 1) {
@@ -346,4 +345,3 @@ const stringifyPathData = ({ pathData, precision, disableSpaceAfterFlags }) => {
   }
   return result;
 };
-exports.stringifyPathData = stringifyPathData;

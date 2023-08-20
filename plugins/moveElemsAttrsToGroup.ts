@@ -3,8 +3,8 @@
 import { visit } from '../lib/xast';
 import { inheritableAttrs, pathElems } from './_collections';
 
-exports.name = 'moveElemsAttrsToGroup';
-exports.description = 'Move common attributes of group children to the group';
+export const name = 'moveElemsAttrsToGroup';
+export const description = 'Move common attributes of group children to the group';
 
 /**
  * Move common attributes of group children to the group
@@ -28,7 +28,7 @@ exports.description = 'Move common attributes of group children to the group';
  *
  * @type {import('./plugins-types').Plugin<'moveElemsAttrsToGroup'>}
  */
-exports.fn = (root) => {
+export const fn = (root) => {
   // find if any style element is present
   let deoptimizedWithStyles = false;
   visit(root, {

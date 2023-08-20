@@ -5,7 +5,7 @@
 /**
  * @type {Record<string, Array<string>>}
  */
-exports.elemsGroups = {
+export const elemsGroups = {
   animation: [
     'animate',
     'animateColor',
@@ -93,15 +93,15 @@ exports.elemsGroups = {
   ],
 };
 
-exports.textElems = exports.elemsGroups.textContent.concat('title');
+export const textElems = elemsGroups.textContent.concat('title');
 
-exports.pathElems = ['path', 'glyph', 'missing-glyph'];
+export const pathElems = ['path', 'glyph', 'missing-glyph'];
 
 // https://www.w3.org/TR/SVG11/intro.html#Definitions
 /**
  * @type {Record<string, Array<string>>}
  */
-exports.attrsGroups = {
+export const attrsGroups = {
   animationAddition: ['additive', 'accumulate'],
   animationAttributeTarget: ['attributeType', 'attributeName'],
   animationEvent: ['onbegin', 'onend', 'onrepeat', 'onload'],
@@ -240,7 +240,7 @@ exports.attrsGroups = {
 /**
  * @type {Record<string, Record<string, string>>}
  */
-exports.attrsGroupsDefaults = {
+export const attrsGroupsDefaults = {
   core: { 'xml:space': 'default' },
   presentation: {
     clip: 'auto',
@@ -314,7 +314,7 @@ exports.attrsGroupsDefaults = {
  *   content?: Array<string>,
  * }>}
  */
-exports.elems = {
+export const elems = {
   a: {
     attrsGroups: [
       'conditionalProcessing',
@@ -1864,7 +1864,7 @@ exports.elems = {
 };
 
 // https://wiki.inkscape.org/wiki/index.php/Inkscape-specific_XML_attributes
-exports.editorNamespaces = [
+export const editorNamespaces = [
   'http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd',
   'http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd',
   'http://www.inkscape.org/namespaces/inkscape',
@@ -1890,7 +1890,7 @@ exports.editorNamespaces = [
 ];
 
 // https://www.w3.org/TR/SVG11/linking.html#processingIRI
-exports.referencesProps = [
+export const referencesProps = [
   'clip-path',
   'color-profile',
   'fill',
@@ -1904,7 +1904,7 @@ exports.referencesProps = [
 ];
 
 // https://www.w3.org/TR/SVG11/propidx.html
-exports.inheritableAttrs = [
+export const inheritableAttrs = [
   'clip-rule',
   'color',
   'color-interpolation',
@@ -1952,7 +1952,7 @@ exports.inheritableAttrs = [
   'writing-mode',
 ];
 
-exports.presentationNonInheritableGroupAttrs = [
+export const presentationNonInheritableGroupAttrs = [
   'display',
   'clip-path',
   'filter',
@@ -1968,7 +1968,7 @@ exports.presentationNonInheritableGroupAttrs = [
  *
  * @type {Record<string, string>}
  */
-exports.colorsNames = {
+export const colorsNames = {
   aliceblue: '#f0f8ff',
   antiquewhite: '#faebd7',
   aqua: '#0ff',
@@ -2122,7 +2122,7 @@ exports.colorsNames = {
 /**
  * @type {Record<string, string>}
  */
-exports.colorsShortNames = {
+export const colorsShortNames = {
   '#f0ffff': 'azure',
   '#f5f5dc': 'beige',
   '#ffe4c4': 'bisque',
@@ -2158,7 +2158,7 @@ exports.colorsShortNames = {
 };
 
 // https://www.w3.org/TR/SVG11/single-page.html#types-DataTypeColor
-exports.colorsProps = [
+export const colorsProps = [
   'color',
   'fill',
   'stroke',

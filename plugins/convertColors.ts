@@ -2,8 +2,8 @@
 
 import * as collections from './_collections';
 
-exports.name = 'convertColors';
-exports.description = 'converts colors: rgb() to #rrggbb and #rrggbb to #rgb';
+export const name = 'convertColors';
+export const description = 'converts colors: rgb() to #rrggbb and #rrggbb to #rgb';
 
 const rNumber = '([+-]?(?:\\d*\\.\\d+|\\d+\\.?)%?)';
 const rComma = '\\s*,\\s*';
@@ -63,7 +63,7 @@ const convertRgbToHex = ([r, g, b]) => {
  *
  * @type {import('./plugins-types').Plugin<'convertColors'>}
  */
-exports.fn = (_root, params) => {
+export const fn = (_root, params) => {
   const {
     currentColor = false,
     names2hex = true,

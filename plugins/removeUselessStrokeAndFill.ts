@@ -4,8 +4,8 @@ import { visit, visitSkip, detachNodeFromParent } from '../lib/xast';
 import { collectStylesheet, computeStyle } from '../lib/style';
 import { elemsGroups } from './_collections';
 
-exports.name = 'removeUselessStrokeAndFill';
-exports.description = 'removes useless stroke and fill attributes';
+export const name = 'removeUselessStrokeAndFill';
+export const description = 'removes useless stroke and fill attributes';
 
 /**
  * Remove useless stroke and fill attrs.
@@ -14,7 +14,7 @@ exports.description = 'removes useless stroke and fill attributes';
  *
  * @type {import('./plugins-types').Plugin<'removeUselessStrokeAndFill'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const {
     stroke: removeStroke = true,
     fill: removeFill = true,

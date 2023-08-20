@@ -5,8 +5,8 @@ import {detachNodeFromParent, querySelector, visit, visitSkip} from "../lib/xast
 import { collectStylesheet, computeStyle } from '../lib/style';
 import { parsePathData } from '../lib/path';
 
-exports.name = 'removeHiddenElems';
-exports.description =
+export const name = 'removeHiddenElems';
+export const description =
   'removes hidden elements (zero sized, with absent attributes)';
 
 /**
@@ -26,7 +26,7 @@ exports.description =
  *
  * @type {import('./plugins-types').Plugin<'removeHiddenElems'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const {
     isHidden = true,
     displayNone = true,

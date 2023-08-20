@@ -12,7 +12,7 @@ import { visit } from '../xast';
  * @param {Array} plugins plugins object from config
  * @return {Object} output ast
  */
-const invokePlugins = (ast, info, plugins, overrides, globalOverrides) => {
+export const invokePlugins = (ast, info, plugins, overrides, globalOverrides) => {
   for (const plugin of plugins) {
     const override = overrides == null ? null : overrides[plugin.name];
     if (override === false) {
@@ -26,9 +26,8 @@ const invokePlugins = (ast, info, plugins, overrides, globalOverrides) => {
     }
   }
 };
-exports.invokePlugins = invokePlugins;
 
-const createPreset = ({ name, plugins }) => {
+export const createPreset = ({ name, plugins }) => {
   return {
     name,
     fn: (ast, params, info) => {
@@ -58,4 +57,3 @@ const createPreset = ({ name, plugins }) => {
     },
   };
 };
-exports.createPreset = createPreset;

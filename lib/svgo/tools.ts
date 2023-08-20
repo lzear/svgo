@@ -10,7 +10,7 @@
  *
  * @type {(str: string, type?: DataUri) => string}
  */
-exports.encodeSVGDatauri = (str, type) => {
+export const encodeSVGDatauri = (str, type) => {
   var prefix = 'data:image/svg+xml';
   if (!type || type === 'base64') {
     // base64
@@ -31,7 +31,7 @@ exports.encodeSVGDatauri = (str, type) => {
  *
  * @type {(str: string) => string}
  */
-exports.decodeSVGDatauri = (str) => {
+export const decodeSVGDatauri = (str) => {
   var regexp = /data:image\/svg\+xml(;charset=[^;,]*)?(;base64)?,(.*)/;
   var match = regexp.exec(str);
 
@@ -69,7 +69,7 @@ exports.decodeSVGDatauri = (str) => {
  *
  * @type {(data: Array<number>, params: CleanupOutDataParams, command?: PathDataCommand) => string}
  */
-exports.cleanupOutData = (data, params, command) => {
+export const cleanupOutData = (data, params, command) => {
   let str = '';
   let delimiter;
   /**
@@ -125,7 +125,7 @@ exports.cleanupOutData = (data, params, command) => {
  *
  * @type {(num: number) => string}
  */
-const removeLeadingZero = (num) => {
+export const removeLeadingZero = (num) => {
   var strNum = num.toString();
 
   if (0 < num && num < 1 && strNum.charAt(0) === '0') {
@@ -135,4 +135,3 @@ const removeLeadingZero = (num) => {
   }
   return strNum;
 };
-exports.removeLeadingZero = removeLeadingZero;

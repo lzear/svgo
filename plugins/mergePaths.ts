@@ -4,8 +4,8 @@ import { detachNodeFromParent } from '../lib/xast';
 import { collectStylesheet, computeStyle } from '../lib/style';
 import { path2js, js2path, intersects } from './_path';
 
-exports.name = 'mergePaths';
-exports.description = 'merges multiple paths in one if possible';
+export const name = 'mergePaths';
+export const description = 'merges multiple paths in one if possible';
 
 /**
  * Merge multiple Paths into one.
@@ -14,7 +14,7 @@ exports.description = 'merges multiple paths in one if possible';
  *
  * @type {import('./plugins-types').Plugin<'mergePaths'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const {
     force = false,
     floatPrecision,

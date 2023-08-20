@@ -11,8 +11,8 @@ import { path2js, js2path } from './_path';
 import { applyTransforms } from './applyTransforms';
 import { cleanupOutData } from '../lib/svgo/tools';
 
-exports.name = 'convertPathData';
-exports.description =
+export const name = 'convertPathData';
+export const description =
   'optimizes path data: writes in shorter form, applies transformations';
 
 /**
@@ -84,7 +84,7 @@ let arcTolerance;
  *
  * @type {import('./plugins-types').Plugin<'convertPathData'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const {
     // TODO convert to separate plugin in v3
     applyTransforms: _applyTransforms = true,

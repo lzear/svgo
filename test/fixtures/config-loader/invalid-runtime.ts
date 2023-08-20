@@ -1,1 +1,1 @@
-module.exports = { plugins }; // eslint-disable-line no-undef
+export { plugins }; // eslint-disable-line no-undef

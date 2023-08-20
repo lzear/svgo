@@ -2,8 +2,8 @@
 
 import { pathElems, referencesProps } from './_collections';
 
-exports.name = 'moveGroupAttrsToElems';
-exports.description = 'moves some group attributes to the content elements';
+export const name = 'moveGroupAttrsToElems';
+export const description = 'moves some group attributes to the content elements';
 
 const pathElemsWithGroupsAndText = [...pathElems, 'g', 'text'];
 
@@ -25,7 +25,7 @@ const pathElemsWithGroupsAndText = [...pathElems, 'g', 'text'];
  *
  * @type {import('./plugins-types').Plugin<'moveGroupAttrsToElems'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     element: {
       enter: (node) => {

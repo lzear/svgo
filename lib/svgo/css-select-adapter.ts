@@ -117,4 +117,4 @@ const svgoCssSelectAdapter = {
   findOne,
 };
 
-module.exports = svgoCssSelectAdapter;
+export default svgoCssSelectAdapter;

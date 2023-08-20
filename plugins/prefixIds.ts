@@ -3,8 +3,8 @@
 import * as csstree from 'css-tree';
 import { referencesProps } from './_collections';
 
-exports.name = 'prefixIds';
-exports.description = 'prefix IDs';
+export const name = 'prefixIds';
+export const description = 'prefix IDs';
 
 /**
  * extract basename from path
@@ -72,7 +72,7 @@ const toAny = (value) => value;
  *
  * @type {import('./plugins-types').Plugin<'prefixIds'>}
  */
-exports.fn = (_root, params, info) => {
+export const fn = (_root, params, info) => {
   const { delim = '__', prefixIds = true, prefixClassNames = true } = params;
 
   return {

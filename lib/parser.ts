@@ -89,7 +89,7 @@ const config = {
  *
  * @type {(data: string, from?: string) => XastRoot}
  */
-const parseSvg = (data, from) => {
+export const parseSvg = (data, from) => {
   const sax = SAX.parser(config.strict, config);
   /**
    * @type {XastRoot}
@@ -259,4 +259,3 @@ const parseSvg = (data, from) => {
   sax.write(data).close();
   return root;
 };
-exports.parseSvg = parseSvg;

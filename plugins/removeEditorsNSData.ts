@@ -3,8 +3,8 @@
 import { detachNodeFromParent } from '../lib/xast';
 import { editorNamespaces } from './_collections';
 
-exports.name = 'removeEditorsNSData';
-exports.description = 'removes editors namespaces, elements and attributes';
+export const name = 'removeEditorsNSData';
+export const description = 'removes editors namespaces, elements and attributes';
 
 /**
  * Remove editors namespaces, elements and attributes.
@@ -18,7 +18,7 @@ exports.description = 'removes editors namespaces, elements and attributes';
  *
  * @type {import('./plugins-types').Plugin<'removeEditorsNSData'>}
  */
-exports.fn = (_root, params) => {
+export const fn = (_root, params) => {
   let namespaces = editorNamespaces;
   if (Array.isArray(params.additionalNamespaces)) {
     namespaces = [...editorNamespaces, ...params.additionalNamespaces];

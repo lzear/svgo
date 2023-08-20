@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeXMLProcInst';
-exports.description = 'removes XML processing instructions';
+export const name = 'removeXMLProcInst';
+export const description = 'removes XML processing instructions';
 
 /**
  * Remove XML Processing Instruction.
@@ -15,7 +15,7 @@ exports.description = 'removes XML processing instructions';
  *
  * @type {import('./plugins-types').Plugin<'removeXMLProcInst'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     instruction: {
       enter: (node, parentNode) => {

@@ -8,8 +8,8 @@ import { visitSkip, detachNodeFromParent } from '../lib/xast';
 import { parsePathData } from '../lib/path';
 import { intersects } from './_path';
 
-exports.name = 'removeOffCanvasPaths';
-exports.description =
+export const name = 'removeOffCanvasPaths';
+export const description =
   'removes elements that are drawn outside of the viewbox (disabled by default)';
 
 /**
@@ -19,7 +19,7 @@ exports.description =
  *
  * @type {import('./plugins-types').Plugin<'removeOffCanvasPaths'>}
  */
-exports.fn = () => {
+export const fn = () => {
   /**
    * @type {null | {
    *   top: number,

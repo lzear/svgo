@@ -2,8 +2,8 @@
 
 import { attrsGroups } from './_collections';
 
-exports.name = 'convertStyleToAttrs';
-exports.description = 'converts style to attributes';
+export const name = 'convertStyleToAttrs';
+export const description = 'converts style to attributes';
 
 /**
  * @type {(...args: string[]) => string}
@@ -67,7 +67,7 @@ const regStripComments = new RegExp(
  *
  * @type {import('./plugins-types').Plugin<'convertStyleToAttrs'>}
  */
-exports.fn = (_root, params) => {
+export const fn = (_root, params) => {
   const { keepImportant = false } = params;
   return {
     element: {

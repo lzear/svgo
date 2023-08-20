@@ -2,8 +2,8 @@
 
 import { removeLeadingZero } from '../lib/svgo/tools';
 
-exports.name = 'cleanupNumericValues';
-exports.description =
+export const name = 'cleanupNumericValues';
+export const description =
   'rounds numeric values to the fixed precision, removes default ‘px’ units';
 
 const regNumericValues =
@@ -27,7 +27,7 @@ const absoluteLengths = {
  *
  * @type {import('./plugins-types').Plugin<'cleanupNumericValues'>}
  */
-exports.fn = (_root, params) => {
+export const fn = (_root, params) => {
   const {
     floatPrecision = 3,
     leadingZero = true,

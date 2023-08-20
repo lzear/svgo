@@ -2,8 +2,8 @@
 
 import { querySelectorAll } from '../lib/xast';
 
-exports.name = 'removeAttributesBySelector';
-exports.description =
+export const name = 'removeAttributesBySelector';
+export const description =
   'removes attributes of elements that match a css selector';
 
 /**
@@ -75,7 +75,7 @@ exports.description =
  *
  * @type {import('./plugins-types').Plugin<'removeAttributesBySelector'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const selectors = Array.isArray(params.selectors)
     ? params.selectors
     : [params];

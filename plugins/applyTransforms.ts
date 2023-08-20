@@ -28,7 +28,7 @@ const regNumericValues = /[-+]?(\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?/g;
  *   applyTransformsStroked: boolean,
  * }>}
  */
-const applyTransforms = (root, params) => {
+export const applyTransforms = (root, params) => {
   const stylesheet = collectStylesheet(root);
   return {
     element: {
@@ -149,7 +149,6 @@ const applyTransforms = (root, params) => {
     },
   };
 };
-exports.applyTransforms = applyTransforms;
 
 /**
  * @type {(matrix: Matrix, x: number, y: number) => [number, number]}

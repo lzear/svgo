@@ -17,8 +17,8 @@ const {
 } = csso;
 
 
-exports.name = 'inlineStyles';
-exports.description = 'inline styles (additional options)';
+export const name = 'inlineStyles';
+export const description = 'inline styles (additional options)';
 
 /**
  * Compares two selector specificities.
@@ -65,7 +65,7 @@ const toAny = (value) => value;
  *
  * @type {import('./plugins-types').Plugin<'inlineStyles'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const {
     onlyMatchedOnce = true,
     removeMatchedSelectors = true,

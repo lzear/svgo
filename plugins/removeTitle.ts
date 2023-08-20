@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeTitle';
-exports.description = 'removes <title>';
+export const name = 'removeTitle';
+export const description = 'removes <title>';
 
 /**
  * Remove <title>.
@@ -14,7 +14,7 @@ exports.description = 'removes <title>';
  *
  * @type {import('./plugins-types').Plugin<'removeTitle'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     element: {
       enter: (node, parentNode) => {

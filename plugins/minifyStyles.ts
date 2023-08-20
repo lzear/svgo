@@ -6,8 +6,8 @@
 
 import * as csso from 'csso';
 
-exports.name = 'minifyStyles';
-exports.description =
+export const name = 'minifyStyles';
+export const description =
   'minifies styles and removes unused styles based on usage data';
 
 /**
@@ -17,7 +17,7 @@ exports.description =
  *
  * @type {import('./plugins-types').Plugin<'minifyStyles'>}
  */
-exports.fn = (_root, { usage, ...params }) => {
+export const fn = (_root, { usage, ...params }) => {
   let enableTagsUsage = true;
   let enableIdsUsage = true;
   let enableClassesUsage = true;

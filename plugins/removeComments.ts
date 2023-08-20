@@ -2,8 +2,8 @@
 
 import { detachNodeFromParent } from '../lib/xast';
 
-exports.name = 'removeComments';
-exports.description = 'removes comments';
+export const name = 'removeComments';
+export const description = 'removes comments';
 
 /**
  * Remove comments.
@@ -16,7 +16,7 @@ exports.description = 'removes comments';
  *
  * @type {import('./plugins-types').Plugin<'removeComments'>}
  */
-exports.fn = () => {
+export const fn = () => {
   return {
     comment: {
       enter: (node, parentNode) => {

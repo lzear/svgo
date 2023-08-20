@@ -219,7 +219,7 @@ const compareSpecificity = (a, b) => {
 /**
  * @type {(root: XastRoot) => Stylesheet}
  */
-const collectStylesheet = (root) => {
+export const collectStylesheet = (root) => {
   /**
    * @type {Array<StylesheetRule>}
    */
@@ -257,12 +257,11 @@ const collectStylesheet = (root) => {
   rules.sort((a, b) => compareSpecificity(a.specificity, b.specificity));
   return { rules, parents };
 };
-exports.collectStylesheet = collectStylesheet;
 
 /**
  * @type {(stylesheet: Stylesheet, node: XastElement) => ComputedStyles}
  */
-const computeStyle = (stylesheet, node) => {
+export const computeStyle = (stylesheet, node) => {
   const { parents } = stylesheet;
   // collect inherited styles
   const computedStyles = computeOwnStyle(stylesheet, node);
@@ -283,4 +282,3 @@ const computeStyle = (stylesheet, node) => {
   }
   return computedStyles;
 };
-exports.computeStyle = computeStyle;

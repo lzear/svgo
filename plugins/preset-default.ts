@@ -79,4 +79,4 @@ const presetDefault = createPreset({
   ],
 });
 
-module.exports = presetDefault;
+export default presetDefault;

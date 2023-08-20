@@ -34,7 +34,7 @@ const isFile = async (file) => {
   }
 };
 
-const loadConfig = async (configFile, cwd = process.cwd()) => {
+export const loadConfig = async (configFile, cwd = process.cwd()) => {
   if (configFile != null) {
     if (path.isAbsolute(configFile)) {
       return await importConfig(configFile);
@@ -64,9 +64,8 @@ const loadConfig = async (configFile, cwd = process.cwd()) => {
     dir = parent;
   }
 };
-exports.loadConfig = loadConfig;
 
-const optimize = (input, config) => {
+export const optimize = (input, config) => {
   if (config == null) {
     config = {};
   }
@@ -82,4 +81,3 @@ const optimize = (input, config) => {
     },
   });
 };
-exports.optimize = optimize;

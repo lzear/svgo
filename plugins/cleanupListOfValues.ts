@@ -2,8 +2,8 @@
 
 import { removeLeadingZero } from '../lib/svgo/tools';
 
-exports.name = 'cleanupListOfValues';
-exports.description = 'rounds list of values to the fixed precision';
+export const name = 'cleanupListOfValues';
+export const description = 'rounds list of values to the fixed precision';
 
 const regNumericValues =
   /^([-+]?\d*\.?\d+([eE][-+]?\d+)?)(px|pt|pc|mm|cm|m|in|ft|em|ex|%)?$/;
@@ -34,7 +34,7 @@ const absoluteLengths = {
  *
  * @type {import('./plugins-types').Plugin<'cleanupListOfValues'>}
  */
-exports.fn = (_root, params) => {
+export const fn = (_root, params) => {
   const {
     floatPrecision = 3,
     leadingZero = true,

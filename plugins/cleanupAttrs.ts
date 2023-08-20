@@ -1,7 +1,7 @@
 'use strict';
 
-exports.name = 'cleanupAttrs';
-exports.description =
+export const name = 'cleanupAttrs';
+export const description =
   'cleanups attributes from newlines, trailing and repeating spaces';
 
 const regNewlinesNeedSpace = /(\S)\r?\n(\S)/g;
@@ -15,7 +15,7 @@ const regSpaces = /\s{2,}/g;
  *
  * @type {import('./plugins-types').Plugin<'cleanupAttrs'>}
  */
-exports.fn = (root, params) => {
+export const fn = (root, params) => {
   const { newlines = true, trim = true, spaces = true } = params;
   return {
     element: {
