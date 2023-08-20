@@ -1,5 +1,3 @@
-'use strict';
-
 const regTransformTypes = /matrix|translate|scale|rotate|skewX|skewY/;
 const regTransformSplit =
   /\s*(matrix|translate|scale|rotate|skewX|skewY)\s*\(\s*(.+?)\s*\)[\s,]*/;

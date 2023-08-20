@@ -1,5 +1,3 @@
-'use strict';
-
 import FS from 'fs';
 import path from 'path';
 import url from "node:url";

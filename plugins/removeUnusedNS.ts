@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'removeUnusedNS';
 export const description = 'removes unused namespaces declaration';
 

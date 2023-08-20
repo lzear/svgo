@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'removeViewBox';
 export const description = 'removes viewBox attribute when possible';
 

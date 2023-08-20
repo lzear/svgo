@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'cleanupAttrs';
 export const description =
   'cleanups attributes from newlines, trailing and repeating spaces';

@@ -1,5 +1,3 @@
-'use strict';
-
 // https://www.w3.org/TR/SVG11/intro.html#Definitions
 
 /**

@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'removeAttrs';
 export const description = 'removes specified attributes';
 

@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'sortAttrs';
 export const description = 'Sort element attributes for better compression';
 

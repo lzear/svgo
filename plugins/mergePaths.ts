@@ -1,5 +1,3 @@
-'use strict';
-
 import { detachNodeFromParent } from '../lib/xast';
 import { collectStylesheet, computeStyle } from '../lib/style';
 import { path2js, js2path, intersects } from './_path';

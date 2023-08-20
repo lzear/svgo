@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @typedef {import('../types').PathDataCommand} PathDataCommand
  * @typedef {import('../types').DataUri} DataUri

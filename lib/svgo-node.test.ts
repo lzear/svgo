@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @typedef {import('../lib/types').Plugin} Plugin
  */

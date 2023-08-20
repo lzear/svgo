@@ -1,5 +1,3 @@
-'use strict';
-
 import { attrsGroups } from './_collections';
 
 export const name = 'removeEmptyAttrs';

@@ -1,5 +1,3 @@
-'use strict';
-
 import { createPreset } from '../lib/svgo/plugins';
 
 import removeDoctype from './removeDoctype';

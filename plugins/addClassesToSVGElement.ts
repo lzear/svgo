@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'addClassesToSVGElement';
 export const description = 'adds classnames to an outer <svg> element';
 

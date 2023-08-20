@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'removeXMLNS';
 export const description =
   'removes xmlns attribute (for inline svg, disabled by default)';

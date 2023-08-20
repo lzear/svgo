@@ -1,5 +1,3 @@
-'use strict';
-
 import { querySelectorAll } from '../lib/xast';
 
 export const name = 'removeAttributesBySelector';

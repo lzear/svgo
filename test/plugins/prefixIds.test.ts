@@ -1,5 +1,3 @@
-'use strict';
-
 import { optimize } from '../../lib/svgo';
 
 test('should extract prefix from path basename', () => {

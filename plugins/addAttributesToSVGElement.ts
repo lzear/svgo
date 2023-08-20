@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'addAttributesToSVGElement';
 export const description = 'adds attributes to an outer <svg> element';
 

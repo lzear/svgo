@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @typedef {import('../lib/types').XastElement} XastElement
  * @typedef {import('../lib/types').XastParent} XastParent

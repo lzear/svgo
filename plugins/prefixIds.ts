@@ -1,5 +1,3 @@
-'use strict';
-
 import * as csstree from 'css-tree';
 import { referencesProps } from './_collections';
 

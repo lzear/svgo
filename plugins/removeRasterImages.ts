@@ -1,5 +1,3 @@
-'use strict';
-
 import { detachNodeFromParent } from '../lib/xast';
 
 export const name = 'removeRasterImages';

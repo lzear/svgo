@@ -1,5 +1,3 @@
-'use strict';
-
 import { pathElems, referencesProps } from './_collections';
 
 export const name = 'moveGroupAttrsToElems';

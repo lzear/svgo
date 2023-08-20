@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'sortDefsChildren';
 export const description = 'Sorts children of <defs> to improve compression';
 

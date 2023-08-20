@@ -1,5 +1,3 @@
-'use strict';
-
 import { removeLeadingZero } from '../lib/svgo/tools';
 
 export const name = 'cleanupNumericValues';

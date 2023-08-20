@@ -1,5 +1,3 @@
-'use strict';
-
 import { parseSvg } from './parser';
 import { stringifySvg } from './stringifier';
 import { builtin } from './builtin';

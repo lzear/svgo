@@ -1,5 +1,3 @@
-'use strict';
-
 const isTag = (node) => {
   return node.type === 'element';
 };

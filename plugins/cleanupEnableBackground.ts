@@ -1,5 +1,3 @@
-'use strict';
-
 import { visit } from '../lib/xast';
 
 export const name = 'cleanupEnableBackground';

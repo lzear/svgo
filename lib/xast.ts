@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @typedef {import('./types').XastNode} XastNode
  * @typedef {import('./types').XastChild} XastChild

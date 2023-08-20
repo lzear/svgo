@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @typedef {import('css-tree').Rule} CsstreeRule
  * @typedef {import('./types').Specificity} Specificity

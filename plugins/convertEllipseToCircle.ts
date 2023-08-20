@@ -1,5 +1,3 @@
-'use strict';
-
 export const name = 'convertEllipseToCircle';
 export const description = 'converts non-eccentric <ellipse>s to <circle>s';
 

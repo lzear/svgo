@@ -1,5 +1,3 @@
-'use strict';
-
 import * as collections from './_collections';
 
 export const name = 'convertColors';

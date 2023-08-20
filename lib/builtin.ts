@@ -1,5 +1,3 @@
-'use strict';
-
 export const builtin = [
   require('../plugins/preset-default'),
   require('../plugins/addAttributesToSVGElement'),

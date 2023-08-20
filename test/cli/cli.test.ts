@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * @typedef {import('child_process').ChildProcessWithoutNullStreams} ChildProcessWithoutNullStreams
  */
