@@ -1,3 +1,5 @@
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeAttrs'
 export const description = 'removes specified attributes'
 
@@ -78,10 +80,8 @@ plugins: [
  *
  *
  * @author Benny Schudel
- *
- * @type {import('./plugins-types').Plugin<'removeAttrs'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'removeAttrs'> = (root, params) => {
   if (params.attrs === undefined) {
     console.warn(ENOATTRS)
     return null

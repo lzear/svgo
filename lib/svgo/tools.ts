@@ -1,14 +1,9 @@
-/**
- * @typedef {import('../types').PathDataCommand} PathDataCommand
- * @typedef {import('../types').DataUri} DataUri
- */
+import type { DataUri, PathDataCommand } from '../types'
 
 /**
  * Encode plain SVG data string into Data URI string.
- *
- * @type {(str: string, type?: DataUri) => string}
  */
-export const encodeSVGDatauri = (str, type) => {
+export const encodeSVGDatauri = (str: string, type?: DataUri): string => {
   let prefix = 'data:image/svg+xml'
   if (!type || type === 'base64') {
     // base64
@@ -26,10 +21,8 @@ export const encodeSVGDatauri = (str, type) => {
 
 /**
  * Decode SVG Data URI string into plain SVG string.
- *
- * @type {(str: string) => string}
  */
-export const decodeSVGDatauri = (str) => {
+export const decodeSVGDatauri = (str: string) => {
   const regexp = /data:image\/svg\+xml(;charset=[^,;]*)?(;base64)?,(.*)/
   const match = regexp.exec(str)
 
@@ -51,29 +44,26 @@ export const decodeSVGDatauri = (str) => {
   return str
 }
 
-/**
- * @typedef {{
- *   noSpaceAfterFlags?: boolean,
- *   leadingZero?: boolean,
- *   negativeExtraSpace?: boolean
- * }} CleanupOutDataParams
- */
+type CleanupOutDataParams = {
+  noSpaceAfterFlags?: boolean
+  leadingZero?: boolean
+  negativeExtraSpace?: boolean
+}
 
 /**
  * Convert a row of numbers to an optimized string view.
  *
  * @example
  * [0, -1, .5, .5] → "0-1 .5.5"
- *
- * @type {(data: Array<number>, params: CleanupOutDataParams, command?: PathDataCommand) => string}
  */
-export const cleanupOutData = (data, params, command) => {
+export const cleanupOutData = (
+  data: Array<number>,
+  params: CleanupOutDataParams,
+  command?: PathDataCommand,
+): string => {
   let str = ''
   let delimiter
-  /**
-   * @type {number}
-   */
-  let prev
+  let prev: number
 
   for (const [i, item] of data.entries()) {
     // space delimiter by default
@@ -101,7 +91,7 @@ export const cleanupOutData = (data, params, command) => {
     if (
       params.negativeExtraSpace &&
       delimiter != '' &&
-      (item < 0 || (itemStr.charAt(0) === '.' && prev % 1 !== 0))
+      (item < 0 || (itemStr.charAt(0) === '.' && prev! % 1 !== 0))
     ) {
       delimiter = ''
     }
@@ -120,10 +110,8 @@ export const cleanupOutData = (data, params, command) => {
  *
  * @example
  * -0.5 → -.5
- *
- * @type {(num: number) => string}
  */
-export const removeLeadingZero = (num) => {
+export const removeLeadingZero = (num: number) => {
   let strNum = num.toString()
 
   if (0 < num && num < 1 && strNum.charAt(0) === '0') {

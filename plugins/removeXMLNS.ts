@@ -1,3 +1,5 @@
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeXMLNS'
 export const description =
   'removes xmlns attribute (for inline svg, disabled by default)'
@@ -11,10 +13,8 @@ export const description =
  * <svg viewBox="0 0 100 50">
  *
  * @author Ricardo Tomasi
- *
- * @type {import('./plugins-types').Plugin<'removeXMLNS'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeXMLNS'> = () => {
   return {
     element: {
       enter: (node) => {

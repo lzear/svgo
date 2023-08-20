@@ -1,3 +1,4 @@
+import { Plugin } from './plugins-types'
 export const name = 'removeViewBox'
 export const description = 'removes viewBox attribute when possible'
 
@@ -14,10 +15,8 @@ const viewBoxElems = new Set(['svg', 'pattern', 'symbol'])
  * <svg width="100" height="50">
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeViewBox'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeViewBox'> = () => {
   return {
     element: {
       enter: (node, parentNode) => {

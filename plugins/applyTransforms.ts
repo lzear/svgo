@@ -1,33 +1,25 @@
 // @ts-nocheck
 
-/**
- * @typedef {import('../lib/types').PathDataItem} PathDataItem
- * @typedef {import('../lib/types').XastElement} XastElement
- */
-
 import { collectStylesheet, computeStyle } from '../lib/style'
 import { removeLeadingZero } from '../lib/svgo/tools'
+import type { PathDataItem, Plugin } from '../lib/types'
 
 import { attrsGroupsDefaults, referencesProps } from './_collections'
 import { path2js } from './_path'
 import { transform2js, transformArc, transformsMultiply } from './_transforms'
 
-/**
- * @typedef {Array<PathDataItem>} PathData
- * @typedef {Array<number>} Matrix
- */
+type PathData = Array<PathDataItem>
+type Matrix = number[]
 
 const regNumericValues = /[+-]?(\d*\.\d+|\d+\.?)(?:[Ee][+-]?\d+)?/g
 
 /**
  * Apply transformation(s) to the Path data.
- *
- * @type {import('../lib/types').Plugin<{
- *   transformPrecision: number,
- *   applyTransformsStroked: boolean,
- * }>}
  */
-export const applyTransforms = (root, params) => {
+export const applyTransforms: Plugin<{
+  transformPrecision: number
+  applyTransformsStroked: boolean
+}> = (root, params) => {
   const stylesheet = collectStylesheet(root)
   return {
     element: {
@@ -150,36 +142,29 @@ export const applyTransforms = (root, params) => {
   }
 }
 
-/**
- * @type {(matrix: Matrix, x: number, y: number) => [number, number]}
- */
-const transformAbsolutePoint = (matrix, x, y) => {
+const transformAbsolutePoint = (
+  matrix: Matrix,
+  x: number,
+  y: number,
+): [number, number] => {
   const newX = matrix[0] * x + matrix[2] * y + matrix[4]
   const newY = matrix[1] * x + matrix[3] * y + matrix[5]
   return [newX, newY]
 }
 
-/**
- * @type {(matrix: Matrix, x: number, y: number) => [number, number]}
- */
-const transformRelativePoint = (matrix, x, y) => {
+const transformRelativePoint = (
+  matrix: Matrix,
+  x: number,
+  y: number,
+): [number, number] => {
   const newX = matrix[0] * x + matrix[2] * y
   const newY = matrix[1] * x + matrix[3] * y
   return [newX, newY]
 }
 
-/**
- * @type {(pathData: PathData, matrix: Matrix) => void}
- */
-const applyMatrixToPathData = (pathData, matrix) => {
-  /**
-   * @type {[number, number]}
-   */
-  const start = [0, 0]
-  /**
-   * @type {[number, number]}
-   */
-  const cursor = [0, 0]
+const applyMatrixToPathData = (pathData: PathData, matrix: Matrix): void => {
+  const start: [number, number] = [0, 0]
+  const cursor: [number, number] = [0, 0]
 
   for (const pathItem of pathData) {
     let { command, args } = pathItem

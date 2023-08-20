@@ -1,12 +1,10 @@
 import { attrsGroups } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'convertStyleToAttrs'
 export const description = 'converts style to attributes'
 
-/**
- * @type {(...args: string[]) => string}
- */
-const g = (...args) => {
+const g = (...args: string[]) => {
   return '(?:' + args.join('|') + ')'
 }
 
@@ -62,10 +60,8 @@ const regStripComments = new RegExp(
  * <g fill="#000" color="#fff" style="-webkit-blah: blah">
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'convertStyleToAttrs'>}
  */
-export const fn = (_root, params) => {
+export const fn: Plugin<'convertStyleToAttrs'> = (_root, params) => {
   const { keepImportant = false } = params
   return {
     element: {
@@ -73,10 +69,7 @@ export const fn = (_root, params) => {
         if (node.attributes.style != null) {
           // ['opacity: 1', 'color: #000']
           let styles = []
-          /**
-           * @type {Record<string, string>}
-           */
-          const newAttributes = {}
+          const newAttributes: Record<string, string> = {}
 
           // Strip CSS comments preserving escape sequences and strings.
           const styleValue = node.attributes.style.replace(
@@ -91,8 +84,7 @@ export const fn = (_root, params) => {
           )
 
           regDeclarationBlock.lastIndex = 0
-          // eslint-disable-next-line no-cond-assign
-          for (var rule; (rule = regDeclarationBlock.exec(styleValue)); ) {
+          for (let rule; (rule = regDeclarationBlock.exec(styleValue)); ) {
             if (!keepImportant || !rule[3]) {
               styles.push([rule[1], rule[2]])
             }

@@ -1,12 +1,9 @@
 // @ts-nocheck
 
-/**
- * @typedef {import('../lib/types').XastElement} XastElement
- */
-
 import { visitSkip } from '../lib/xast'
 
 import { referencesProps } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'cleanupIds'
 export const description = 'removes unused IDs and minifies used'
@@ -72,10 +69,8 @@ const maxIdIndex = generateIdChars.length - 1
 
 /**
  * Check if an ID starts with any one of a list of strings.
- *
- * @type {(string: string, prefixes: Array<string>) => boolean}
  */
-const hasStringPrefix = (string, prefixes) => {
+const hasStringPrefix = (string: string, prefixes: Array<string>): boolean => {
   for (const prefix of prefixes) {
     if (string.startsWith(prefix)) {
       return true
@@ -86,10 +81,8 @@ const hasStringPrefix = (string, prefixes) => {
 
 /**
  * Generate unique minimal ID.
- *
- * @type {(currentId: null | Array<number>) => Array<number>}
  */
-const generateId = (currentId) => {
+const generateId = (currentId: null | Array<number>): number[] => {
   if (currentId == null) {
     return [0]
   }
@@ -111,10 +104,8 @@ const generateId = (currentId) => {
 
 /**
  * Get string from generated ID array.
- *
- * @type {(arr: Array<number>) => string}
  */
-const getIdString = (arr) => {
+const getIdString = (arr: Array<number>): string => {
   return arr.map((i) => generateIdChars[i]).join('')
 }
 
@@ -123,10 +114,8 @@ const getIdString = (arr) => {
  * (only if there are no any <style> or <script>).
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'cleanupIds'>}
  */
-export const fn = (_root, params) => {
+export const fn: Plugin<'cleanupIds'> = (_root, params) => {
   const {
     remove = true,
     minify = true,
@@ -142,20 +131,17 @@ export const fn = (_root, params) => {
     : preservePrefixes
     ? [preservePrefixes]
     : []
-  /**
-   * @type {Map<string, XastElement>}
-   */
-  const nodeById = new Map()
-  /**
-   * @type {Map<string, Array<{element: XastElement, name: string, value: string }>>}
-   */
-  const referencesById = new Map()
+  const nodeById = new Map<string, XastElement>()
+  const referencesById = new Map<
+    string,
+    Array<{ element: XastElement; name: string; value: string }>
+  >()
   let deoptimized = false
 
   return {
     element: {
       enter: (node) => {
-        if (force == false) {
+        if (!force) {
           // deoptimize if style or script elements are present
           if (
             (node.name === 'style' || node.name === 'script') &&
@@ -191,10 +177,7 @@ export const fn = (_root, params) => {
             }
           } else {
             // collect all references
-            /**
-             * @type {null | string}
-             */
-            let id = null
+            let id: null | string = null
             if (referencesProps.includes(name)) {
               const match = value.match(regReferencesUrl)
               if (match != null) {
@@ -231,24 +214,15 @@ export const fn = (_root, params) => {
         if (deoptimized) {
           return
         }
-        /**
-         * @type {(id: string) => boolean}
-         **/
-        const isIdPreserved = (id) =>
+        const isIdPreserved = (id: string): boolean =>
           preserveIds.has(id) || hasStringPrefix(id, preserveIdPrefixes)
-        /**
-         * @type {null | Array<number>}
-         */
-        let currentId = null
+        let currentId: null | Array<number> = null
         for (const [id, refs] of referencesById) {
           const node = nodeById.get(id)
           if (node != null) {
             // replace referenced IDs with the minified ones
             if (minify && isIdPreserved(id) === false) {
-              /**
-               * @type {null | string}
-               */
-              let currentIdString = null
+              let currentIdString: null | string = null
               do {
                 currentId = generateId(currentId)
                 currentIdString = getIdString(currentId)
@@ -277,7 +251,7 @@ export const fn = (_root, params) => {
         // remove non-referenced IDs attributes from elements
         if (remove) {
           for (const [id, node] of nodeById) {
-            if (isIdPreserved(id) === false) {
+            if (!isIdPreserved(id)) {
               delete node.attributes.id
             }
           }

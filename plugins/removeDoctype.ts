@@ -1,5 +1,7 @@
 import { detachNodeFromParent } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeDoctype'
 export const description = 'removes doctype declaration'
 
@@ -24,10 +26,8 @@ export const description = 'removes doctype declaration'
  * ]>
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeDoctype'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeDoctype'> = () => {
   return {
     doctype: {
       enter: (node, parentNode) => {

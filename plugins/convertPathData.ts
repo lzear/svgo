@@ -1,75 +1,49 @@
-// @ts-nocheck
-
-/**
- * @typedef {import('../lib//types').PathDataItem} PathDataItem
- */
-
 import { collectStylesheet, computeStyle } from '../lib/style'
 import { cleanupOutData } from '../lib/svgo/tools'
+import type { PathDataItem } from '../lib/types'
 import { visit } from '../lib/xast'
 
 import { pathElems } from './_collections'
 import { js2path, path2js } from './_path'
 import { applyTransforms } from './applyTransforms'
+import type { Plugin } from './plugins-types'
 
 export const name = 'convertPathData'
 export const description =
   'optimizes path data: writes in shorter form, applies transformations'
 
-/**
- * @type {(data: number[]) => number[]}
- */
-let roundData
-/**
- * @type {number | false}
- */
-let precision
-/**
- * @type {number}
- */
-let error
-/**
- * @type {number}
- */
-let arcThreshold
-/**
- * @type {number}
- */
-let arcTolerance
+let roundData: (data: number[]) => number[]
+let precision: number | false
+let error: number
+let arcThreshold: number
+let arcTolerance: number
 
-/**
- * @typedef {{
- *   applyTransforms: boolean,
- *   applyTransformsStroked: boolean,
- *   makeArcs: {
- *     threshold: number,
- *     tolerance: number,
- *   },
- *   straightCurves: boolean,
- *   lineShorthands: boolean,
- *   curveSmoothShorthands: boolean,
- *   floatPrecision: number | false,
- *   transformPrecision: number,
- *   removeUseless: boolean,
- *   collapseRepeated: boolean,
- *   utilizeAbsolute: boolean,
- *   leadingZero: boolean,
- *   negativeExtraSpace: boolean,
- *   noSpaceAfterFlags: boolean,
- *   forceAbsolutePath: boolean,
- * }} InternalParams
- */
+type InternalParams = {
+  applyTransforms: boolean
+  applyTransformsStroked: boolean
+  makeArcs: {
+    threshold: number
+    tolerance: number
+  }
+  straightCurves: boolean
+  lineShorthands: boolean
+  curveSmoothShorthands: boolean
+  floatPrecision: number | false
+  transformPrecision: number
+  removeUseless: boolean
+  collapseRepeated: boolean
+  utilizeAbsolute: boolean
+  leadingZero: boolean
+  negativeExtraSpace: boolean
+  noSpaceAfterFlags: boolean
+  forceAbsolutePath: boolean
+}
+type Point = [number, number]
 
-/**
- * @typedef {[number, number]} Point
- */
-
-/**
- * @typedef {{
- *   center: Point,
- *   radius: number
- * }} Circle
- */
+type Circle = {
+  center: Point
+  radius: number
+}
 
 /**
  * Convert absolute Path to relative,
@@ -82,10 +56,8 @@ let arcTolerance
  * @see https://www.w3.org/TR/SVG11/paths.html#PathData
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'convertPathData'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'convertPathData'> = (root, params) => {
   const {
     // TODO convert to separate plugin in v3
     applyTransforms: _applyTransforms = true,
@@ -108,10 +80,7 @@ export const fn = (root, params) => {
     forceAbsolutePath = false,
   } = params
 
-  /**
-   * @type {InternalParams}
-   */
-  const newParams = {
+  const newParams: InternalParams = {
     applyTransforms: _applyTransforms,
     applyTransformsStroked,
     makeArcs,
@@ -152,6 +121,7 @@ export const fn = (root, params) => {
             precision === false
               ? 1e-2
               : +Math.pow(0.1, precision).toFixed(precision)
+          // @ts-ignore
           roundData = precision > 0 && precision < 20 ? strongRound : round
           if (makeArcs) {
             arcThreshold = makeArcs.threshold
@@ -195,16 +165,17 @@ export const fn = (root, params) => {
 
 /**
  * Convert absolute path data coordinates to relative.
- *
- * @type {(pathData: PathDataItem[]) => PathDataItem[]}
  */
-const convertToRelative = (pathData) => {
-  const start = [0, 0]
-  const cursor = [0, 0]
-  let prevCoords = [0, 0]
+const convertToRelative = (
+  pathData: (PathDataItem & { base?: [number, number]; coords?: number[] })[],
+): PathDataItem[] => {
+  const start: [number, number] = [0, 0]
+  const cursor: [number, number] = [0, 0]
+  let prevCoords: [number, number] = [0, 0]
 
   for (const [i, pathItem] of pathData.entries()) {
-    let { command, args } = pathItem
+    let { command } = pathItem
+    const { args } = pathItem
 
     // moveto (x y)
     if (command === 'm') {
@@ -359,6 +330,7 @@ const convertToRelative = (pathData) => {
     // @ts-ignore
     pathItem.coords = [cursor[0], cursor[1]]
     // @ts-ignore
+    // eslint-disable-next-line unicorn/consistent-destructuring
     prevCoords = pathItem.coords
   }
 
@@ -367,18 +339,24 @@ const convertToRelative = (pathData) => {
 
 /**
  * Main filters loop.
- *
- * @type {(
- *   path: PathDataItem[],
- *   params: InternalParams,
- *   aux: { maybeHasStrokeAndLinecap: boolean, hasMarkerMid: boolean }
- * ) => PathDataItem[]}
  */
-function filters(path, params, { maybeHasStrokeAndLinecap, hasMarkerMid }) {
-  let stringify = data2Path.bind(null, params),
-    relSubpoint = [0, 0],
-    pathBase = [0, 0],
-    prev = {}
+function filters(
+  path: (PathDataItem & { coords?: number[]; base?: [number, number] })[],
+  params: InternalParams,
+  {
+    maybeHasStrokeAndLinecap,
+    hasMarkerMid,
+  }: { maybeHasStrokeAndLinecap: boolean; hasMarkerMid: boolean },
+): PathDataItem[] {
+  const stringify = data2Path.bind(null, params)
+  const relSubpoint = [0, 0]
+  const pathBase = [0, 0]
+  // @ts-ignore
+  let prev: PathDataItem & {
+    coords?: number[]
+    base?: [number, number]
+    sdata?: number[]
+  } = {}
 
   path = path.filter(function (item, index, path) {
     let command = item.command
@@ -386,15 +364,15 @@ function filters(path, params, { maybeHasStrokeAndLinecap, hasMarkerMid }) {
     let next = path[index + 1]
 
     if (command !== 'Z' && command !== 'z') {
-      let sdata = data,
-        circle
+      let sdata = data
+      let circle: Circle
 
       if (command === 's') {
-        sdata = [0, 0].concat(data)
+        sdata = [0, 0, ...data]
 
         // @ts-ignore
-        const pdata = prev.args,
-          n = pdata.length
+        const pdata = prev.args
+        const n = pdata.length
 
         // (-x, -y) of the prev tangent point relative to the current point
         sdata[0] = pdata[n - 2] - pdata[n - 4]
@@ -408,37 +386,30 @@ function filters(path, params, { maybeHasStrokeAndLinecap, hasMarkerMid }) {
         isConvex(sdata) &&
         (circle = findCircle(sdata))
       ) {
-        let r = roundData([circle.radius])[0],
-          angle = findArcAngle(sdata, circle),
-          sweep = sdata[5] * sdata[0] - sdata[4] * sdata[1] > 0 ? 1 : 0,
-          /**
-           * @type {PathDataItem}
-           */
-          arc = {
+        let j
+        const r = roundData([circle.radius])[0]
+        let angle = findArcAngle(sdata, circle)
+        const sweep = sdata[5] * sdata[0] - sdata[4] * sdata[1] > 0 ? 1 : 0
+        let arc: PathDataItem & { coords?: number[]; base?: [number, number] } =
+          {
             command: 'a',
             args: [r, r, 0, 0, sweep, sdata[4], sdata[5]],
             // @ts-ignore
             coords: [...item.coords],
             // @ts-ignore
             base: item.base,
-          },
-          /**
-           * @type {PathDataItem[]}
-           */
-          output = [arc],
-          // relative coordinates to adjust the found circle
-          /**
-           * @type {Point}
-           */
-          relCenter = [
-            circle.center[0] - sdata[4],
-            circle.center[1] - sdata[5],
-          ],
-          relCircle = { center: relCenter, radius: circle.radius },
-          arcCurves = [item],
-          hasPrev = 0,
-          suffix = '',
-          nextLonghand
+          }
+        const output: (PathDataItem & { coords?: number[] })[] = [arc]
+        // relative coordinates to adjust the found circle
+        const relCenter: Point = [
+          circle.center[0] - sdata[4],
+          circle.center[1] - sdata[5],
+        ]
+        const relCircle = { center: relCenter, radius: circle.radius }
+        const arcCurves = [item]
+        let hasPrev = 0
+        let suffix = ''
+        let nextLonghand
 
         if (
           // @ts-ignore
@@ -473,11 +444,7 @@ function filters(path, params, { maybeHasStrokeAndLinecap, hasMarkerMid }) {
         }
 
         // check if next curves are fitting the arc
-        for (
-          var j = index;
-          (next = path[++j]) && ~'cs'.indexOf(next.command);
-
-        ) {
+        for (j = index; (next = path[++j]) && ~'cs'.indexOf(next.command); ) {
           let nextData = next.args
           if (next.command == 's') {
             nextLonghand = makeLonghand(
@@ -568,7 +535,7 @@ function filters(path, params, { maybeHasStrokeAndLinecap, hasMarkerMid }) {
             path.splice.apply(
               path,
               // @ts-ignore
-              [index + 1, arcCurves.length - 1 - hasPrev].concat(output),
+              [index + 1, arcCurves.length - 1 - hasPrev, ...output],
             )
           }
           if (!arc) return false
@@ -815,10 +782,11 @@ function filters(path, params, { maybeHasStrokeAndLinecap, hasMarkerMid }) {
 
 /**
  * Writes data in shortest form using absolute or relative coordinates.
- *
- * @type {(path: PathDataItem[], params: InternalParams) => PathDataItem[]}
  */
-function convertToMixed(path, params) {
+function convertToMixed(
+  path: (PathDataItem & { base?: [number, number] })[],
+  params: InternalParams,
+): PathDataItem[] {
   let prev = path[0]
 
   path = path.filter(function (item, index) {
@@ -828,9 +796,9 @@ function convertToMixed(path, params) {
       return true
     }
 
-    const command = item.command,
-      data = item.args,
-      adata = [...data]
+    const command = item.command
+    const data = item.args
+    const adata = [...data]
 
     if (
       command === 'm' ||
@@ -859,8 +827,8 @@ function convertToMixed(path, params) {
 
     roundData(adata)
 
-    const absoluteDataStr = cleanupOutData(adata, params),
-      relativeDataStr = cleanupOutData(data, params)
+    const absoluteDataStr = cleanupOutData(adata, params)
+    const relativeDataStr = cleanupOutData(data, params)
 
     // Convert to absolute coordinates if it's shorter or forceAbsolutePath is true.
     // v-20 -> V0
@@ -872,7 +840,7 @@ function convertToMixed(path, params) {
         !(
           params.negativeExtraSpace &&
           command == prev.command &&
-          prev.command.charCodeAt(0) > 96 &&
+          prev.command.codePointAt(0) > 96 &&
           absoluteDataStr.length == relativeDataStr.length - 1 &&
           (data[0] < 0 ||
             // @ts-ignore
@@ -895,10 +863,8 @@ function convertToMixed(path, params) {
 /**
  * Checks if curve is convex. Control points of such a curve must form
  * a convex quadrilateral with diagonals crosspoint inside of it.
- *
- * @type {(data: number[]) => boolean}
  */
-function isConvex(data) {
+function isConvex(data: number[]) {
   const center = getIntersection([
     0,
     0,
@@ -921,10 +887,8 @@ function isConvex(data) {
 
 /**
  * Computes lines equations by two points and returns their intersection point.
- *
- * @type {(coords: number[]) => undefined | Point}
  */
-function getIntersection(coords) {
+function getIntersection(coords: number[]): undefined | Point {
   // Prev line equation parameters.
   const a1 = coords[1] - coords[3], // y1 - y2
     b1 = coords[2] - coords[0], // x2 - x1
@@ -937,15 +901,15 @@ function getIntersection(coords) {
 
   if (!denom) return // parallel lines havn't an intersection
 
-  /**
-   * @type {Point}
-   */
-  const cross = [(b1 * c2 - b2 * c1) / denom, (a1 * c2 - a2 * c1) / -denom]
+  const cross: Point = [
+    (b1 * c2 - b2 * c1) / denom,
+    (a1 * c2 - a2 * c1) / -denom,
+  ]
   if (
-    !isNaN(cross[0]) &&
-    !isNaN(cross[1]) &&
-    isFinite(cross[0]) &&
-    isFinite(cross[1])
+    !Number.isNaN(cross[0]) &&
+    !Number.isNaN(cross[1]) &&
+    Number.isFinite(cross[0]) &&
+    Number.isFinite(cross[1])
   ) {
     return cross
   }
@@ -954,9 +918,8 @@ function getIntersection(coords) {
 /**
  * Does the same as `Number.prototype.toFixed` but without casting
  * the return value to a string.
- * @type {(num: number, precision: number) => number}
  */
-function toFixed(num, precision) {
+function toFixed(num: number, precision: number): number {
   const pow = 10 ** precision
   return Math.round(num * pow) / pow
 }
@@ -966,10 +929,8 @@ function toFixed(num, precision) {
  * in path data keeping a specified number of decimals.
  * Smart rounds values like 2.3491 to 2.35 instead of 2.349.
  * Doesn't apply "smartness" if the number precision fits already.
- *
- * @type {(data: number[]) => number[]}
  */
-function strongRound(data) {
+function strongRound(data: number[]): number[] {
   const precisionNum = precision || 0
   for (let i = data.length; i-- > 0; ) {
     const fixed = toFixed(data[i], precisionNum)
@@ -986,10 +947,8 @@ function strongRound(data) {
 
 /**
  * Simple rounding function if precision is 0.
- *
- * @type {(data: number[]) => number[]}
  */
-function round(data) {
+function round(data: number[]) {
   for (let i = data.length; i-- > 0; ) {
     data[i] = Math.round(data[i])
   }
@@ -999,18 +958,16 @@ function round(data) {
 /**
  * Checks if a curve is a straight line by measuring distance
  * from middle points to the line formed by end points.
- *
- * @type {(data: number[]) => boolean}
  */
 
-function isCurveStraightLine(data) {
+function isCurveStraightLine(data: number[]): boolean {
   // Get line equation a·x + b·y + c = 0 coefficients a, b (c = 0) by start and end points.
-  let i = data.length - 2,
-    a = -data[i + 1], // y1 − y2 (y1 = 0)
-    b = data[i], // x2 − x1 (x1 = 0)
-    d = 1 / (a * a + b * b) // same part for all points
+  let i = data.length - 2
+  const a = -data[i + 1] // y1 − y2 (y1 = 0)
+  const b = data[i] // x2 − x1 (x1 = 0)
+  const d = 1 / (a * a + b * b) // same part for all points
 
-  if (i <= 1 || !isFinite(d)) return false // curve that ends at start point isn't the case
+  if (i <= 1 || !Number.isFinite(d)) return false // curve that ends at start point isn't the case
 
   // Distance from point (x0, y0) to the line is sqrt((c − a·x0 − b·y0)² / (a² + b²))
   while ((i -= 2) >= 0) {
@@ -1023,11 +980,9 @@ function isCurveStraightLine(data) {
 
 /**
  * Converts next curve from shorthand to full form using the current curve data.
- *
- * @type {(item: PathDataItem, data: number[]) => PathDataItem}
  */
 
-function makeLonghand(item, data) {
+function makeLonghand(item: PathDataItem, data: number[]): PathDataItem {
   switch (item.command) {
     case 's': {
       item.command = 'c'
@@ -1044,11 +999,9 @@ function makeLonghand(item, data) {
 
 /**
  * Returns distance between two points
- *
- * @type {(point1: Point, point2: Point) => number}
  */
 
-function getDistance(point1, point2) {
+function getDistance(point1: Point, point2: Point) {
   return Math.hypot(point1[0] - point2[0], point1[1] - point2[1])
 }
 
@@ -1056,11 +1009,9 @@ function getDistance(point1, point2) {
  * Returns coordinates of the curve point corresponding to the certain t
  * a·(1 - t)³·p1 + b·(1 - t)²·t·p2 + c·(1 - t)·t²·p3 + d·t³·p4,
  * where pN are control points and p1 is zero due to relative coordinates.
- *
- * @type {(curve: number[], t: number) => Point}
  */
 
-function getCubicBezierPoint(curve, t) {
+function getCubicBezierPoint(curve: number[], t: number): Point {
   const sqrT = t * t,
     cubT = sqrT * t,
     mt = 1 - t,
@@ -1074,11 +1025,9 @@ function getCubicBezierPoint(curve, t) {
 
 /**
  * Finds circle by 3 points of the curve and checks if the curve fits the found circle.
- *
- * @type {(curve: number[]) => undefined | Circle}
  */
 
-function findCircle(curve) {
+function findCircle(curve: number[]): undefined | Circle {
   const midPoint = getCubicBezierPoint(curve, 1 / 2),
     m1 = [midPoint[0] / 2, midPoint[1] / 2],
     m2 = [(midPoint[0] + curve[4]) / 2, (midPoint[1] + curve[5]) / 2],
@@ -1115,11 +1064,9 @@ function findCircle(curve) {
 
 /**
  * Checks if a curve fits the given circle.
- *
- * @type {(curve: number[], circle: Circle) => boolean}
  */
 
-function isArc(curve, circle) {
+function isArc(curve: number[], circle: Circle): boolean {
   const tolerance = Math.min(
     arcThreshold * error,
     (arcTolerance * circle.radius) / 100,
@@ -1137,11 +1084,9 @@ function isArc(curve, circle) {
 
 /**
  * Checks if a previous curve fits the given circle.
- *
- * @type {(curve: number[], circle: Circle) => boolean}
  */
 
-function isArcPrev(curve, circle) {
+function isArcPrev(curve: number[], circle: Circle) {
   return isArc(curve, {
     center: [circle.center[0] + curve[4], circle.center[1] + curve[5]],
     radius: circle.radius,
@@ -1150,11 +1095,9 @@ function isArcPrev(curve, circle) {
 
 /**
  * Finds angle of a curve fitting the given arc.
-
- * @type {(curve: number[], relCircle: Circle) => number}
  */
 
-function findArcAngle(curve, relCircle) {
+function findArcAngle(curve: number[], relCircle: Circle) {
   const x1 = -relCircle.center[0],
     y1 = -relCircle.center[1],
     x2 = curve[4] - relCircle.center[0],
@@ -1167,11 +1110,10 @@ function findArcAngle(curve, relCircle) {
 
 /**
  * Converts given path data to string.
- *
- * @type {(params: InternalParams, pathData: PathDataItem[]) => string}
  */
 
-function data2Path(params, pathData) {
+function data2Path(params: InternalParams, pathData: PathDataItem[]) {
+  // eslint-disable-next-line unicorn/no-array-reduce
   return pathData.reduce(function (pathString, item) {
     let strData = ''
     if (item.args) {

@@ -1,7 +1,3 @@
-/**
- * @typedef {import('../lib/types').Plugin} Plugin
- */
-
 import { jest } from '@jest/globals'
 
 import { optimize } from './svgo'
@@ -17,7 +13,7 @@ test('allow to setup default preset', () => {
     </svg>
   `
   const { data } = optimize(svg, {
-    plugins: ['preset-default'],
+    plugins: ['preset-default' as const],
     js2svg: { pretty: true, indent: 2 },
   })
   expect(data).toMatchInlineSnapshot(`

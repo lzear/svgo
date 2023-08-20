@@ -1,18 +1,6 @@
 // @ts-nocheck
 
-/**
- * @typedef {import('css-tree').Rule} CsstreeRule
- * @typedef {import('./types').Specificity} Specificity
- * @typedef {import('./types').Stylesheet} Stylesheet
- * @typedef {import('./types').StylesheetRule} StylesheetRule
- * @typedef {import('./types').StylesheetDeclaration} StylesheetDeclaration
- * @typedef {import('./types').ComputedStyles} ComputedStyles
- * @typedef {import('./types').XastRoot} XastRoot
- * @typedef {import('./types').XastElement} XastElement
- * @typedef {import('./types').XastParent} XastParent
- * @typedef {import('./types').XastChild} XastChild
- */
-
+import type { Rule as CsstreeRule } from 'css-tree'
 import * as csstree from 'css-tree'
 import * as csso from 'csso'
 
@@ -22,6 +10,16 @@ import {
   presentationNonInheritableGroupAttrs,
 } from '../plugins/_collections'
 
+import type {
+  ComputedStyles,
+  Specificity,
+  Stylesheet,
+  StylesheetDeclaration,
+  StylesheetRule,
+  XastElement,
+  XastParent,
+  XastRoot,
+} from './types'
 import { matches, visit } from './xast'
 
 const {
@@ -32,14 +30,8 @@ const {
 // @ts-ignore not defined in @types/csstree
 const csstreeWalkSkip = csstree.walk.skip
 
-/**
- * @type {(ruleNode: CsstreeRule, dynamic: boolean) => StylesheetRule[]}
- */
-const parseRule = (ruleNode, dynamic) => {
-  /**
-   * @type {Array<StylesheetDeclaration>}
-   */
-  const declarations = []
+const parseRule = (ruleNode: CsstreeRule, dynamic: boolean): StylesheetRule[] => {
+  const declarations: Array<StylesheetDeclaration> = []
   // collect declarations
   for (const cssNode of ruleNode.block.children) {
     if (cssNode.type === 'Declaration') {
@@ -51,10 +43,7 @@ const parseRule = (ruleNode, dynamic) => {
     }
   }
 
-  /**
-   * @type {StylesheetRule[]}
-   */
-  const rules = []
+  const rules: StylesheetRule[] = []
   csstree.walk(ruleNode.prelude, (node) => {
     if (node.type === 'Selector') {
       const newNode = csstree.clone(node)
@@ -78,14 +67,8 @@ const parseRule = (ruleNode, dynamic) => {
   return rules
 }
 
-/**
- * @type {(css: string, dynamic: boolean) => Array<StylesheetRule>}
- */
-const parseStylesheet = (css, dynamic) => {
-  /**
-   * @type {Array<StylesheetRule>}
-   */
-  const rules = []
+const parseStylesheet = (css: string, dynamic: boolean): StylesheetRule[] => {
+  const rules: StylesheetRule[] = []
   const ast = csstree.parse(css, {
     parseValue: false,
     parseAtrulePrelude: false,
@@ -111,14 +94,8 @@ const parseStylesheet = (css, dynamic) => {
   return rules
 }
 
-/**
- * @type {(css: string) => Array<StylesheetDeclaration>}
- */
-const parseStyleDeclarations = (css) => {
-  /**
-   * @type {Array<StylesheetDeclaration>}
-   */
-  const declarations = []
+const parseStyleDeclarations = (css: string): StylesheetDeclaration[] => {
+  const declarations: StylesheetDeclaration[] = []
   const ast = csstree.parse(css, {
     context: 'declarationList',
     parseValue: false,
@@ -135,14 +112,11 @@ const parseStyleDeclarations = (css) => {
   return declarations
 }
 
-/**
- * @type {(stylesheet: Stylesheet, node: XastElement) => ComputedStyles}
- */
-const computeOwnStyle = (stylesheet, node) => {
-  /**
-   * @type {ComputedStyles}
-   */
-  const computedStyle = {}
+const computeOwnStyle = (
+  stylesheet: Stylesheet,
+  node: XastElement,
+): ComputedStyles => {
+  const computedStyle: ComputedStyles = {}
   const importantStyles = new Map()
 
   // collect attributes
@@ -203,10 +177,8 @@ const computeOwnStyle = (stylesheet, node) => {
 /**
  * Compares two selector specificities.
  * extracted from https://github.com/keeganstreet/specificity/blob/main/specificity.js#L211
- *
- * @type {(a: Specificity, b: Specificity) => number}
  */
-const compareSpecificity = (a, b) => {
+const compareSpecificity = (a: Specificity, b: Specificity): number => {
   for (let i = 0; i < 4; i += 1) {
     if (a[i] < b[i]) {
       return -1
@@ -218,18 +190,9 @@ const compareSpecificity = (a, b) => {
   return 0
 }
 
-/**
- * @type {(root: XastRoot) => Stylesheet}
- */
-export const collectStylesheet = (root) => {
-  /**
-   * @type {Array<StylesheetRule>}
-   */
-  const rules = []
-  /**
-   * @type {Map<XastElement, XastParent>}
-   */
-  const parents = new Map()
+export const collectStylesheet = (root: XastRoot): Stylesheet => {
+  const rules: StylesheetRule[] = []
+  const parents = new Map<XastElement, XastParent>()
   visit(root, {
     element: {
       enter: (node, parentNode) => {
@@ -260,10 +223,10 @@ export const collectStylesheet = (root) => {
   return { rules, parents }
 }
 
-/**
- * @type {(stylesheet: Stylesheet, node: XastElement) => ComputedStyles}
- */
-export const computeStyle = (stylesheet, node) => {
+export const computeStyle = (
+  stylesheet: Stylesheet,
+  node: XastElement,
+): ComputedStyles => {
   const { parents } = stylesheet
   // collect inherited styles
   const computedStyles = computeOwnStyle(stylesheet, node)

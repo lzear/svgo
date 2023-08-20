@@ -1,9 +1,9 @@
 // @ts-nocheck
-
 import { collectStylesheet, computeStyle } from '../lib/style'
 import { detachNodeFromParent, visit, visitSkip } from '../lib/xast'
 
 import { elemsGroups } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'removeUselessStrokeAndFill'
 export const description = 'removes useless stroke and fill attributes'
@@ -12,10 +12,8 @@ export const description = 'removes useless stroke and fill attributes'
  * Remove useless stroke and fill attrs.
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeUselessStrokeAndFill'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'removeUselessStrokeAndFill'> = (root, params) => {
   const {
     stroke: removeStroke = true,
     fill: removeFill = true,

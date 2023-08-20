@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import * as collections from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'convertColors'
 export const description =
@@ -22,10 +23,8 @@ const regHEX = /^#(([\dA-Fa-f])\2){3}$/
  * rgb2hex([255, 255, 255]) // '#ffffff'
  *
  * @author Jed Schmidt
- *
- * @type {(rgb: Array<number>) => string}
  */
-const convertRgbToHex = ([r, g, b]) => {
+const convertRgbToHex = ([r, g, b]: [number, number, number]) => {
   // combine the octets into a 32-bit integer as: [1][r][g][b]
   const hexNumber =
     // operator precedence is (+) > (<<) > (|)
@@ -61,10 +60,8 @@ const convertRgbToHex = ([r, g, b]) => {
  * #000080 ➡ navy
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'convertColors'>}
  */
-export const fn = (_root, params) => {
+export const fn: Plugin<'convertColors'> = (_root, params) => {
   const {
     currentColor = false,
     names2hex = true,
@@ -108,12 +105,11 @@ export const fn = (_root, params) => {
               const match = val.match(regRGB)
               if (match != null) {
                 const nums = match.slice(1, 4).map((m) => {
-                  let n
-                  n = m.includes('%')
+                  const n = m.includes('%')
                     ? Math.round(Number.parseFloat(m) * 2.55)
                     : Number(m)
                   return Math.max(0, Math.min(n, 255))
-                })
+                }) as [number, number, number]
                 val = convertRgbToHex(nums)
               }
             }

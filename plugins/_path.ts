@@ -1,27 +1,16 @@
-/**
- * @typedef {import('../lib/types').XastElement} XastElement
- * @typedef {import('../lib/types').PathDataItem} PathDataItem
- */
-
 import { parsePathData, stringifyPathData } from '../lib/path'
+import type { PathDataItem, XastElement } from '../lib/types'
 
-/**
- * @type {[number, number]}
- */
-let prevCtrlPoint
+let prevCtrlPoint: [number, number]
 
 /**
  * Convert path string to JS representation.
- *
- * @type {(path: XastElement) => Array<PathDataItem>}
  */
-export const path2js = (path) => {
+export const path2js = (path: XastElement): PathDataItem[] => {
   // @ts-ignore legacy
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   if (path.pathJS) return path.pathJS
-  /**
-   * @type {Array<PathDataItem>}
-   */
-  const pathData = [] // JS representation of the path data
+  const pathData: Array<PathDataItem> = [] // JS representation of the path data
   const newPathData = parsePathData(path.attributes.d)
   for (const { command, args } of newPathData) {
     pathData.push({ command, args })
@@ -37,15 +26,11 @@ export const path2js = (path) => {
 
 /**
  * Convert relative Path data to absolute.
- *
- * @type {(data: Array<PathDataItem>) => Array<PathDataItem>}
- *
  */
-const convertRelativeToAbsolute = (data) => {
-  /**
-   * @type {Array<PathDataItem>}
-   */
-  const newData = []
+const convertRelativeToAbsolute = (
+  data: Array<PathDataItem>,
+): PathDataItem[] => {
+  const newData: PathDataItem[] = []
   const start = [0, 0]
   const cursor = [0, 0]
 
@@ -169,16 +154,16 @@ const convertRelativeToAbsolute = (data) => {
   return newData
 }
 
-/**
- * @typedef {{ floatPrecision?: number, noSpaceAfterFlags?: boolean }} Js2PathParams
- */
+type Js2PathParams = { floatPrecision?: number; noSpaceAfterFlags?: boolean }
 
 /**
  * Convert path array to string.
- *
- * @type {(path: XastElement, data: Array<PathDataItem>, params: Js2PathParams) => void}
  */
-export const js2path = function (path, data, params) {
+export const js2path = function (
+  path: XastElement,
+  data: Array<PathDataItem>,
+  params: Js2PathParams,
+) {
   // @ts-ignore legacy
   path.pathJS = data
 
@@ -187,7 +172,7 @@ export const js2path = function (path, data, params) {
     // remove moveto commands which are followed by moveto commands
     if (pathData.length > 0 && (item.command === 'M' || item.command === 'm')) {
       const last = pathData.at(-1)
-      if (last.command === 'M' || last.command === 'm') {
+      if (last?.command === 'M' || last?.command === 'm') {
         pathData.pop()
       }
     }
@@ -204,11 +189,10 @@ export const js2path = function (path, data, params) {
   })
 }
 
-/**
- * @type {(dest: Array<number>, source: Array<number>) => Array<number>}
- */
-function set(dest, source) {
+function set(dest: Array<number>, source: Array<number>): number[] {
+  // @ts-ignore
   dest[0] = source.at(-2)
+  // @ts-ignore
   dest[1] = source.at(-1)
   return dest
 }
@@ -217,10 +201,11 @@ function set(dest, source) {
  * Checks if two paths have an intersection by checking convex hulls
  * collision using Gilbert-Johnson-Keerthi distance algorithm
  * https://web.archive.org/web/20180822200027/http://entropyinteractive.com/2011/04/gjk-algorithm/
- *
- * @type {(path1: Array<PathDataItem>, path2: Array<PathDataItem>) => boolean}
  */
-export const intersects = function (path1, path2) {
+export const intersects = function (
+  path1: Array<PathDataItem>,
+  path2: Array<PathDataItem>,
+) {
   // Collect points of every subpath.
   const points1 = gatherPoints(convertRelativeToAbsolute(path1))
   const points2 = gatherPoints(convertRelativeToAbsolute(path2))
@@ -245,8 +230,8 @@ export const intersects = function (path1, path2) {
     return false
 
   // Get a convex hull from points of each subpath. Has the most complexity O(n·log n).
-  const hullNest1 = points1.list.map(convexHull)
-  const hullNest2 = points2.list.map(convexHull)
+  const hullNest1 = points1.list.map((element) => convexHull(element))
+  const hullNest2 = points2.list.map((element) => convexHull(element))
 
   // Check intersection of every subpath of the first path with every subpath of the second.
   return hullNest1.some(function (hull1) {
@@ -271,6 +256,7 @@ export const intersects = function (path1, path2) {
         // add a new point
         simplex.push(getSupport(hull1, hull2, direction))
         // see if the new point was on the correct side of the origin
+        // @ts-ignore
         if (dot(direction, simplex.at(-1)) <= 0) return false
         // process the simplex
         if (processSimplex(simplex, direction)) return true
@@ -278,20 +264,17 @@ export const intersects = function (path1, path2) {
     })
   })
 
-  /**
-   * @type {(a: Point, b: Point, direction: Array<number>) => Array<number>}
-   */
-  function getSupport(a, b, direction) {
+  function getSupport(a: Point, b: Point, direction: [number, number]) {
     return sub(supportPoint(a, direction), supportPoint(b, minus(direction)))
   }
 
   // Computes farthest polygon point in particular direction.
   // Thanks to knowledge of min/max x and y coordinates we can choose a quadrant to search in.
   // Since we're working on convex hull, the dot product is increasing until we find the farthest point.
-  /**
-   * @type {(polygon: Point, direction: Array<number>) => Array<number>}
-   */
-  function supportPoint(polygon, direction) {
+  function supportPoint(
+    polygon: Point,
+    direction: [number, number],
+  ): [number, number] {
     let index =
         direction[1] >= 0
           ? direction[0] < 0
@@ -306,21 +289,22 @@ export const intersects = function (path1, path2) {
       max = value
       index = ++index % polygon.list.length
     }
+    // eslint-disable-next-line unicorn/explicit-length-check
     return polygon.list[(index || polygon.list.length) - 1]
   }
 }
 
-/**
- * @type {(simplex: Array<Array<number>>, direction: Array<number>) => boolean}
- */
-function processSimplex(simplex, direction) {
+function processSimplex(
+  simplex: Array<[number, number]>,
+  direction: [number, number],
+): boolean {
   // we only need to handle to 1-simplex and 2-simplex
   if (simplex.length == 2) {
     // 1-simplex
-    const a = simplex[1],
-      b = simplex[0],
-      AO = minus(simplex[1]),
-      AB = sub(b, a)
+    const a = simplex[1]
+    const b = simplex[0]
+    const AO = minus(simplex[1])
+    const AB = sub(b, a)
     // AO is in the same direction as AB
     if (dot(AO, AB) > 0) {
       // get the vector perpendicular to AB facing O
@@ -367,69 +351,43 @@ function processSimplex(simplex, direction) {
   return false
 }
 
-/**
- * @type {(v: Array<number>) => Array<number>}
- */
-function minus(v) {
+function minus(v: [number, number]): [number, number] {
   return [-v[0], -v[1]]
 }
 
-/**
- * @type {(v1: Array<number>, v2: Array<number>) => Array<number>}
- */
-function sub(v1, v2) {
+function sub(v1: [number, number], v2: [number, number]): [number, number] {
   return [v1[0] - v2[0], v1[1] - v2[1]]
 }
 
-/**
- * @type {(v1: Array<number>, v2: Array<number>) => number}
- */
-function dot(v1, v2) {
+function dot(v1: [number, number], v2: [number, number]): number {
   return v1[0] * v2[0] + v1[1] * v2[1]
 }
 
-/**
- * @type {(v1: Array<number>, v2: Array<number>) => Array<number>}
- */
-function orth(v, from) {
-  const o = [-v[1], v[0]]
+function orth(v: [number, number], from: [number, number]): [number, number] {
+  const o: [number, number] = [-v[1], v[0]]
   return dot(o, minus(from)) < 0 ? minus(o) : o
 }
 
-/**
- * @typedef {{
- *   list: Array<Array<number>>,
- *   minX: number,
- *   minY: number,
- *   maxX: number,
- *   maxY: number
- * }} Point
- */
+type Point = {
+  list: Array<[number, number]>
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
+}
 
-/**
- * @typedef {{
- *   list: Array<Point>,
- *   minX: number,
- *   minY: number,
- *   maxX: number,
- *   maxY: number
- * }} Points
- */
-
-/**
- * @type {(pathData: Array<PathDataItem>) => Points}
- */
-function gatherPoints(pathData) {
-  /**
-   * @type {Points}
-   */
-  const points = { list: [], minX: 0, minY: 0, maxX: 0, maxY: 0 }
+type Points = {
+  list: Array<Point>
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
+}
+function gatherPoints(pathData: Array<PathDataItem>): Points {
+  const points: Points = { list: [], minX: 0, minY: 0, maxX: 0, maxY: 0 }
 
   // Writes data about the extreme points on each axle
-  /**
-   * @type {(path: Point, point: Array<number>) => void}
-   */
-  const addPoint = (path, point) => {
+  const addPoint = (path: Point, point: [number, number]) => {
     if (path.list.length === 0 || point[1] > path.list[path.maxY][1]) {
       path.maxY = path.list.length
       points.maxY =
@@ -458,17 +416,17 @@ function gatherPoints(pathData) {
     let subPath =
       points.list.length === 0
         ? { list: [], minX: 0, minY: 0, maxX: 0, maxY: 0 }
-        : points.list.at(-1)
+        : points.list.at(-1)!
     const prev = i === 0 ? null : pathData[i - 1]
     let basePoint = subPath.list.length === 0 ? null : subPath.list.at(-1)
     const data = pathDataItem.args
     let ctrlPoint = basePoint
 
     /**
-     * @type {(n: number, i: number) => number}
      * TODO fix null hack
      */
-    const toAbsolute = (n, i) => n + (basePoint == null ? 0 : basePoint[i % 2])
+    const toAbsolute = (n: number, i: number): number =>
+      n + (basePoint == null ? 0 : basePoint[i % 2])
 
     switch (pathDataItem.command) {
       case 'M': {
@@ -492,6 +450,7 @@ function gatherPoints(pathData) {
       }
 
       case 'Q': {
+        // @ts-ignore
         addPoint(subPath, data.slice(0, 2))
         prevCtrlPoint = [data[2] - data[0], data[3] - data[1]] // Save control point for shorthand
         break
@@ -566,10 +525,12 @@ function gatherPoints(pathData) {
         if (basePoint != null) {
           // Convert the arc to bezier curves and use the same approximation
           // @ts-ignore no idea what's going on here
-          const curves = a2c.apply(0, basePoint.concat(data))
+          const curves = a2c.apply(0, [...basePoint, ...data])
           for (
-            var cData;
-            (cData = curves.splice(0, 6).map(toAbsolute)).length > 0;
+            let cData;
+            (cData = curves
+              .splice(0, 6)
+              .map((element, i) => toAbsolute(element, i))).length > 0;
 
           ) {
             if (basePoint != null) {
@@ -586,8 +547,10 @@ function gatherPoints(pathData) {
               0.5 * (cData[2] + cData[4]),
               0.5 * (cData[3] + cData[5]),
             ])
-            if (curves.length > 0)
+            if (curves.length > 0) {
+              // @ts-ignore
               addPoint(subPath, (basePoint = cData.slice(-2)))
+            }
           }
         }
         break
@@ -595,7 +558,10 @@ function gatherPoints(pathData) {
     }
 
     // Save final command coordinates
-    if (data.length >= 2) addPoint(subPath, data.slice(-2))
+    if (data.length >= 2) {
+      // @ts-ignore
+      addPoint(subPath, data.slice(-2))
+    }
   }
 
   return points
@@ -604,21 +570,19 @@ function gatherPoints(pathData) {
 /**
  * Forms a convex hull from set of points of every subpath using monotone chain convex hull algorithm.
  * https://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
- *
- * @type {(points: Point) => Point}
  */
-function convexHull(points) {
+function convexHull(points: Point): Point {
   points.list.sort(function (a, b) {
     return a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]
   })
 
-  let lower = [],
-    minY = 0,
-    bottom = 0
+  const lower: [number, number][] = []
+  let minY = 0
+  let bottom = 0
   for (let i = 0; i < points.list.length; i++) {
     while (
       lower.length >= 2 &&
-      cross(lower.at(-2), lower.at(-1), points.list[i]) <= 0
+      cross(lower.at(-2)!, lower.at(-1)!, points.list[i]) <= 0
     ) {
       lower.pop()
     }
@@ -629,13 +593,13 @@ function convexHull(points) {
     lower.push(points.list[i])
   }
 
-  let upper = [],
-    maxY = points.list.length - 1,
-    top = 0
+  const upper: [number, number][] = []
+  let maxY = points.list.length - 1
+  let top = 0
   for (let i = points.list.length; i--; ) {
     while (
       upper.length >= 2 &&
-      cross(upper.at(-2), upper.at(-1), points.list[i]) <= 0
+      cross(upper.at(-2)!, upper.at(-1)!, points.list[i]) <= 0
     ) {
       upper.pop()
     }
@@ -652,10 +616,7 @@ function convexHull(points) {
 
   const hullList = [...lower, ...upper]
 
-  /**
-   * @type {Point}
-   */
-  const hull = {
+  const hull: Point = {
     list: hullList,
     minX: 0, // by sorting
     maxX: lower.length,
@@ -666,60 +627,35 @@ function convexHull(points) {
   return hull
 }
 
-/**
- * @type {(o: Array<number>, a: Array<number>, b: Array<number>) => number}
- */
-function cross(o, a, b) {
+function cross(o: [number, number], a: [number, number], b: [number, number]) {
   return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
 }
 
 /**
  * Based on code from Snap.svg (Apache 2 license). http://snapsvg.io/
  * Thanks to Dmitry Baranovskiy for his great work!
- *
- * @type {(
- *  x1: number,
- *  y1: number,
- *  rx: number,
- *  ry: number,
- *  angle: number,
- *  large_arc_flag: number,
- *  sweep_flag: number,
- *  x2: number,
- *  y2: number,
- *  recursive: Array<number>
- * ) => Array<number>}
  */
 const a2c = (
-  x1,
-  y1,
-  rx,
-  ry,
-  angle,
-  large_arc_flag,
-  sweep_flag,
-  x2,
-  y2,
-  recursive,
-) => {
+  x1: number,
+  y1: number,
+  rx: number,
+  ry: number,
+  angle: number,
+  large_arc_flag: number,
+  sweep_flag: number,
+  x2: number,
+  y2: number,
+  recursive: Array<number>,
+): number[] => {
   // for more information of where this Math came from visit:
   // https://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
   const _120 = (Math.PI * 120) / 180
   const rad = (Math.PI / 180) * (+angle || 0)
-  /**
-   * @type {Array<number>}
-   */
-  let res = []
-  /**
-   * @type {(x: number, y: number, rad: number) => number}
-   */
-  const rotateX = (x, y, rad) => {
+  let res: number[] = []
+  const rotateX = (x: number, y: number, rad: number): number => {
     return x * Math.cos(rad) - y * Math.sin(rad)
   }
-  /**
-   * @type {(x: number, y: number, rad: number) => number}
-   */
-  const rotateY = (x, y, rad) => {
+  const rotateY = (x: number, y: number, rad: number): number => {
     return x * Math.sin(rad) + y * Math.cos(rad)
   }
   if (recursive) {
@@ -797,9 +733,9 @@ const a2c = (
       y2 - y1,
     ]
   if (recursive) {
-    return m.concat(res)
+    return [...m, ...res]
   } else {
-    res = m.concat(res)
+    res = [...m, ...res]
     const newres = []
     for (let i = 0, n = res.length; i < n; i++) {
       newres[i] =

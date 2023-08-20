@@ -1,48 +1,40 @@
 // @ts-nocheck
 
-/**
- * @typedef {import('./types').XastNode} XastNode
- * @typedef {import('./types').XastChild} XastChild
- * @typedef {import('./types').XastParent} XastParent
- * @typedef {import('./types').Visitor} Visitor
- */
-
 import { is, selectAll, selectOne } from 'css-select'
 
 import xastAdaptor from './svgo/css-select-adapter'
+import type { Visitor, XastChild, XastNode, XastParent } from './types'
 
 const cssSelectOptions = {
   xmlMode: true,
   adapter: xastAdaptor,
 }
 
-/**
- * @type {(node: XastNode, selector: string) => Array<XastChild>}
- */
-export const querySelectorAll = (node, selector) => {
+export const querySelectorAll = (
+  node: XastNode,
+  selector: string,
+): XastChild[] => {
   return selectAll(selector, node, cssSelectOptions)
 }
 
-/**
- * @type {(node: XastNode, selector: string) => null | XastChild}
- */
-export const querySelector = (node, selector) => {
+export const querySelector = (
+  node: XastNode,
+  selector: string,
+): null | XastChild => {
   return selectOne(selector, node, cssSelectOptions)
 }
 
-/**
- * @type {(node: XastChild, selector: string) => boolean}
- */
-export const matches = (node, selector) => {
+export const matches = (node: XastChild, selector: string): boolean => {
   return is(node, selector, cssSelectOptions)
 }
 
 export const visitSkip = Symbol()
 
-/**
- * @type {(node: XastNode, visitor: Visitor, parentNode?: any) => void}
- */
-export const visit = (node, visitor, parentNode) => {
+export const visit = (
+  node: XastNode,
+  visitor: Visitor,
+  parentNode?: XastParent,
+) => {
   const callbacks = visitor[node.type]
   if (callbacks && callbacks.enter) {
     // @ts-ignore hard to infer
@@ -70,10 +62,10 @@ export const visit = (node, visitor, parentNode) => {
   }
 }
 
-/**
- * @type {(node: XastChild, parentNode: XastParent) => void}
- */
-export const detachNodeFromParent = (node, parentNode) => {
+export const detachNodeFromParent = (
+  node: XastChild,
+  parentNode: XastParent,
+) => {
   // avoid splice to not break for loops
   parentNode.children = parentNode.children.filter((child) => child !== node)
 }

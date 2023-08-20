@@ -1,15 +1,12 @@
 // @ts-nocheck
 
-/**
- * @typedef {import('../lib/types').Specificity} Specificity
- * @typedef {import('../lib/types').XastElement} XastElement
- * @typedef {import('../lib/types').XastParent} XastParent
- */
-
 import * as csstree from 'css-tree'
 import * as csso from 'csso'
 
 import { detachNodeFromParent, querySelectorAll, visitSkip } from '../lib/xast'
+
+import type { Plugin } from './plugins-types'
+import {XastElement} from "../lib/types";
 
 const {
   // @ts-ignore not defined in @types/csso
@@ -22,10 +19,8 @@ export const description = 'inline styles (additional options)'
 /**
  * Compares two selector specificities.
  * extracted from https://github.com/keeganstreet/specificity/blob/main/specificity.js#L211
- *
- * @type {(a: Specificity, b: Specificity) => number}
  */
-const compareSpecificity = (a, b) => {
+const compareSpecificity = (a: Specificity, b: Specificity): number => {
   for (let i = 0; i < 4; i += 1) {
     if (a[i] < b[i]) {
       return -1
@@ -36,10 +31,8 @@ const compareSpecificity = (a, b) => {
   return 0
 }
 
-/**
- * @type {(value: any) => any}
- */
-const toAny = (value) => value
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const toAny = (value: any): any => value
 
 /**
  * Moves + merges styles from style elements to element styles
@@ -61,10 +54,8 @@ const toAny = (value) => value
  *     empty string element for all non-pseudo-classes and/or -elements
  *
  * @author strarsis <strarsis@gmail.com>
- *
- * @type {import('./plugins-types').Plugin<'inlineStyles'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'inlineStyles'> = (root, params) => {
   const {
     onlyMatchedOnce = true,
     removeMatchedSelectors = true,
@@ -72,19 +63,17 @@ export const fn = (root, params) => {
     usePseudos = [''],
   } = params
 
-  /**
-   * @type {Array<{ node: XastElement, parentNode: XastParent, cssAst: csstree.StyleSheet }>}
-   */
-  const styles = []
-  /**
-   * @type {Array<{
-   *   node: csstree.Selector,
-   *   item: csstree.ListItem<csstree.CssNode>,
-   *   rule: csstree.Rule,
-   *   matchedElements?: Array<XastElement>
-   * }>}
-   */
-  const selectors = []
+  const styles: Array<{
+    node: XastElement
+    parentNode: XastParent
+    cssAst: csstree.StyleSheet
+  }> = []
+  const selectors: Array<{
+    node: csstree.Selector
+    item: csstree.ListItem<csstree.CssNode>
+    rule: csstree.Rule
+    matchedElements?: Array<XastElement>
+  }> = []
 
   return {
     element: {
@@ -112,10 +101,7 @@ export const fn = (root, params) => {
             cssText += child.value
           }
         }
-        /**
-         * @type {null | csstree.CssNode}
-         */
-        let cssAst = null
+        let cssAst: null | csstree.CssNode = null
         try {
           cssAst = csstree.parse(cssText, {
             parseValue: false,
@@ -150,13 +136,10 @@ export const fn = (root, params) => {
               return
             }
 
-            /**
-             * @type {Array<{
-             *   item: csstree.ListItem<csstree.CssNode>,
-             *   list: csstree.List<csstree.CssNode>
-             * }>}
-             */
-            const pseudos = []
+            const pseudos: Array<{
+              item: csstree.ListItem<csstree.CssNode>,
+              list: csstree.List<csstree.CssNode>
+            }> = []
             if (node.type === 'Selector') {
               node.children.forEach((childNode, childItem, childList) => {
                 if (
@@ -209,10 +192,7 @@ export const fn = (root, params) => {
         for (const selector of sortedSelectors) {
           // match selectors
           const selectorText = csstree.generate(selector.item.data)
-          /**
-           * @type {Array<XastElement>}
-           */
-          const matchedElements = []
+          const matchedElements: XastElement[] = []
           try {
             for (const node of querySelectorAll(root, selectorText)) {
               if (node.type === 'element') {

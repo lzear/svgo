@@ -1,4 +1,5 @@
 import { attrsGroups } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'removeEmptyAttrs'
 export const description = 'removes empty attributes'
@@ -7,10 +8,8 @@ export const description = 'removes empty attributes'
  * Remove attributes with empty values.
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeEmptyAttrs'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeEmptyAttrs'> = () => {
   return {
     element: {
       enter: (node) => {

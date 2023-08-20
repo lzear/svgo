@@ -1,9 +1,5 @@
 import { removeLeadingZero } from './svgo/tools'
-
-/**
- * @typedef {import('./types').PathDataItem} PathDataItem
- * @typedef {import('./types').PathDataCommand} PathDataCommand
- */
+import type { PathDataCommand, PathDataItem } from './types'
 
 // Based on https://www.w3.org/TR/SVG11/paths.html#PathDataBNF
 
@@ -30,17 +26,11 @@ const argsCountPerCommand = {
   a: 7,
 }
 
-/**
- * @type {(c: string) => c is PathDataCommand}
- */
-const isCommand = (c) => {
+const isCommand = (c: string): c is PathDataCommand => {
   return c in argsCountPerCommand
 }
 
-/**
- * @type {(c: string) => boolean}
- */
-const isWsp = (c) => {
+const isWsp = (c: string): boolean => {
   const codePoint = c.codePointAt(0)
   return (
     codePoint === 0x20 ||
@@ -50,10 +40,7 @@ const isWsp = (c) => {
   )
 }
 
-/**
- * @type {(c: string) => boolean}
- */
-const isDigit = (c) => {
+const isDigit = (c: string) => {
   const codePoint = c.codePointAt(0)
   if (codePoint == null) {
     return false
@@ -61,17 +48,23 @@ const isDigit = (c) => {
   return 48 <= codePoint && codePoint <= 57
 }
 
-/**
- * @typedef {'none' | 'sign' | 'whole' | 'decimal_point' | 'decimal' | 'e' | 'exponent_sign' | 'exponent'} ReadNumberState
- */
+type ReadNumberState =
+  | 'none'
+  | 'sign'
+  | 'whole'
+  | 'decimal_point'
+  | 'decimal'
+  | 'e'
+  | 'exponent_sign'
+  | 'exponent'
 
-/**
- * @type {(string: string, cursor: number) => [number, number | null]}
- */
-const readNumber = (string, cursor) => {
+const readNumber = (
+  string: string,
+  cursor: number,
+): [number, number | null] => {
   let i = cursor
   let value = ''
-  let state = /** @type {ReadNumberState} */ 'none'
+  let state: ReadNumberState = 'none'
   for (; i < string.length; i += 1) {
     const c = string[i]
     if (c === '+' || c === '-') {
@@ -122,27 +115,13 @@ const readNumber = (string, cursor) => {
     break
   }
   const number = Number.parseFloat(value)
-  if (Number.isNaN(number)) {
-    return [cursor, null]
-  } else {
-    // step back to delegate iteration to parent loop
-    return [i - 1, number]
-  }
+  return Number.isNaN(number) ? [cursor, null] : [i - 1, number]
 }
 
-/**
- * @type {(string: string) => Array<PathDataItem>}
- */
-export const parsePathData = (string) => {
-  /**
-   * @type {Array<PathDataItem>}
-   */
-  const pathData = []
-  /**
-   * @type {null | PathDataCommand}
-   */
-  let command = null
-  let args = /** @type {number[]} */ []
+export const parsePathData = (string: string): PathDataItem[] => {
+  const pathData: PathDataItem[] = []
+  let command: null | PathDataCommand = null
+  let args: number[] = []
   let argsCount = 0
   let canHaveComma = false
   let hadComma = false
@@ -238,10 +217,7 @@ export const parsePathData = (string) => {
   return pathData
 }
 
-/**
- * @type {(number: number, precision?: number) => string}
- */
-export const stringifyNumber = (number, precision) => {
+const stringifyNumber = (number: number, precision?: number): string => {
   if (precision != null) {
     const ratio = 10 ** precision
     number = Math.round(number * ratio) / ratio
@@ -253,15 +229,13 @@ export const stringifyNumber = (number, precision) => {
 /**
  * Elliptical arc large-arc and sweep flags are rendered with spaces
  * because many non-browser environments are not able to parse such paths
- *
- * @type {(
- *   command: string,
- *   args: number[],
- *   precision?: number,
- *   disableSpaceAfterFlags?: boolean
- * ) => string}
  */
-const stringifyArgs = (command, args, precision, disableSpaceAfterFlags) => {
+const stringifyArgs = (
+  command: string,
+  args: number[],
+  precision?: number,
+  disableSpaceAfterFlags?: boolean,
+): string => {
   let result = ''
   let prev = ''
   for (const [i, number] of args.entries()) {
@@ -288,32 +262,27 @@ const stringifyArgs = (command, args, precision, disableSpaceAfterFlags) => {
   return result
 }
 
-/**
- * @typedef {{
- *   pathData: Array<PathDataItem>;
- *   precision?: number;
- *   disableSpaceAfterFlags?: boolean;
- * }} StringifyPathDataOptions
- */
+type StringifyPathDataOptions = {
+  pathData: Array<PathDataItem>
+  precision?: number
+  disableSpaceAfterFlags?: boolean
+}
 
-/**
- * @type {(options: StringifyPathDataOptions) => string}
- */
 export const stringifyPathData = ({
   pathData,
   precision,
   disableSpaceAfterFlags,
-}) => {
+}: StringifyPathDataOptions): string => {
   // combine sequence of the same commands
-  const combined = []
+  const combined: { command: PathDataCommand; args: number[] }[] = []
   for (const [i, { command, args }] of pathData.entries()) {
     if (i === 0) {
       combined.push({ command, args })
     } else {
-      /**
-       * @type {PathDataItem}
-       */
-      const last = combined.at(-1)
+      const last: PathDataItem | undefined = combined.at(-1)
+      if (!last) {
+        throw new Error('Unexpected error')
+      }
       // match leading moveto with following lineto
       if (i === 1) {
         if (command === 'L') {

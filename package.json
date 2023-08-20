@@ -1,6 +1,6 @@
 {
   "packageManager": "yarn@2.4.3",
-  "name": "svgo",
+  "name": "@ubahnchen/svgo",
   "version": "3.0.2",
   "type": "module",
   "description": "Nodejs-based tool for optimizing SVG vector graphics files",
@@ -45,9 +45,9 @@
     "type": "opencollective",
     "url": "https://opencollective.com/svgo"
   },
-  "main": "./lib/svgo-node.js",
+  "main": "./dist/svgo.js",
   "bin": "./bin/svgo",
-  "types": "./lib/svgo.d.ts",
+  "types": "./dist/svgo.d.ts",
   "files": [
     "bin",
     "lib",

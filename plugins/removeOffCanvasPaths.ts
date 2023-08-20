@@ -1,11 +1,9 @@
-/**
- * @typedef {import('../lib/types').PathDataItem} PathDataItem
- */
-
 import { parsePathData } from '../lib/path'
+import type { PathDataItem } from '../lib/types'
 import { detachNodeFromParent, visitSkip } from '../lib/xast'
 
 import { intersects } from './_path'
+import type { Plugin } from './plugins-types'
 
 export const name = 'removeOffCanvasPaths'
 export const description =
@@ -15,21 +13,16 @@ export const description =
  * Remove elements that are drawn outside of the viewbox.
  *
  * @author JoshyPHP
- *
- * @type {import('./plugins-types').Plugin<'removeOffCanvasPaths'>}
  */
-export const fn = () => {
-  /**
-   * @type {null | {
-   *   top: number,
-   *   right: number,
-   *   bottom: number,
-   *   left: number,
-   *   width: number,
-   *   height: number
-   * }}
-   */
-  let viewBoxData = null
+export const fn: Plugin<'removeOffCanvasPaths'> = () => {
+  let viewBoxData: null | {
+    top: number
+    right: number
+    bottom: number
+    left: number
+    width: number
+    height: number
+  } = null
 
   return {
     element: {
@@ -114,10 +107,7 @@ export const fn = () => {
           }
 
           const { left, top, width, height } = viewBoxData
-          /**
-           * @type {Array<PathDataItem>}
-           */
-          const viewBoxPathData = [
+          const viewBoxPathData: PathDataItem[] = [
             { command: 'M', args: [left, top] },
             { command: 'h', args: [width] },
             { command: 'v', args: [height] },

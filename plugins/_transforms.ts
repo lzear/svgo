@@ -3,29 +3,19 @@ const regTransformSplit =
   /\s*(matrix|translate|scale|rotate|skewX|skewY)\s*\(\s*(.+?)\s*\)[\s,]*/
 const regNumericValues = /[+-]?(?:\d*\.\d+|\d+\.?)(?:[Ee][+-]?\d+)?/g
 
-/**
- * @typedef {{ name: string, data: Array<number> }} TransformItem
- */
+type TransformItem = { name: string; data: Array<number> }
 
 /**
  * Convert transform string to JS representation.
- *
- * @type {(transformString: string) => Array<TransformItem>}
  */
-export const transform2js = (transformString) => {
+export const transform2js = (transformString: string): TransformItem[] => {
   // JS representation of the transform data
-  /**
-   * @type {Array<TransformItem>}
-   */
-  const transforms = []
+  const transforms: TransformItem[] = []
   // current transform context
-  /**
-   * @type {null | TransformItem}
-   */
-  let current = null
+  let current: null | TransformItem = null
   // split value into ['', 'translate', '10 50', '', 'scale', '2', '', 'rotate', '-45', '']
   for (const item of transformString.split(regTransformSplit)) {
-    var num
+    let num
     if (item) {
       // if item is a translate function
       if (regTransformTypes.test(item)) {
@@ -51,10 +41,10 @@ export const transform2js = (transformString) => {
 
 /**
  * Multiply transforms into one.
- *
- * @type {(transforms: Array<TransformItem>) => TransformItem}
  */
-export const transformsMultiply = (transforms) => {
+export const transformsMultiply = (
+  transforms: Array<TransformItem>,
+): TransformItem => {
   // convert transforms objects to the matrices
   const matrixData = transforms.map((transform) => {
     if (transform.name === 'matrix') {
@@ -66,95 +56,72 @@ export const transformsMultiply = (transforms) => {
   const matrixTransform = {
     name: 'matrix',
     data:
-      matrixData.length > 0 ? matrixData.reduce(multiplyTransformMatrices) : [],
+      matrixData.length > 0
+        ? // eslint-disable-next-line unicorn/no-array-reduce
+          matrixData.reduce((accumulator, element) =>
+            multiplyTransformMatrices(accumulator, element),
+          )
+        : [],
   }
   return matrixTransform
 }
 
-/**
- * math utilities in radians.
- */
 const mth = {
-  /**
-   * @type {(deg: number) => number}
-   */
-  rad: (deg) => {
+  rad: (deg: number): number => {
     return (deg * Math.PI) / 180
   },
 
-  /**
-   * @type {(rad: number) => number}
-   */
-  deg: (rad) => {
+  deg: (rad: number): number => {
     return (rad * 180) / Math.PI
   },
 
-  /**
-   * @type {(deg: number) => number}
-   */
-  cos: (deg) => {
+  cos: (deg: number): number => {
     return Math.cos(mth.rad(deg))
   },
 
-  /**
-   * @type {(val: number, floatPrecision: number) => number}
-   */
-  acos: (val, floatPrecision) => {
+  acos: (val: number, floatPrecision: number): number => {
     return Number(mth.deg(Math.acos(val)).toFixed(floatPrecision))
   },
 
-  /**
-   * @type {(deg: number) => number}
-   */
-  sin: (deg) => {
+  sin: (deg: number): number => {
     return Math.sin(mth.rad(deg))
   },
 
-  /**
-   * @type {(val: number, floatPrecision: number) => number}
-   */
-  asin: (val, floatPrecision) => {
+  asin: (val: number, floatPrecision: number): number => {
     return Number(mth.deg(Math.asin(val)).toFixed(floatPrecision))
   },
 
-  /**
-   * @type {(deg: number) => number}
-   */
-  tan: (deg) => {
+  tan: (deg: number): number => {
     return Math.tan(mth.rad(deg))
   },
 
-  /**
-   * @type {(val: number, floatPrecision: number) => number}
-   */
-  atan: (val, floatPrecision) => {
+  atan: (val: number, floatPrecision: number) => {
     return Number(mth.deg(Math.atan(val)).toFixed(floatPrecision))
   },
 }
 
-/**
- * @typedef {{
- *   convertToShorts: boolean,
- *   floatPrecision: number,
- *   transformPrecision: number,
- *   matrixToTransform: boolean,
- *   shortTranslate: boolean,
- *   shortScale: boolean,
- *   shortRotate: boolean,
- *   removeUseless: boolean,
- *   collapseIntoOne: boolean,
- *   leadingZero: boolean,
- *   negativeExtraSpace: boolean,
- * }} TransformParams
- */
+type TransformParams = {
+  convertToShorts: boolean
+  floatPrecision: number
+  transformPrecision: number
+  matrixToTransform: boolean
+  shortTranslate: boolean
+  shortScale: boolean
+  shortRotate: boolean
+  removeUseless: boolean
+  collapseIntoOne: boolean
+  leadingZero: boolean
+  negativeExtraSpace: boolean
+}
 
 /**
  * Decompose matrix into simple transforms. See
  * https://frederic-wang.fr/decomposition-of-2d-transform-matrices.html
- *
- * @type {(transform: TransformItem, params: TransformParams) => Array<TransformItem>}
  */
-export const matrixToTransform = (transform, params) => {
+export const matrixToTransform = (
+  transform: TransformItem,
+  params: TransformParams,
+): TransformItem[] => {
   const floatPrecision = params.floatPrecision
   const data = transform.data
   const transforms = []
@@ -248,10 +215,8 @@ export const matrixToTransform = (transform, params) => {
 
 /**
  * Convert transform to the matrix data.
- *
- * @type {(transform: TransformItem) => Array<number> }
  */
-const transformToMatrix = (transform) => {
+const transformToMatrix = (transform: TransformItem): number[] => {
   if (transform.name === 'matrix') {
     return transform.data
   }
@@ -305,14 +270,13 @@ const transformToMatrix = (transform) => {
  * by the transformation matrix and use a singular value decomposition to represent in a form
  * rotate(θ)·scale(a b)·rotate(φ). This gives us new ellipse params a, b and θ.
  * SVD is being done with the formulae provided by Wolffram|Alpha (svd {{m0, m2}, {m1, m3}})
- *
- * @type {(
- *   cursor: [x: number, y: number],
- *   arc: Array<number>,
- *   transform: Array<number>
- * ) => Array<number>}
+
  */
-export const transformArc = (cursor, arc, transform) => {
+export const transformArc = (
+  cursor: [x: number, y: number],
+  arc: Array<number>,
+  transform: Array<number>,
+): number[] => {
   const x = arc[5] - cursor[0]
   const y = arc[6] - cursor[1]
   let a = arc[0]
@@ -370,10 +334,11 @@ export const transformArc = (cursor, arc, transform) => {
 
 /**
  * Multiply transformation matrices.
- *
- * @type {(a: Array<number>, b: Array<number>) => Array<number>}
  */
-const multiplyTransformMatrices = (a, b) => {
+const multiplyTransformMatrices = (
+  a: Array<number>,
+  b: Array<number>,
+): number[] => {
   return [
     a[0] * b[0] + a[2] * b[1],
     a[1] * b[0] + a[3] * b[1],

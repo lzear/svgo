@@ -1,5 +1,7 @@
 import { removeLeadingZero } from '../lib/svgo/tools'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'cleanupListOfValues'
 export const description = 'rounds list of values to the fixed precision'
 
@@ -29,10 +31,8 @@ const absoluteLengths = {
  * <polygon points="208.251 77.131 223.069 ... "/>
  *
  * @author kiyopikko
- *
- * @type {import('./plugins-types').Plugin<'cleanupListOfValues'>}
  */
-export const fn = (_root, params) => {
+export const fn: Plugin<'cleanupListOfValues'> = (_root, params) => {
   const {
     floatPrecision = 3,
     leadingZero = true,
@@ -40,10 +40,7 @@ export const fn = (_root, params) => {
     convertToPx = true,
   } = params
 
-  /**
-   * @type {(lists: string) => string}
-   */
-  const roundValues = (lists) => {
+  const roundValues = (lists: string) => {
     const roundedList = []
 
     for (const elem of lists.split(regSeparator)) {
@@ -54,14 +51,8 @@ export const fn = (_root, params) => {
       if (match) {
         // round it to the fixed precision
         let num = Number(Number(match[1]).toFixed(floatPrecision))
-        /**
-         * @type {any}
-         */
-        const matchedUnit = match[3] || ''
-        /**
-         * @type{'' | keyof typeof absoluteLengths}
-         */
-        let units = matchedUnit
+        const matchedUnit: any = match[3] || ''
+        let units: '' | keyof typeof absoluteLengths = matchedUnit
 
         // convert absolute values to pixels
         if (convertToPx && units && units in absoluteLengths) {
@@ -76,8 +67,7 @@ export const fn = (_root, params) => {
         }
 
         // and remove leading zero
-        let str
-        str = leadingZero ? removeLeadingZero(num) : num.toString()
+        const str = leadingZero ? removeLeadingZero(num) : num.toString()
 
         // remove default 'px' units
         if (defaultPx && units === 'px') {

@@ -2,6 +2,8 @@
 
 import { visit } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'cleanupEnableBackground'
 export const description =
   'remove or cleanup enable-background attribute when possible'
@@ -17,10 +19,8 @@ export const description =
  * <svg width="100" height="50">
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'cleanupEnableBackground'>}
  */
-export const fn = (root) => {
+export const fn: Plugin<'cleanupEnableBackground'> = (root) => {
   const regEnableBackground =
     /^new\s0\s0\s([+-]?\d*\.?\d+([Ee][+-]?\d+)?)\s([+-]?\d*\.?\d+([Ee][+-]?\d+)?)$/
 

@@ -3,6 +3,7 @@
 import { visit } from '../lib/xast'
 
 import { inheritableAttrs, pathElems } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'moveElemsAttrsToGroup'
 export const description =
@@ -27,10 +28,8 @@ export const description =
  * </g>
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'moveElemsAttrsToGroup'>}
  */
-export const fn = (root) => {
+export const fn: Plugin<'moveElemsAttrsToGroup'> = (root) => {
   // find if any style element is present
   let deoptimizedWithStyles = false
   visit(root, {
@@ -59,9 +58,8 @@ export const fn = (root) => {
 
         /**
          * find common attributes in group children
-         * @type {Map<string, string>}
          */
-        const commonAttributes = new Map()
+        const commonAttributes = new Map<string, string>()
         let initial = true
         let everyChildIsPath = true
         for (const child of node.children) {

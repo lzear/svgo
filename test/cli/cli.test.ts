@@ -1,17 +1,10 @@
-/**
- * @typedef {import('child_process').ChildProcessWithoutNullStreams} ChildProcessWithoutNullStreams
- */
-
 import type { ChildProcessWithoutNullStreams } from 'node:child_process'
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import url from 'node:url'
 
-/**
- * @type {(proc: ChildProcessWithoutNullStreams) => Promise<string>}
- */
-const waitStdout = (proc) => {
+const waitStdout = (proc: ChildProcessWithoutNullStreams): Promise<string> => {
   return new Promise((resolve) => {
     proc.stdout.on('data', (data) => {
       resolve(data.toString())
@@ -19,14 +12,20 @@ const waitStdout = (proc) => {
   })
 }
 
-/**
- * @type {(proc: ChildProcessWithoutNullStreams) => Promise<void>}
- */
-const waitClose = (proc) => {
+const waitClose = (proc: ChildProcessWithoutNullStreams): Promise<void> => {
   return new Promise((resolve) => {
     proc.on('close', () => {
       resolve()
     })
+  })
+}
+
+const logProc = (proc: ChildProcessWithoutNullStreams): void => {
+  proc.stdout.on('data', (data: { toString: () => string }) => {
+    console.log(data.toString())
+  })
+  proc.stderr.on('data', (data: { toString: () => string }) => {
+    console.log(data.toString())
   })
 }
 
@@ -46,6 +45,7 @@ test('shows plugins when flag specified', async () => {
     ],
     { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
   )
+  logProc(proc)
   const stdout = await waitStdout(proc)
   expect(stdout).toMatch(/Currently available plugins:/)
 })
@@ -143,6 +143,7 @@ test('output as stream when "-" is specified', async () => {
     ],
     { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
   )
+  logProc(proc)
   const stdout = await waitStdout(proc)
   expect(stdout).toEqual('<svg/>')
 })
@@ -165,6 +166,7 @@ test('should exit with 1 code on syntax error', async () => {
       cwd: path.dirname(url.fileURLToPath(import.meta.url)),
     },
   )
+  logProc(proc)
   const [code, stderr] = await Promise.all([
     new Promise((resolve) => {
       proc.on('close', (code) => {

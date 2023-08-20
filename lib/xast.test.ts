@@ -1,34 +1,21 @@
-/**
- * @typedef {import('./types').XastRoot} XastRoot
- * @typedef {import('./types').XastElement} XastElement
- */
-
+import type { XastElement, XastRoot } from './types'
 import { detachNodeFromParent, visit, visitSkip } from './xast'
 
-/**
- * @type {(children: Array<XastElement>) => XastRoot}
- */
-const root = (children) => {
+const root = (children: XastElement[]): XastRoot => {
   return { type: 'root', children }
 }
 
-/**
- * @type {(
- *   name: string,
- *   attrs?: null | Record<string, string>,
- *   children?: Array<XastElement>
- * ) => XastElement}
- */
-const x = (name, attrs = null, children = []) => {
+const x = (
+  name: string,
+  attrs: null | Record<string, string> = null,
+  children: XastElement[] = [],
+): XastElement => {
   return { type: 'element', name, attributes: attrs || {}, children }
 }
 
 test('visit enters into nodes', () => {
   const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')])
-  /**
-   * @type {Array<string>}
-   */
-  const entered = []
+  const entered: string[] = []
   visit(ast, {
     root: {
       enter: (node) => {
@@ -52,10 +39,7 @@ test('visit enters into nodes', () => {
 
 test('visit exits from nodes', () => {
   const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')])
-  /**
-   * @type {Array<string>}
-   */
-  const exited = []
+  const exited: string[] = []
   visit(ast, {
     root: {
       exit: (node) => {
@@ -79,10 +63,7 @@ test('visit exits from nodes', () => {
 
 test('visit skips entering children if node is detached', () => {
   const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')])
-  /**
-   * @type {Array<string>}
-   */
-  const entered = []
+  const entered: string[] = []
   visit(ast, {
     element: {
       enter: (node, parentNode) => {

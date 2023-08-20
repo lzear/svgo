@@ -1,3 +1,5 @@
+import { Plugin } from './plugins-types'
+
 export const name = 'removeDimensions'
 export const description =
   'removes width and height in presence of viewBox (opposite to removeViewBox, disable it first)'
@@ -11,10 +13,8 @@ export const description =
  * <svg viewBox="0 0 100 50" />
  *
  * @author Benny Schudel
- *
- * @type {import('./plugins-types').Plugin<'removeDimensions'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeDimensions'> = () => {
   return {
     element: {
       enter: (node) => {

@@ -1,9 +1,6 @@
 // https://www.w3.org/TR/SVG11/intro.html#Definitions
 
-/**
- * @type {Record<string, Array<string>>}
- */
-export const elemsGroups = {
+export const elemsGroups: Record<string, Array<string>> = {
   animation: [
     'animate',
     'animateColor',
@@ -96,10 +93,7 @@ export const textElems = [...elemsGroups.textContent, 'title']
 export const pathElems = ['path', 'glyph', 'missing-glyph']
 
 // https://www.w3.org/TR/SVG11/intro.html#Definitions
-/**
- * @type {Record<string, Array<string>>}
- */
-export const attrsGroups = {
+export const attrsGroups: Record<string, Array<string>> = {
   animationAddition: ['additive', 'accumulate'],
   animationAttributeTarget: ['attributeType', 'attributeName'],
   animationEvent: ['onbegin', 'onend', 'onrepeat', 'onload'],
@@ -235,10 +229,7 @@ export const attrsGroups = {
   ],
 }
 
-/**
- * @type {Record<string, Record<string, string>>}
- */
-export const attrsGroupsDefaults = {
+export const attrsGroupsDefaults: Record<string, Record<string, string>> = {
   core: { 'xml:space': 'default' },
   presentation: {
     clip: 'auto',
@@ -303,16 +294,16 @@ export const attrsGroupsDefaults = {
 }
 
 // https://www.w3.org/TR/SVG11/eltindex.html
-/**
- * @type {Record<string, {
- *   attrsGroups: Array<string>,
- *   attrs?: Array<string>,
- *   defaults?: Record<string, string>,
- *   contentGroups?: Array<string>,
- *   content?: Array<string>,
- * }>}
- */
-export const elems = {
+export const elems: Record<
+  string,
+  {
+    attrsGroups: Array<string>
+    attrs?: Array<string>
+    defaults?: Record<string, string>
+    contentGroups?: Array<string>
+    content?: Array<string>
+  }
+> = {
   a: {
     attrsGroups: [
       'conditionalProcessing',
@@ -2117,10 +2108,7 @@ export const colorsNames = {
   yellowgreen: '#9acd32',
 }
 
-/**
- * @type {Record<string, string>}
- */
-export const colorsShortNames = {
+export const colorsShortNames: Record<string, string> = {
   '#f0ffff': 'azure',
   '#f5f5dc': 'beige',
   '#ffe4c4': 'bisque',

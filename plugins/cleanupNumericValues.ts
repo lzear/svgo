@@ -2,6 +2,8 @@
 
 import { removeLeadingZero } from '../lib/svgo/tools'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'cleanupNumericValues'
 export const description =
   'rounds numeric values to the fixed precision, removes default ‘px’ units'
@@ -24,10 +26,8 @@ const absoluteLengths = {
  * remove default 'px' units.
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'cleanupNumericValues'>}
  */
-export const fn = (_root, params) => {
+export const fn: Plugin<'cleanupNumericValues'> = (_root, params) => {
   const {
     floatPrecision = 3,
     leadingZero = true,
@@ -62,19 +62,14 @@ export const fn = (_root, params) => {
           if (match) {
             // round it to the fixed precision
             let num = Number(Number(match[1]).toFixed(floatPrecision))
-            /**
-             * @type {any}
-             */
-            const matchedUnit = match[3] || ''
-            /**
-             * @type{'' | keyof typeof absoluteLengths}
-             */
-            let units = matchedUnit
+            const matchedUnit: any = match[3] || ''
+            let units: keyof typeof absoluteLengths | '' = matchedUnit
 
             // convert absolute values to pixels
             if (convertToPx && units !== '' && units in absoluteLengths) {
               const pxNum = Number(
-                (absoluteLengths[units] * Number(match[1])).toFixed(
+                // @ts-ignore
+                ((absoluteLengths[units] as number) * Number(match[1])).toFixed(
                   floatPrecision,
                 ),
               )
@@ -85,8 +80,7 @@ export const fn = (_root, params) => {
             }
 
             // and remove leading zero
-            let str
-            str = leadingZero ? removeLeadingZero(num) : num.toString()
+            const str = leadingZero ? removeLeadingZero(num) : num.toString()
 
             // remove default 'px' units
             if (defaultPx && units === 'px') {

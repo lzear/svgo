@@ -1,4 +1,5 @@
 // @ts-nocheck
+import type { Plugin } from './plugins-types'
 
 export const name = 'sortAttrs'
 export const description = 'Sort element attributes for better compression'
@@ -7,10 +8,8 @@ export const description = 'Sort element attributes for better compression'
  * Sort element attributes for better compression
  *
  * @author Nikolay Frantsev
- *
- * @type {import('./plugins-types').Plugin<'sortAttrs'>}
  */
-export const fn = (_root, params) => {
+export const fn: Plugin<'sortAttrs'> = (_root, params) => {
   const {
     order = [
       'id',
@@ -34,10 +33,7 @@ export const fn = (_root, params) => {
     xmlnsOrder = 'front',
   } = params
 
-  /**
-   * @type {(name: string) => number}
-   */
-  const getNsPriority = (name) => {
+  const getNsPriority = (name: string) => {
     if (xmlnsOrder === 'front') {
       // put xmlns first
       if (name === 'xmlns') {
@@ -56,10 +52,10 @@ export const fn = (_root, params) => {
     return 0
   }
 
-  /**
-   * @type {(a: [string, string], b: [string, string]) => number}
-   */
-  const compareAttrs = ([aName], [bName]) => {
+  const compareAttrs = (
+    [aName]: [string, string],
+    [bName]: [string, string],
+  ) => {
     // sort namespaces
     const aPriority = getNsPriority(aName)
     const bPriority = getNsPriority(bName)
@@ -94,10 +90,7 @@ export const fn = (_root, params) => {
       enter: (node) => {
         const attrs = Object.entries(node.attributes)
         attrs.sort(compareAttrs)
-        /**
-         * @type {Record<string, string>}
-         */
-        const sortedAttributes = {}
+        const sortedAttributes: Record<string, string> = {}
         for (const [name, value] of attrs) {
           sortedAttributes[name] = value
         }

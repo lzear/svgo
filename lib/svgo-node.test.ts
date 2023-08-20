@@ -1,7 +1,3 @@
-/**
- * @typedef {import('../lib/types').Plugin} Plugin
- */
-
 import os from 'node:os'
 import path from 'node:path'
 import url from 'node:url'

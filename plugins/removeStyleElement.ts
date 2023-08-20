@@ -1,5 +1,7 @@
 import { detachNodeFromParent } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeStyleElement'
 export const description = 'removes <style> element (disabled by default)'
 
@@ -9,10 +11,8 @@ export const description = 'removes <style> element (disabled by default)'
  * https://www.w3.org/TR/SVG11/styling.html#StyleElement
  *
  * @author Betsy Dupuis
- *
- * @type {import('./plugins-types').Plugin<'removeStyleElement'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeStyleElement'> = () => {
   return {
     element: {
       enter: (node, parentNode) => {

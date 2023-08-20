@@ -1,3 +1,5 @@
+import type { Plugin } from './plugins-types'
+
 export const name = 'convertEllipseToCircle'
 export const description = 'converts non-eccentric <ellipse>s to <circle>s'
 
@@ -7,10 +9,8 @@ export const description = 'converts non-eccentric <ellipse>s to <circle>s'
  * @see https://www.w3.org/TR/SVG11/shapes.html
  *
  * @author Taylor Hunt
- *
- * @type {import('./plugins-types').Plugin<'convertEllipseToCircle'>}
  */
-export const fn = () => {
+export const fn: Plugin<'convertEllipseToCircle'> = () => {
   return {
     element: {
       enter: (node) => {

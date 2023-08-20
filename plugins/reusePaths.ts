@@ -1,8 +1,6 @@
-/**
- * @typedef {import('../lib/types').XastElement} XastElement
- * @typedef {import('../lib/types').XastParent} XastParent
- * @typedef {import('../lib/types').XastNode} XastNode
- */
+import type { XastElement } from '../lib/types'
+
+import type { Plugin } from './plugins-types'
 
 export const name = 'reusePaths'
 export const description =
@@ -15,14 +13,9 @@ export const description =
  * <use> elements referencing a single <path> def.
  *
  * @author Jacob Howcroft
- *
- * @type {import('./plugins-types').Plugin<'reusePaths'>}
  */
-export const fn = () => {
-  /**
-   * @type {Map<string, Array<XastElement>>}
-   */
-  const paths = new Map()
+export const fn: Plugin<'reusePaths'> = () => {
+  const paths = new Map<string, Array<XastElement>>()
 
   return {
     element: {
@@ -43,10 +36,7 @@ export const fn = () => {
 
       exit: (node, parentNode) => {
         if (node.name === 'svg' && parentNode.type === 'root') {
-          /**
-           * @type {XastElement}
-           */
-          const defsTag = {
+          const defsTag: XastElement = {
             type: 'element',
             name: 'defs',
             attributes: {},
@@ -61,10 +51,7 @@ export const fn = () => {
           for (const list of paths.values()) {
             if (list.length > 1) {
               // add reusable path to defs
-              /**
-               * @type {XastElement}
-               */
-              const reusablePath = {
+              const reusablePath: XastElement = {
                 type: 'element',
                 name: 'path',
                 attributes: { ...list[0].attributes },

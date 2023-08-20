@@ -3,14 +3,15 @@ import path from 'node:path'
 import url from 'node:url'
 
 import { parseSvg } from '../../lib/parser'
+import type { XastRoot } from '../../lib/types'
 
 describe('svg2js', function () {
   describe('working svg', function () {
-    let filepath = path.resolve(
-        path.dirname(url.fileURLToPath(import.meta.url)),
-        './test.svg',
-      ),
-      root
+    const filepath = path.resolve(
+      path.dirname(url.fileURLToPath(import.meta.url)),
+      './test.svg',
+    )
+    let root: XastRoot
 
     beforeAll(function (done) {
       FS.readFile(filepath, 'utf8', function (err, data) {

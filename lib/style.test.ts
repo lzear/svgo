@@ -1,20 +1,10 @@
-/**
- * @typedef {import('./types').XastParent} XastParent
- * @typedef {import('./types').XastElement} XastElement
- */
-
 import { parseSvg } from './parser'
 import { collectStylesheet, computeStyle } from './style'
+import type { XastElement, XastParent } from './types'
 import { visit } from './xast'
 
-/**
- * @type {(node: XastParent, id: string) => XastElement}
- */
-const getElementById = (node, id) => {
-  /**
-   * @type {null | XastElement}
-   */
-  let matched = null
+const getElementById = (node: XastParent, id: string) => {
+  let matched: null | XastElement = null
   visit(node, {
     element: {
       enter: (node) => {

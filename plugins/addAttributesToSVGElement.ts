@@ -1,3 +1,5 @@
+import type { Plugin } from './plugins-types'
+
 export const name = 'addAttributesToSVGElement'
 export const description = 'adds attributes to an outer <svg> element'
 
@@ -45,9 +47,8 @@ plugins: [
  *
  * @author April Arcus
  *
- * @type {import('./plugins-types').Plugin<'addAttributesToSVGElement'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'addAttributesToSVGElement'> = (root, params) => {
   if (!Array.isArray(params.attributes) && !params.attribute) {
     console.error(ENOCLS)
     return null

@@ -1,32 +1,35 @@
 // @ts-nocheck
 
-/**
- * @typedef {import('./types').XastNode} XastNode
- * @typedef {import('./types').XastInstruction} XastInstruction
- * @typedef {import('./types').XastDoctype} XastDoctype
- * @typedef {import('./types').XastComment} XastComment
- * @typedef {import('./types').XastRoot} XastRoot
- * @typedef {import('./types').XastElement} XastElement
- * @typedef {import('./types').XastCdata} XastCdata
- * @typedef {import('./types').XastText} XastText
- * @typedef {import('./types').XastParent} XastParent
- * @typedef {import('./types').XastChild} XastChild
- */
-
 // @ts-ignore sax will be replaced with something else later
 import SAX from '@trysound/sax'
 
 import { textElems } from '../plugins/_collections'
 
+import type {
+  XastCdata,
+  XastChild,
+  XastComment,
+  XastDoctype,
+  XastElement,
+  XastInstruction,
+  XastParent,
+  XastRoot,
+  XastText,
+} from './types'
+
 class SvgoParserError extends Error {
-  /**
-   * @param message {string}
-   * @param line {number}
-   * @param column {number}
-   * @param source {string}
-   * @param file {void | string}
-   */
-  constructor(message, line, column, source, file) {
+  private column: number
+  private reason: string
+  private line: number
+  private source: string
+
+  constructor(
+    message: string,
+    line: number,
+    column: number,
+    source: string,
+    file?: string,
+  ) {
     super(message)
     this.name = 'SvgoParserError'
     this.message = `${file || '<input>'}:${line}:${column}: ${message}`
@@ -87,28 +90,14 @@ const config = {
 
 /**
  * Convert SVG (XML) string to SVG-as-JS object.
- *
- * @type {(data: string, from?: string) => XastRoot}
  */
-export const parseSvg = (data, from) => {
+export const parseSvg = (data: string, from?: string) => {
   const sax = SAX.parser(config.strict, config)
-  /**
-   * @type {XastRoot}
-   */
-  const root = { type: 'root', children: [] }
-  /**
-   * @type {XastParent}
-   */
-  let current = root
-  /**
-   * @type {Array<XastParent>}
-   */
-  const stack = [root]
+  const root: XastRoot = { type: 'root' as const, children: [] }
+  let current: XastParent = root
+  const stack: XastParent[] = [root]
 
-  /**
-   * @type {(node: XastChild) => void}
-   */
-  const pushToContent = (node) => {
+  const pushToContent = (node: XastChild) => {
     // TODO remove legacy parentNode in v4
     Object.defineProperty(node, 'parentNode', {
       writable: true,
@@ -117,14 +106,8 @@ export const parseSvg = (data, from) => {
     current.children.push(node)
   }
 
-  /**
-   * @type {(doctype: string) => void}
-   */
-  sax.ondoctype = (doctype) => {
-    /**
-     * @type {XastDoctype}
-     */
-    const node = {
+  sax.ondoctype = (doctype: string) => {
+    const node: XastDoctype = {
       type: 'doctype',
       // TODO parse doctype for name, public and system to match xast
       name: 'svg',
@@ -144,14 +127,8 @@ export const parseSvg = (data, from) => {
     }
   }
 
-  /**
-   * @type {(data: { name: string, body: string }) => void}
-   */
-  sax.onprocessinginstruction = (data) => {
-    /**
-     * @type {XastInstruction}
-     */
-    const node = {
+  sax.onprocessinginstruction = (data: { name: string; body: string }) => {
+    const node: XastInstruction = {
       type: 'instruction',
       name: data.name,
       value: data.body,
@@ -159,42 +136,27 @@ export const parseSvg = (data, from) => {
     pushToContent(node)
   }
 
-  /**
-   * @type {(comment: string) => void}
-   */
-  sax.oncomment = (comment) => {
-    /**
-     * @type {XastComment}
-     */
-    const node = {
+  sax.oncomment = (comment: string) => {
+    const node: XastComment = {
       type: 'comment',
       value: comment.trim(),
     }
     pushToContent(node)
   }
 
-  /**
-   * @type {(cdata: string) => void}
-   */
-  sax.oncdata = (cdata) => {
-    /**
-     * @type {XastCdata}
-     */
-    const node = {
+  sax.oncdata = (cdata: string) => {
+    const node: XastCdata = {
       type: 'cdata',
       value: cdata,
     }
     pushToContent(node)
   }
 
-  /**
-   * @type {(data: { name: string, attributes: Record<string, { value: string }>}) => void}
-   */
-  sax.onopentag = (data) => {
-    /**
-     * @type {XastElement}
-     */
-    const element = {
+  sax.onopentag = (data: {
+    name: string
+    attributes: Record<string, { value: string }>
+  }) => {
+    const element: XastElement = {
       type: 'element',
       name: data.name,
       attributes: {},
@@ -208,27 +170,18 @@ export const parseSvg = (data, from) => {
     stack.push(element)
   }
 
-  /**
-   * @type {(text: string) => void}
-   */
   // eslint-disable-next-line unicorn/prefer-add-event-listener
-  sax.ontext = (text) => {
+  sax.ontext = (text: string) => {
     if (current.type === 'element') {
       // prevent trimming of meaningful whitespace inside textual tags
       if (textElems.includes(current.name)) {
-        /**
-         * @type {XastText}
-         */
-        const node = {
+        const node: XastText = {
           type: 'text',
           value: text,
         }
         pushToContent(node)
       } else if (/\S/.test(text)) {
-        /**
-         * @type {XastText}
-         */
-        const node = {
+        const node: XastText = {
           type: 'text',
           value: text.trim(),
         }
@@ -239,13 +192,16 @@ export const parseSvg = (data, from) => {
 
   sax.onclosetag = () => {
     stack.pop()
-    current = stack.at(-1)
+    current = stack.at(-1) || current
   }
 
-  /**
-   * @type {(e: any) => void}
-   */
-  sax.onerror = (e) => {
+  sax.onerror = (e: {
+    line: number
+    reason: string
+    column: number
+    from: string
+    message: string
+  }) => {
     const error = new SvgoParserError(
       e.reason,
       e.line + 1,

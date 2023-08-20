@@ -1,3 +1,6 @@
+
+import { Plugin } from './plugins-types'
+
 export const name = 'addClassesToSVGElement'
 export const description = 'adds classnames to an outer <svg> element'
 
@@ -46,10 +49,8 @@ plugins: [
  * ]
  *
  * @author April Arcus
- *
- * @type {import('./plugins-types').Plugin<'addClassesToSVGElement'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'addClassesToSVGElement'> = (root, params) => {
   if (
     !(Array.isArray(params.classNames) && params.classNames.some(String)) &&
     !params.className

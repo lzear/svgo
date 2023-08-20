@@ -1,5 +1,7 @@
 import { detachNodeFromParent } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeEmptyText'
 export const description = 'removes empty <text> elements'
 
@@ -19,10 +21,8 @@ export const description = 'removes empty <text> elements'
  * <tref xlink:href=""/>
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeEmptyText'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'removeEmptyText'> = (root, params) => {
   const { text = true, tspan = true, tref = true } = params
   return {
     element: {

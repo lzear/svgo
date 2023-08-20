@@ -1,5 +1,5 @@
 // @ts-nocheck
-
+import { Plugin } from './plugins-types'
 import { pathElems, referencesProps } from './_collections'
 
 export const name = 'moveGroupAttrsToElems'
@@ -22,10 +22,8 @@ const pathElemsWithGroupsAndText = new Set([...pathElems, 'g', 'text'])
  * </g>
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'moveGroupAttrsToElems'>}
  */
-export const fn = () => {
+export const fn: Plugin<'moveGroupAttrsToElems'> = () => {
   return {
     element: {
       enter: (node) => {

@@ -1,6 +1,7 @@
 import { detachNodeFromParent } from '../lib/xast'
 
 import { elemsGroups } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'removeEmptyContainers'
 export const description = 'removes empty container elements'
@@ -17,10 +18,8 @@ export const description = 'removes empty container elements'
  * <g><marker><a/></marker></g>
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeEmptyContainers'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeEmptyContainers'> = () => {
   return {
     element: {
       exit: (node, parentNode) => {

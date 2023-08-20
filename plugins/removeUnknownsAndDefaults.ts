@@ -10,6 +10,7 @@ import {
   elemsGroups,
   presentationNonInheritableGroupAttrs,
 } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'removeUnknownsAndDefaults'
 export const description =
@@ -17,32 +18,23 @@ export const description =
 
 // resolve all groups references
 
-/**
- * @type {Map<string, Set<string>>}
- */
-const allowedChildrenPerElement = new Map()
-/**
- * @type {Map<string, Set<string>>}
- */
-const allowedAttributesPerElement = new Map()
-/**
- * @type {Map<string, Map<string, string>>}
- */
-const attributesDefaultsPerElement = new Map()
+const allowedChildrenPerElement = new Map<string, Set<string>>()
+const allowedAttributesPerElement = new Map<string, Set<string>>()
+const attributesDefaultsPerElement = new Map<string, Map<string, string>>()
 
-for (const [name, config] of Object.entries(elems)) {
-  /**
-   * @type {Set<string>}
-   */
-  const allowedChildren = new Set()
-  if (config.content) {
+for (const [_name, _config] of Object.entries(elems)) {
+  const name = _name as keyof typeof elems
+  const config = _config
+  const allowedChildren = new Set<string>()
+  if ('content' in config && config.content) {
     for (const elementName of config.content) {
       allowedChildren.add(elementName)
     }
   }
-  if (config.contentGroups) {
+  if ('contentGroups' in config && config.contentGroups) {
     for (const contentGroupName of config.contentGroups) {
-      const elemsGroup = elemsGroups[contentGroupName]
+      const elemsGroup =
+        elemsGroups[contentGroupName as keyof typeof elemsGroups]
       if (elemsGroup) {
         for (const elementName of elemsGroup) {
           allowedChildren.add(elementName)
@@ -50,38 +42,34 @@ for (const [name, config] of Object.entries(elems)) {
       }
     }
   }
-  /**
-   * @type {Set<string>}
-   */
-  const allowedAttributes = new Set()
-  if (config.attrs) {
+  const allowedAttributes = new Set<string>()
+  if ('attrs' in config && config.attrs) {
     for (const attrName of config.attrs) {
       allowedAttributes.add(attrName)
     }
   }
-  /**
-   * @type {Map<string, string>}
-   */
-  const attributesDefaults = new Map()
-  if (config.defaults) {
+  const attributesDefaults = new Map<string, string>()
+  if ('defaults' in config && config.defaults) {
     for (const [attrName, defaultValue] of Object.entries(config.defaults)) {
       attributesDefaults.set(attrName, defaultValue)
     }
   }
-  for (const attrsGroupName of config.attrsGroups) {
-    const attrsGroup = attrsGroups[attrsGroupName]
-    if (attrsGroup) {
-      for (const attrName of attrsGroup) {
-        allowedAttributes.add(attrName)
+  if ('attrsGroups' in config && config.attrsGroups)
+    for (const attrsGroupName of config.attrsGroups) {
+      const attrsGroup = attrsGroups[attrsGroupName as keyof typeof attrsGroups]
+      if (attrsGroup) {
+        for (const attrName of attrsGroup) {
+          allowedAttributes.add(attrName)
+        }
+      }
+      const groupDefaults =
+        attrsGroupsDefaults[attrsGroupName as keyof typeof attrsGroupsDefaults]
+      if (groupDefaults) {
+        for (const [attrName, defaultValue] of Object.entries(groupDefaults)) {
+          attributesDefaults.set(attrName, defaultValue)
+        }
       }
     }
-    const groupDefaults = attrsGroupsDefaults[attrsGroupName]
-    if (groupDefaults) {
-      for (const [attrName, defaultValue] of Object.entries(groupDefaults)) {
-        attributesDefaults.set(attrName, defaultValue)
-      }
-    }
-  }
   allowedChildrenPerElement.set(name, allowedChildren)
   allowedAttributesPerElement.set(name, allowedAttributes)
   attributesDefaultsPerElement.set(name, attributesDefaults)
@@ -92,10 +80,8 @@ for (const [name, config] of Object.entries(elems)) {
  * remove attributes with default values.
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeUnknownsAndDefaults'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'removeUnknownsAndDefaults'> = (root, params) => {
   const {
     unknownContent = true,
     unknownAttrs = true,

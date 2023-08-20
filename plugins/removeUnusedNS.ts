@@ -1,3 +1,5 @@
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeUnusedNS'
 export const description = 'removes unused namespaces declaration'
 
@@ -7,13 +9,9 @@ export const description = 'removes unused namespaces declaration'
  *
  * @author Kir Belevich
  *
- * @type {import('./plugins-types').Plugin<'removeUnusedNS'>}
  */
-export const fn = () => {
-  /**
-   * @type {Set<string>}
-   */
-  const unusedNamespaces = new Set()
+export const fn: Plugin<'removeUnusedNS'> = () => {
+  const unusedNamespaces = new Set<string>()
   return {
     element: {
       enter: (node, parentNode) => {

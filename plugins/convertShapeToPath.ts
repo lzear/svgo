@@ -1,11 +1,8 @@
-// @ts-nocheck
-
-/**
- * @typedef {import('../lib/types').PathDataItem} PathDataItem
- */
-
 import { stringifyPathData } from '../lib/path'
+import type { PathDataItem } from '../lib/types'
 import { detachNodeFromParent } from '../lib/xast'
+
+import type { Plugin } from './plugins-types'
 
 export const name = 'convertShapeToPath'
 export const description = 'converts basic shapes to more compact path form'
@@ -20,10 +17,8 @@ const regNumber = /[+-]?(?:\d*\.\d+|\d+\.?)(?:[Ee][+-]?\d+)?/g
  * @see https://www.w3.org/TR/SVG11/shapes.html
  *
  * @author Lev Solntsev
- *
- * @type {import('./plugins-types').Plugin<'convertShapeToPath'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'convertShapeToPath'> = (root, params) => {
   const { convertArcs = false, floatPrecision: precision } = params
 
   return {
@@ -45,10 +40,7 @@ export const fn = (root, params) => {
           // cleanupNumericValues when 'px' units has already been removed.
           // TODO: Calculate sizes from % and non-px units if possible.
           if (Number.isNaN(x - y + width - height)) return
-          /**
-           * @type {Array<PathDataItem>}
-           */
-          const pathData = [
+          const pathData: PathDataItem[] = [
             { command: 'M', args: [x, y] },
             { command: 'H', args: [x + width] },
             { command: 'V', args: [y + height] },
@@ -70,10 +62,7 @@ export const fn = (root, params) => {
           const x2 = Number(node.attributes.x2 || '0')
           const y2 = Number(node.attributes.y2 || '0')
           if (Number.isNaN(x1 - y1 + x2 - y2)) return
-          /**
-           * @type {Array<PathDataItem>}
-           */
-          const pathData = [
+          const pathData: PathDataItem[] = [
             { command: 'M', args: [x1, y1] },
             { command: 'L', args: [x2, y2] },
           ]
@@ -97,10 +86,7 @@ export const fn = (root, params) => {
             detachNodeFromParent(node, parentNode)
             return
           }
-          /**
-           * @type {Array<PathDataItem>}
-           */
-          const pathData = []
+          const pathData: PathDataItem[] = []
           for (let i = 0; i < coords.length; i += 2) {
             pathData.push({
               command: i === 0 ? 'M' : 'L',
@@ -123,10 +109,7 @@ export const fn = (root, params) => {
           if (Number.isNaN(cx - cy + r)) {
             return
           }
-          /**
-           * @type {Array<PathDataItem>}
-           */
-          const pathData = [
+          const pathData: PathDataItem[] = [
             { command: 'M', args: [cx, cy - r] },
             { command: 'A', args: [r, r, 0, 1, 0, cx, cy + r] },
             { command: 'A', args: [r, r, 0, 1, 0, cx, cy - r] },
@@ -148,10 +131,7 @@ export const fn = (root, params) => {
           if (Number.isNaN(ecx - ecy + rx - ry)) {
             return
           }
-          /**
-           * @type {Array<PathDataItem>}
-           */
-          const pathData = [
+          const pathData: PathDataItem[] = [
             { command: 'M', args: [ecx, ecy - ry] },
             { command: 'A', args: [rx, ry, 0, 1, 0, ecx, ecy + ry] },
             { command: 'A', args: [rx, ry, 0, 1, 0, ecx, ecy - ry] },

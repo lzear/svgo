@@ -1,8 +1,5 @@
-/**
- * @typedef {import('../lib/types').PathDataItem} PathDataItem
- */
-
 import { parsePathData, stringifyPathData } from './path'
+import {PathDataItem} from "./types";
 
 describe('parse path data', () => {
   it('should allow spaces between commands', () => {
@@ -143,10 +140,7 @@ describe('stringify path data', () => {
     ).toEqual('M0-1.2.3 4 5-.6 7 .8')
   })
   it('should configure precision', () => {
-    /**
-     * @type {Array<PathDataItem>}
-     */
-    const pathData = [
+    const pathData: PathDataItem[] = [
       { command: 'M', args: [0, -1.9876] },
       { command: 'L', args: [0.3, 3.141_592_65] },
       { command: 'L', args: [-0.3, -3.141_592_65] },
@@ -166,10 +160,7 @@ describe('stringify path data', () => {
     ).toEqual('M0-2 0 3 0-3 100 200')
   })
   it('allows to avoid spaces after arc flags', () => {
-    /**
-     * @type {Array<PathDataItem>}
-     */
-    const pathData = [
+    const pathData: PathDataItem[] = [
       { command: 'M', args: [0, 0] },
       { command: 'A', args: [50, 50, 10, 1, 0, 0.2, 20] },
       { command: 'a', args: [50, 50, 10, 1, 0, 0.2, 20] },

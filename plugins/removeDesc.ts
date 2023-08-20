@@ -1,5 +1,7 @@
 import { detachNodeFromParent } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeDesc'
 export const description = 'removes <desc>'
 
@@ -13,10 +15,8 @@ const standardDescs = /^(Created with|Created using)/
  * https://developer.mozilla.org/en-US/docs/Web/SVG/Element/desc
  *
  * @author Daniel Wabyick
- *
- * @type {import('./plugins-types').Plugin<'removeDesc'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'removeDesc'> = (root, params) => {
   const { removeAny = true } = params
   return {
     element: {

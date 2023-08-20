@@ -1,5 +1,7 @@
 import { detachNodeFromParent } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeRasterImages'
 export const description = 'removes raster images (disabled by default)'
 
@@ -9,10 +11,8 @@ export const description = 'removes raster images (disabled by default)'
  * @see https://bugs.webkit.org/show_bug.cgi?id=63548
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeRasterImages'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeRasterImages'> = () => {
   return {
     element: {
       enter: (node, parentNode) => {

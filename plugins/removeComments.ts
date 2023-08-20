@@ -1,5 +1,7 @@
 import { detachNodeFromParent } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeComments'
 export const description = 'removes comments'
 
@@ -11,10 +13,8 @@ export const description = 'removes comments'
  * Plug-In . SVG Version: 6.00 Build 0)  -->
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeComments'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeComments'> = () => {
   return {
     comment: {
       enter: (node, parentNode) => {

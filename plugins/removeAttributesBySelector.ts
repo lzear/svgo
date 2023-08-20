@@ -1,5 +1,7 @@
 import { querySelectorAll } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeAttributesBySelector'
 export const description =
   'removes attributes of elements that match a css selector'
@@ -70,10 +72,8 @@ export const description =
  * @link https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors|MDN CSS Selectors
  *
  * @author Bradley Mease
- *
- * @type {import('./plugins-types').Plugin<'removeAttributesBySelector'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'removeAttributesBySelector'> = (root, params) => {
   const selectors = Array.isArray(params.selectors)
     ? params.selectors
     : [params]

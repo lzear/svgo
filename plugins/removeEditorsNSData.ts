@@ -3,6 +3,7 @@
 import { detachNodeFromParent } from '../lib/xast'
 
 import { editorNamespaces } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'removeEditorsNSData'
 export const description = 'removes editors namespaces, elements and attributes'
@@ -16,18 +17,13 @@ export const description = 'removes editors namespaces, elements and attributes'
  * <path sodipodi:nodetypes="cccc"/>
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'removeEditorsNSData'>}
  */
-export const fn = (_root, params) => {
+export const fn: Plugin<'removeEditorsNSData'> = (_root, params) => {
   let namespaces = editorNamespaces
   if (Array.isArray(params.additionalNamespaces)) {
     namespaces = [...editorNamespaces, ...params.additionalNamespaces]
   }
-  /**
-   * @type {Array<string>}
-   */
-  const prefixes = []
+  const prefixes: string[] = []
   return {
     element: {
       enter: (node, parentNode) => {

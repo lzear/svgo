@@ -1,39 +1,29 @@
-/**
- * @typedef {import('./types').XastParent} XastParent
- * @typedef {import('./types').XastRoot} XastRoot
- * @typedef {import('./types').XastElement} XastElement
- * @typedef {import('./types').XastInstruction} XastInstruction
- * @typedef {import('./types').XastDoctype} XastDoctype
- * @typedef {import('./types').XastText} XastText
- * @typedef {import('./types').XastCdata} XastCdata
- * @typedef {import('./types').XastComment} XastComment
- * @typedef {import('./types').StringifyOptions} StringifyOptions
- */
-
 import { textElems } from '../plugins/_collections'
 
-/**
- * @typedef {{
- *   indent: string,
- *   textContext: null | XastElement,
- *   indentLevel: number,
- * }} State
- */
+import type {
+  StringifyOptions,
+  XastCdata,
+  XastComment,
+  XastDoctype,
+  XastElement,
+  XastInstruction,
+  XastParent,
+  XastRoot,
+  XastText,
+} from './types'
 
-/**
- * @typedef {Required<StringifyOptions>} Options
- */
-
-/**
- * @type {(char: string) => string}
- */
-const encodeEntity = (char) => {
-  return entities[char]
+type State = {
+  indent: string
+  textContext: null | XastElement
+  indentLevel: number
 }
 
-/**
- * @type {Options}
- */
+type Options = Required<StringifyOptions>
+
+const encodeEntity = (char: string): string => {
+  return char in entities ? entities[char as keyof typeof entities] : char
+}
+
 const defaults = {
   doctypeStart: '<!DOCTYPE',
   doctypeEnd: '>',
@@ -59,14 +49,11 @@ const defaults = {
   encodeEntity,
   pretty: false,
   useShortTags: true,
-  eol: 'lf',
+  eol: 'lf' as const,
   finalNewline: false,
 }
 
-/**
- * @type {Record<string, string>}
- */
-const entities = {
+const entities: Record<string, string> = {
   '&': '&amp;',
   "'": '&apos;',
   '"': '&quot;',
@@ -76,14 +63,12 @@ const entities = {
 
 /**
  * convert XAST to SVG string
- *
- * @type {(data: XastRoot, config: StringifyOptions) => string}
  */
-export const stringifySvg = (data, userOptions = {}) => {
-  /**
-   * @type {Options}
-   */
-  const config = { ...defaults, ...userOptions }
+export const stringifySvg = (
+  data: XastRoot,
+  userOptions?: StringifyOptions,
+): string => {
+  const config: Options = { ...defaults, ...userOptions }
   const indent = config.indent
   let newIndent = '    '
   if (typeof indent === 'number' && Number.isNaN(indent) === false) {
@@ -91,10 +76,7 @@ export const stringifySvg = (data, userOptions = {}) => {
   } else if (typeof indent === 'string') {
     newIndent = indent
   }
-  /**
-   * @type {State}
-   */
-  const state = {
+  const state: State = {
     indent: newIndent,
     textContext: null,
     indentLevel: 0,
@@ -120,7 +102,7 @@ export const stringifySvg = (data, userOptions = {}) => {
 /**
  * @type {(node: XastParent, config: Options, state: State) => string}
  */
-const stringifyNode = (data, config, state) => {
+const stringifyNode = (data: XastParent, config: Options, state: State) => {
   let svg = ''
   state.indentLevel += 1
   for (const item of data.children) {
@@ -149,10 +131,8 @@ const stringifyNode = (data, config, state) => {
 
 /**
  * create indent string in accordance with the current node level.
- *
- * @type {(config: Options, state: State) => string}
  */
-const createIndent = (config, state) => {
+const createIndent = (config: Options, state: State) => {
   let indent = ''
   if (config.pretty && state.textContext == null) {
     indent = state.indent.repeat(state.indentLevel - 1)
@@ -160,33 +140,21 @@ const createIndent = (config, state) => {
   return indent
 }
 
-/**
- * @type {(node: XastDoctype, config: Options) => string}
- */
-const stringifyDoctype = (node, config) => {
+const stringifyDoctype = (node: XastDoctype, config: Options) => {
   return config.doctypeStart + node.data.doctype + config.doctypeEnd
 }
 
-/**
- * @type {(node: XastInstruction, config: Options) => string}
- */
-const stringifyInstruction = (node, config) => {
+const stringifyInstruction = (node: XastInstruction, config: Options) => {
   return (
     config.procInstStart + node.name + ' ' + node.value + config.procInstEnd
   )
 }
 
-/**
- * @type {(node: XastComment, config: Options) => string}
- */
-const stringifyComment = (node, config) => {
+const stringifyComment = (node: XastComment, config: Options) => {
   return config.commentStart + node.value + config.commentEnd
 }
 
-/**
- * @type {(node: XastCdata, config: Options, state: State) => string}
- */
-const stringifyCdata = (node, config, state) => {
+const stringifyCdata = (node: XastCdata, config: Options, state: State) => {
   return (
     createIndent(config, state) +
     config.cdataStart +
@@ -195,10 +163,7 @@ const stringifyCdata = (node, config, state) => {
   )
 }
 
-/**
- * @type {(node: XastElement, config: Options, state: State) => string}
- */
-const stringifyElement = (node, config, state) => {
+const stringifyElement = (node: XastElement, config: Options, state: State) => {
   // empty element and short tag
   if (node.children.length === 0) {
     return config.useShortTags
@@ -258,10 +223,7 @@ const stringifyElement = (node, config, state) => {
   }
 }
 
-/**
- * @type {(node: XastElement, config: Options) => string}
- */
-const stringifyAttributes = (node, config) => {
+const stringifyAttributes = (node: XastElement, config: Options) => {
   let attrs = ''
   for (const [name, value] of Object.entries(node.attributes)) {
     // TODO remove attributes without values support in v3
@@ -277,10 +239,7 @@ const stringifyAttributes = (node, config) => {
   return attrs
 }
 
-/**
- * @type {(node: XastText, config: Options, state: State) => string}
- */
-const stringifyText = (node, config, state) => {
+const stringifyText = (node: XastText, config: Options, state: State) => {
   return (
     createIndent(config, state) +
     config.textStart +

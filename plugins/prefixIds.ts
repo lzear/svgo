@@ -1,15 +1,15 @@
 import * as csstree from 'css-tree'
 
 import { referencesProps } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'prefixIds'
 export const description = 'prefix IDs'
 
 /**
  * extract basename from path
- * @type {(path: string) => string}
  */
-const getBasename = (path) => {
+const getBasename = (path: string) => {
   // extract everything after latest slash or backslash
   const matched = path.match(/[/\\]?([^/\\]+)$/)
   if (matched) {
@@ -20,16 +20,12 @@ const getBasename = (path) => {
 
 /**
  * escapes a string for being used as ID
- * @type {(string: string) => string}
  */
-const escapeIdentifierName = (str) => {
+const escapeIdentifierName = (str: string) => {
   return str.replaceAll(/[ .]/g, '_')
 }
 
-/**
- * @type {(string: string) => string}
- */
-const unquote = (string) => {
+const unquote = (string: string) => {
   if (
     (string.startsWith('"') && string.endsWith('"')) ||
     (string.startsWith("'") && string.endsWith("'"))
@@ -41,9 +37,8 @@ const unquote = (string) => {
 
 /**
  * prefix an ID
- * @type {(prefix: string, name: string) => string}
  */
-const prefixId = (prefix, value) => {
+const prefixId = (prefix: string, value: string) => {
   if (value.startsWith(prefix)) {
     return value
   }
@@ -52,26 +47,23 @@ const prefixId = (prefix, value) => {
 
 /**
  * prefix an #ID
- * @type {(prefix: string, name: string) => string | null}
  */
-const prefixReference = (prefix, value) => {
+const prefixReference = (prefix: string, value: string) => {
   if (value.startsWith('#')) {
     return '#' + prefixId(prefix, value.slice(1))
   }
   return null
 }
 
-/** @type {(value: any) => any} */
+// @ts-ignore
 const toAny = (value) => value
 
 /**
  * Prefixes identifiers
  *
  * @author strarsis <strarsis@gmail.com>
- *
- * @type {import('./plugins-types').Plugin<'prefixIds'>}
  */
-export const fn = (_root, params, info) => {
+export const fn: Plugin<'prefixIds'> = (_root, params, info) => {
   const { delim = '__', prefixIds = true, prefixClassNames = true } = params
 
   return {
@@ -79,7 +71,6 @@ export const fn = (_root, params, info) => {
       enter: (node) => {
         /**
          * prefix, from file name or option
-         * @type {string}
          */
         let prefix = 'prefix' + delim
         if (typeof params.prefix === 'function') {
@@ -107,10 +98,7 @@ export const fn = (_root, params, info) => {
           ) {
             cssText = node.children[0].value
           }
-          /**
-           * @type {null | csstree.CssNode}
-           */
-          let cssAst = null
+          let cssAst: null | csstree.CssNode = null
           try {
             cssAst = csstree.parse(cssText, {
               parseValue: true,

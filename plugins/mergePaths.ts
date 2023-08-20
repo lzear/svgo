@@ -2,6 +2,7 @@ import { collectStylesheet, computeStyle } from '../lib/style'
 import { detachNodeFromParent } from '../lib/xast'
 
 import { intersects, js2path, path2js } from './_path'
+import type { Plugin } from './plugins-types'
 
 export const name = 'mergePaths'
 export const description = 'merges multiple paths in one if possible'
@@ -11,9 +12,8 @@ export const description = 'merges multiple paths in one if possible'
  *
  * @author Kir Belevich, Lev Solntsev
  *
- * @type {import('./plugins-types').Plugin<'mergePaths'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'mergePaths'> = (root, params) => {
   const {
     force = false,
     floatPrecision,

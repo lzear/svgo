@@ -9,6 +9,8 @@ import {
   visitSkip,
 } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeHiddenElems'
 export const description =
   'removes hidden elements (zero sized, with absent attributes)'
@@ -28,9 +30,8 @@ export const description =
  *
  * @author Kir Belevich
  *
- * @type {import('./plugins-types').Plugin<'removeHiddenElems'>}
  */
-export const fn = (root, params) => {
+export const fn: Plugin<'removeHiddenElems'> = (root, params) => {
   const {
     isHidden = true,
     displayNone = true,

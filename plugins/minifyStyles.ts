@@ -1,10 +1,8 @@
 // @ts-nocheck
 
-/**
- * @typedef {import('../lib/types').XastElement} XastElement
- */
-
 import * as csso from 'csso'
+
+import type { Plugin } from './plugins-types'
 
 export const name = 'minifyStyles'
 export const description =
@@ -14,10 +12,8 @@ export const description =
  * Minifies styles (<style> element + style attribute) using CSSO
  *
  * @author strarsis <strarsis@gmail.com>
- *
- * @type {import('./plugins-types').Plugin<'minifyStyles'>}
  */
-export const fn = (_root, { usage, ...params }) => {
+export const fn: Plugin<'minifyStyles'> = (_root, { usage, ...params }) => {
   let enableTagsUsage = true
   let enableIdsUsage = true
   let enableClassesUsage = true
@@ -33,27 +29,12 @@ export const fn = (_root, { usage, ...params }) => {
     enableClassesUsage = usage.classes == null ? true : usage.classes
     forceUsageDeoptimized = usage.force == null ? false : usage.force
   }
-  /**
-   * @type {Array<XastElement>}
-   */
-  const styleElements = []
-  /**
-   * @type {Array<XastElement>}
-   */
-  const elementsWithStyleAttributes = []
+  const styleElements: XastElement[] = []
+  const elementsWithStyleAttributes: XastElement[] = []
   let deoptimized = false
-  /**
-   * @type {Set<string>}
-   */
-  const tagsUsage = new Set()
-  /**
-   * @type {Set<string>}
-   */
-  const idsUsage = new Set()
-  /**
-   * @type {Set<string>}
-   */
-  const classesUsage = new Set()
+  const tagsUsage = new Set<string>()
+  const idsUsage = new Set<string>()
+  const classesUsage = new Set<string>()
 
   return {
     element: {
@@ -88,10 +69,7 @@ export const fn = (_root, { usage, ...params }) => {
 
     root: {
       exit: () => {
-        /**
-         * @type {csso.Usage}
-         */
-        const cssoUsage = {}
+        const cssoUsage: csso.Usage = {}
         if (deoptimized === false || forceUsageDeoptimized === true) {
           if (enableTagsUsage && tagsUsage.size > 0) {
             cssoUsage.tags = [...tagsUsage]

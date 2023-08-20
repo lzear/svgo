@@ -1,5 +1,7 @@
 import { detachNodeFromParent } from '../lib/xast'
 
+import type { Plugin } from './plugins-types'
+
 export const name = 'removeScriptElement'
 export const description = 'removes <script> elements (disabled by default)'
 
@@ -9,10 +11,8 @@ export const description = 'removes <script> elements (disabled by default)'
  * https://www.w3.org/TR/SVG11/script.html
  *
  * @author Patrick Klingemann
- *
- * @type {import('./plugins-types').Plugin<'removeScriptElement'>}
  */
-export const fn = () => {
+export const fn: Plugin<'removeScriptElement'> = () => {
   return {
     element: {
       enter: (node, parentNode) => {

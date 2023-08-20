@@ -1,16 +1,12 @@
-/**
- * @typedef {import('../lib/types').XastNode} XastNode
- */
+import type { XastNode } from '../lib/types'
 
 import { elemsGroups, inheritableAttrs } from './_collections'
+import type { Plugin } from './plugins-types'
 
 export const name = 'collapseGroups'
 export const description = 'collapses useless groups'
 
-/**
- * @type {(node: XastNode, name: string) => boolean}
- */
-const hasAnimatedAttr = (node, name) => {
+const hasAnimatedAttr = (node: XastNode, name: string) => {
   if (node.type === 'element') {
     if (
       elemsGroups.animation.includes(node.name) &&
@@ -46,10 +42,8 @@ const hasAnimatedAttr = (node, name) => {
  * <path attr1="val1" d="..."/>
  *
  * @author Kir Belevich
- *
- * @type {import('./plugins-types').Plugin<'collapseGroups'>}
  */
-export const fn = () => {
+export const fn: Plugin<'collapseGroups'> = () => {
   return {
     element: {
       exit: (node, parentNode) => {

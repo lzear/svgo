@@ -7,7 +7,7 @@ import { pathToFileURL } from 'node:url'
 
 import { optimize as optimizeAgnostic } from './svgo'
 
-const importConfig = async (configFile) => {
+const importConfig = async (configFile: string) => {
   let config
   // at the moment dynamic import may randomly fail with segfault
   // to workaround this for some users .cjs extension is loaded
@@ -26,7 +26,7 @@ const importConfig = async (configFile) => {
   return config
 }
 
-const isFile = async (file) => {
+const isFile = async (file: string) => {
   try {
     const stats = await fs.promises.stat(file)
     return stats.isFile()
@@ -35,7 +35,10 @@ const isFile = async (file) => {
   }
 }
 
-export const loadConfig = async (configFile, cwd = process.cwd()) => {
+export const loadConfig = async (
+  configFile: string,
+  cwd = process.cwd(),
+): Promise<any> => {
   if (configFile != null) {
     return await (path.isAbsolute(configFile)
       ? importConfig(configFile)
@@ -64,7 +67,7 @@ export const loadConfig = async (configFile, cwd = process.cwd()) => {
   }
 }
 
-export const optimize = (input, config) => {
+export const optimize = (input: string, config: Record<string, any>) => {
   if (config == null) {
     config = {}
   }
