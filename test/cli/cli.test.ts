@@ -4,9 +4,11 @@
  * @typedef {import('child_process').ChildProcessWithoutNullStreams} ChildProcessWithoutNullStreams
  */
 
-const fs = require('fs');
-const path = require('path');
-const { spawn } = require('child_process');
+import type { ChildProcessWithoutNullStreams } from 'node:child_process';
+import { spawn } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import url from 'node:url';
 
 /**
  * @type {(proc: ChildProcessWithoutNullStreams) => Promise<string>}
@@ -33,17 +35,41 @@ const waitClose = (proc) => {
 test('shows plugins when flag specified', async () => {
   const proc = spawn(
     'node',
-    ['../../bin/svgo', '--no-color', '--show-plugins'],
-    { cwd: __dirname }
+    [
+      '--loader',
+      'ts-node/esm',
+      '--es-module-specifier-resolution',
+      'node',
+      '--experimental-vm-modules',
+      '--no-warnings',
+      '../../bin/svgo.ts',
+      '--no-color',
+      '--show-plugins',
+    ],
+    { cwd: __dirname },
   );
   const stdout = await waitStdout(proc);
   expect(stdout).toMatch(/Currently available plugins:/);
 });
 
 test('accepts svg as input stream', async () => {
-  const proc = spawn('node', ['../../bin/svgo', '--no-color', '-'], {
-    cwd: __dirname,
-  });
+  const proc = spawn(
+    'node',
+    [
+      '--loader',
+      'ts-node/esm',
+      '--es-module-specifier-resolution',
+      'node',
+      '--experimental-vm-modules',
+      '--no-warnings',
+      '../../bin/svgo.ts',
+      '--no-color',
+      '-',
+    ],
+    {
+      cwd: __dirname,
+    },
+  );
   proc.stdin.write('<svg><title>stdin</title></svg>');
   proc.stdin.end();
   const stdout = await waitStdout(proc);
@@ -54,8 +80,19 @@ test('accepts svg as string', async () => {
   const input = '<svg><title>string</title></svg>';
   const proc = spawn(
     'node',
-    ['../../bin/svgo', '--no-color', '--string', input],
-    { cwd: __dirname }
+    [
+      '--loader',
+      'ts-node/esm',
+      '--es-module-specifier-resolution',
+      'node',
+      '--experimental-vm-modules',
+      '--no-warnings',
+      '../../bin/svgo.ts',
+      '--no-color',
+      '--string',
+      input,
+    ],
+    { cwd: __dirname },
   );
   const stdout = await waitStdout(proc);
   expect(stdout).toEqual('<svg/>');
@@ -64,13 +101,28 @@ test('accepts svg as string', async () => {
 test('accepts svg as filename', async () => {
   const proc = spawn(
     'node',
-    ['../../bin/svgo', '--no-color', 'single.svg', '-o', 'output/single.svg'],
-    { cwd: __dirname }
+    [
+      '--loader',
+      'ts-node/esm',
+      '--es-module-specifier-resolution',
+      'node',
+      '--experimental-vm-modules',
+      '--no-warnings',
+      '../../bin/svgo.ts',
+      '--no-color',
+      'single.svg',
+      '-o',
+      'output/single.svg',
+    ],
+    { cwd: __dirname },
   );
   await waitClose(proc);
   const output = fs.readFileSync(
-    path.join(__dirname, 'output/single.svg'),
-    'utf-8'
+    path.join(
+      __dirname,
+      'output/single.svg',
+    ),
+    'utf8',
   );
   expect(output).toEqual('<svg/>');
 });
@@ -78,17 +130,43 @@ test('accepts svg as filename', async () => {
 test('output as stream when "-" is specified', async () => {
   const proc = spawn(
     'node',
-    ['../../bin/svgo', '--no-color', 'single.svg', '-o', '-'],
-    { cwd: __dirname }
+    [
+      '--loader',
+      'ts-node/esm',
+      '--es-module-specifier-resolution',
+      'node',
+      '--experimental-vm-modules',
+      '--no-warnings',
+      '../../bin/svgo.ts',
+      '--no-color',
+      'single.svg',
+      '-o',
+      '-',
+    ],
+    { cwd: __dirname },
   );
   const stdout = await waitStdout(proc);
   expect(stdout).toEqual('<svg/>');
 });
 
 test('should exit with 1 code on syntax error', async () => {
-  const proc = spawn('node', ['../../bin/svgo', '--no-color', 'invalid.svg'], {
-    cwd: __dirname,
-  });
+  const proc = spawn(
+    'node',
+    [
+      '--loader',
+      'ts-node/esm',
+      '--es-module-specifier-resolution',
+      'node',
+      '--experimental-vm-modules',
+      '--no-warnings',
+      '../../bin/svgo.ts',
+      '--no-color',
+      'invalid.svg',
+    ],
+    {
+      cwd: __dirname,
+    },
+  );
   const [code, stderr] = await Promise.all([
     new Promise((resolve) => {
       proc.on('close', (code) => {
