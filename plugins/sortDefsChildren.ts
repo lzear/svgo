@@ -1,5 +1,5 @@
-export const name = 'sortDefsChildren';
-export const description = 'Sorts children of <defs> to improve compression';
+export const name = 'sortDefsChildren'
+export const description = 'Sorts children of <defs> to improve compression'
 
 /**
  * Sorts children of defs in order to improve compression.
@@ -17,40 +17,40 @@ export const fn = () => {
           /**
            * @type {Map<string, number>}
            */
-          const frequencies = new Map();
+          const frequencies = new Map()
           for (const child of node.children) {
             if (child.type === 'element') {
-              const frequency = frequencies.get(child.name);
+              const frequency = frequencies.get(child.name)
               if (frequency == null) {
-                frequencies.set(child.name, 1);
+                frequencies.set(child.name, 1)
               } else {
-                frequencies.set(child.name, frequency + 1);
+                frequencies.set(child.name, frequency + 1)
               }
             }
           }
           node.children.sort((a, b) => {
             if (a.type !== 'element' || b.type !== 'element') {
-              return 0;
+              return 0
             }
-            const aFrequency = frequencies.get(a.name);
-            const bFrequency = frequencies.get(b.name);
+            const aFrequency = frequencies.get(a.name)
+            const bFrequency = frequencies.get(b.name)
             if (aFrequency != null && bFrequency != null) {
-              const frequencyComparison = bFrequency - aFrequency;
+              const frequencyComparison = bFrequency - aFrequency
               if (frequencyComparison !== 0) {
-                return frequencyComparison;
+                return frequencyComparison
               }
             }
-            const lengthComparison = b.name.length - a.name.length;
+            const lengthComparison = b.name.length - a.name.length
             if (lengthComparison !== 0) {
-              return lengthComparison;
+              return lengthComparison
             }
             if (a.name !== b.name) {
-              return a.name > b.name ? -1 : 1;
+              return a.name > b.name ? -1 : 1
             }
-            return 0;
-          });
+            return 0
+          })
         }
       },
     },
-  };
-};
+  }
+}

@@ -1,7 +1,7 @@
-export const name = 'addClassesToSVGElement';
-export const description = 'adds classnames to an outer <svg> element';
+export const name = 'addClassesToSVGElement'
+export const description = 'adds classnames to an outer <svg> element'
 
-var ENOCLS = `Error in plugin "addClassesToSVGElement": absent parameters.
+const ENOCLS = `Error in plugin "addClassesToSVGElement": absent parameters.
 It should have a list of classes in "classNames" or one "className".
 Config example:
 
@@ -22,7 +22,7 @@ plugins: [
     }
   }
 ]
-`;
+`
 
 /**
  * Add classnames to an outer <svg> element. Example config:
@@ -54,10 +54,10 @@ export const fn = (root, params) => {
     !(Array.isArray(params.classNames) && params.classNames.some(String)) &&
     !params.className
   ) {
-    console.error(ENOCLS);
-    return null;
+    console.error(ENOCLS)
+    return null
   }
-  const classNames = params.classNames || [params.className];
+  const classNames = params.classNames || [params.className]
   return {
     element: {
       enter: (node, parentNode) => {
@@ -65,16 +65,16 @@ export const fn = (root, params) => {
           const classList = new Set(
             node.attributes.class == null
               ? null
-              : node.attributes.class.split(' ')
-          );
+              : node.attributes.class.split(' '),
+          )
           for (const className of classNames) {
             if (className != null) {
-              classList.add(className);
+              classList.add(className)
             }
           }
-          node.attributes.class = Array.from(classList).join(' ');
+          node.attributes.class = [...classList].join(' ')
         }
       },
     },
-  };
-};
+  }
+}

@@ -1,7 +1,7 @@
-import { detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeXMLProcInst';
-export const description = 'removes XML processing instructions';
+export const name = 'removeXMLProcInst'
+export const description = 'removes XML processing instructions'
 
 /**
  * Remove XML Processing Instruction.
@@ -18,9 +18,9 @@ export const fn = () => {
     instruction: {
       enter: (node, parentNode) => {
         if (node.name === 'xml') {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
       },
     },
-  };
-};
+  }
+}

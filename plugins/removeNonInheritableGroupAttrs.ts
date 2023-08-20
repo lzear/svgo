@@ -1,14 +1,14 @@
 // @ts-nocheck
 
 import {
-  inheritableAttrs,
   attrsGroups,
+  inheritableAttrs,
   presentationNonInheritableGroupAttrs,
-} from './_collections';
+} from './_collections'
 
-export const name = 'removeNonInheritableGroupAttrs';
+export const name = 'removeNonInheritableGroupAttrs'
 export const description =
-  'removes non-inheritable group’s presentational attributes';
+  'removes non-inheritable group’s presentational attributes'
 
 /**
  * Remove non-inheritable group's "presentation" attributes.
@@ -28,11 +28,11 @@ export const fn = () => {
               inheritableAttrs.includes(name) === false &&
               presentationNonInheritableGroupAttrs.includes(name) === false
             ) {
-              delete node.attributes[name];
+              delete node.attributes[name]
             }
           }
         }
       },
     },
-  };
-};
+  }
+}

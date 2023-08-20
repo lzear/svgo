@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { visit } from '../xast';
+import { visit } from '../xast'
 
 /**
  * Plugins engine.
@@ -12,34 +12,40 @@ import { visit } from '../xast';
  * @param {Array} plugins plugins object from config
  * @return {Object} output ast
  */
-export const invokePlugins = (ast, info, plugins, overrides, globalOverrides) => {
+export const invokePlugins = (
+  ast,
+  info,
+  plugins,
+  overrides,
+  globalOverrides,
+) => {
   for (const plugin of plugins) {
-    const override = overrides == null ? null : overrides[plugin.name];
+    const override = overrides == null ? null : overrides[plugin.name]
     if (override === false) {
-      continue;
+      continue
     }
-    const params = { ...plugin.params, ...globalOverrides, ...override };
+    const params = { ...plugin.params, ...globalOverrides, ...override }
 
-    const visitor = plugin.fn(ast, params, info);
+    const visitor = plugin.fn(ast, params, info)
     if (visitor != null) {
-      visit(ast, visitor);
+      visit(ast, visitor)
     }
   }
-};
+}
 
 export const createPreset = ({ name, plugins }) => {
   return {
     name,
     fn: (ast, params, info) => {
-      const { floatPrecision, overrides } = params;
-      const globalOverrides = {};
+      const { floatPrecision, overrides } = params
+      const globalOverrides = {}
       if (floatPrecision != null) {
-        globalOverrides.floatPrecision = floatPrecision;
+        globalOverrides.floatPrecision = floatPrecision
       }
       if (overrides) {
-        const pluginNames = plugins.map(({ name }) => name);
+        const pluginNames = new Set(plugins.map(({ name }) => name))
         for (const pluginName of Object.keys(overrides)) {
-          if (!pluginNames.includes(pluginName)) {
+          if (!pluginNames.has(pluginName)) {
             console.warn(
               `You are trying to configure ${pluginName} which is not part of ${name}.\n` +
                 `Try to put it before or after, for example\n\n` +
@@ -48,12 +54,12 @@ export const createPreset = ({ name, plugins }) => {
                 `    name: '${name}',\n` +
                 `  },\n` +
                 `  '${pluginName}'\n` +
-                `]\n`
-            );
+                `]\n`,
+            )
           }
         }
       }
-      invokePlugins(ast, info, plugins, overrides, globalOverrides);
+      invokePlugins(ast, info, plugins, overrides, globalOverrides)
     },
-  };
-};
+  }
+}

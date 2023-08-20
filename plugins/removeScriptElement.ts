@@ -1,7 +1,7 @@
-import { detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeScriptElement';
-export const description = 'removes <script> elements (disabled by default)';
+export const name = 'removeScriptElement'
+export const description = 'removes <script> elements (disabled by default)'
 
 /**
  * Remove <script>.
@@ -17,9 +17,9 @@ export const fn = () => {
     element: {
       enter: (node, parentNode) => {
         if (node.name === 'script') {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
       },
     },
-  };
-};
+  }
+}

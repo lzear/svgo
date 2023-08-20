@@ -13,22 +13,24 @@
  * @typedef {import('./types').XastChild} XastChild
  */
 
-import * as csstree from 'css-tree';
-import * as csso from "csso";
-const {
-  // @ts-ignore not defined in @types/csso
-  syntax: { specificity },
-} = csso;
-import { visit, matches } from './xast';
+import * as csstree from 'css-tree'
+import * as csso from 'csso'
 
 import {
   attrsGroups,
   inheritableAttrs,
   presentationNonInheritableGroupAttrs,
-} from '../plugins/_collections';
+} from '../plugins/_collections'
+
+import { matches, visit } from './xast'
+
+const {
+  // @ts-ignore not defined in @types/csso
+  syntax: { specificity },
+} = csso
 
 // @ts-ignore not defined in @types/csstree
-const csstreeWalkSkip = csstree.walk.skip;
+const csstreeWalkSkip = csstree.walk.skip
 
 /**
  * @type {(ruleNode: CsstreeRule, dynamic: boolean) => StylesheetRule[]}
@@ -37,44 +39,44 @@ const parseRule = (ruleNode, dynamic) => {
   /**
    * @type {Array<StylesheetDeclaration>}
    */
-  const declarations = [];
+  const declarations = []
   // collect declarations
-  ruleNode.block.children.forEach((cssNode) => {
+  for (const cssNode of ruleNode.block.children) {
     if (cssNode.type === 'Declaration') {
       declarations.push({
         name: cssNode.property,
         value: csstree.generate(cssNode.value),
         important: cssNode.important === true,
-      });
+      })
     }
-  });
+  }
 
   /**
    * @type {StylesheetRule[]}
    */
-  const rules = [];
+  const rules = []
   csstree.walk(ruleNode.prelude, (node) => {
     if (node.type === 'Selector') {
-      const newNode = csstree.clone(node);
-      let hasPseudoClasses = false;
+      const newNode = csstree.clone(node)
+      let hasPseudoClasses = false
       csstree.walk(newNode, (pseudoClassNode, item, list) => {
         if (pseudoClassNode.type === 'PseudoClassSelector') {
-          hasPseudoClasses = true;
-          list.remove(item);
+          hasPseudoClasses = true
+          list.remove(item)
         }
-      });
+      })
       rules.push({
         specificity: specificity(node),
         dynamic: hasPseudoClasses || dynamic,
         // compute specificity from original node to consider pseudo classes
         selector: csstree.generate(newNode),
         declarations,
-      });
+      })
     }
-  });
+  })
 
-  return rules;
-};
+  return rules
+}
 
 /**
  * @type {(css: string, dynamic: boolean) => Array<StylesheetRule>}
@@ -83,31 +85,31 @@ const parseStylesheet = (css, dynamic) => {
   /**
    * @type {Array<StylesheetRule>}
    */
-  const rules = [];
+  const rules = []
   const ast = csstree.parse(css, {
     parseValue: false,
     parseAtrulePrelude: false,
-  });
+  })
   csstree.walk(ast, (cssNode) => {
     if (cssNode.type === 'Rule') {
-      rules.push(...parseRule(cssNode, dynamic || false));
-      return csstreeWalkSkip;
+      rules.push(...parseRule(cssNode, dynamic || false))
+      return csstreeWalkSkip
     }
     if (cssNode.type === 'Atrule') {
       if (cssNode.name === 'keyframes') {
-        return csstreeWalkSkip;
+        return csstreeWalkSkip
       }
       csstree.walk(cssNode, (ruleNode) => {
         if (ruleNode.type === 'Rule') {
-          rules.push(...parseRule(ruleNode, dynamic || true));
-          return csstreeWalkSkip;
+          rules.push(...parseRule(ruleNode, dynamic || true))
+          return csstreeWalkSkip
         }
-      });
-      return csstreeWalkSkip;
+      })
+      return csstreeWalkSkip
     }
-  });
-  return rules;
-};
+  })
+  return rules
+}
 
 /**
  * @type {(css: string) => Array<StylesheetDeclaration>}
@@ -116,22 +118,22 @@ const parseStyleDeclarations = (css) => {
   /**
    * @type {Array<StylesheetDeclaration>}
    */
-  const declarations = [];
+  const declarations = []
   const ast = csstree.parse(css, {
     context: 'declarationList',
     parseValue: false,
-  });
+  })
   csstree.walk(ast, (cssNode) => {
     if (cssNode.type === 'Declaration') {
       declarations.push({
         name: cssNode.property,
         value: csstree.generate(cssNode.value),
         important: cssNode.important === true,
-      });
+      })
     }
-  });
-  return declarations;
-};
+  })
+  return declarations
+}
 
 /**
  * @type {(stylesheet: Stylesheet, node: XastElement) => ComputedStyles}
@@ -140,14 +142,14 @@ const computeOwnStyle = (stylesheet, node) => {
   /**
    * @type {ComputedStyles}
    */
-  const computedStyle = {};
-  const importantStyles = new Map();
+  const computedStyle = {}
+  const importantStyles = new Map()
 
   // collect attributes
   for (const [name, value] of Object.entries(node.attributes)) {
     if (attrsGroups.presentation.includes(name)) {
-      computedStyle[name] = { type: 'static', inherited: false, value };
-      importantStyles.set(name, false);
+      computedStyle[name] = { type: 'static', inherited: false, value }
+      importantStyles.set(name, false)
     }
   }
 
@@ -155,21 +157,21 @@ const computeOwnStyle = (stylesheet, node) => {
   for (const { selector, declarations, dynamic } of stylesheet.rules) {
     if (matches(node, selector)) {
       for (const { name, value, important } of declarations) {
-        const computed = computedStyle[name];
+        const computed = computedStyle[name]
         if (computed && computed.type === 'dynamic') {
-          continue;
+          continue
         }
         if (dynamic) {
-          computedStyle[name] = { type: 'dynamic', inherited: false };
-          continue;
+          computedStyle[name] = { type: 'dynamic', inherited: false }
+          continue
         }
         if (
           computed == null ||
           important === true ||
           importantStyles.get(name) === false
         ) {
-          computedStyle[name] = { type: 'static', inherited: false, value };
-          importantStyles.set(name, important);
+          computedStyle[name] = { type: 'static', inherited: false, value }
+          importantStyles.set(name, important)
         }
       }
     }
@@ -179,24 +181,24 @@ const computeOwnStyle = (stylesheet, node) => {
   const styleDeclarations =
     node.attributes.style == null
       ? []
-      : parseStyleDeclarations(node.attributes.style);
+      : parseStyleDeclarations(node.attributes.style)
   for (const { name, value, important } of styleDeclarations) {
-    const computed = computedStyle[name];
+    const computed = computedStyle[name]
     if (computed && computed.type === 'dynamic') {
-      continue;
+      continue
     }
     if (
       computed == null ||
       important === true ||
       importantStyles.get(name) === false
     ) {
-      computedStyle[name] = { type: 'static', inherited: false, value };
-      importantStyles.set(name, important);
+      computedStyle[name] = { type: 'static', inherited: false, value }
+      importantStyles.set(name, important)
     }
   }
 
-  return computedStyle;
-};
+  return computedStyle
+}
 
 /**
  * Compares two selector specificities.
@@ -207,14 +209,14 @@ const computeOwnStyle = (stylesheet, node) => {
 const compareSpecificity = (a, b) => {
   for (let i = 0; i < 4; i += 1) {
     if (a[i] < b[i]) {
-      return -1;
+      return -1
     } else if (a[i] > b[i]) {
-      return 1;
+      return 1
     }
   }
 
-  return 0;
-};
+  return 0
+}
 
 /**
  * @type {(root: XastRoot) => Stylesheet}
@@ -223,51 +225,51 @@ export const collectStylesheet = (root) => {
   /**
    * @type {Array<StylesheetRule>}
    */
-  const rules = [];
+  const rules = []
   /**
    * @type {Map<XastElement, XastParent>}
    */
-  const parents = new Map();
+  const parents = new Map()
   visit(root, {
     element: {
       enter: (node, parentNode) => {
         // store parents
-        parents.set(node, parentNode);
+        parents.set(node, parentNode)
         // find and parse all styles
         if (node.name === 'style') {
           const dynamic =
-            node.attributes.media != null && node.attributes.media !== 'all';
+            node.attributes.media != null && node.attributes.media !== 'all'
           if (
             node.attributes.type == null ||
             node.attributes.type === '' ||
             node.attributes.type === 'text/css'
           ) {
-            const children = node.children;
+            const children = node.children
             for (const child of children) {
               if (child.type === 'text' || child.type === 'cdata') {
-                rules.push(...parseStylesheet(child.value, dynamic));
+                rules.push(...parseStylesheet(child.value, dynamic))
               }
             }
           }
         }
       },
     },
-  });
+  })
   // sort by selectors specificity
-  rules.sort((a, b) => compareSpecificity(a.specificity, b.specificity));
-  return { rules, parents };
-};
+  rules.sort((a, b) => compareSpecificity(a.specificity, b.specificity))
+  return { rules, parents }
+}
 
 /**
  * @type {(stylesheet: Stylesheet, node: XastElement) => ComputedStyles}
  */
 export const computeStyle = (stylesheet, node) => {
-  const { parents } = stylesheet;
+  const { parents } = stylesheet
   // collect inherited styles
-  const computedStyles = computeOwnStyle(stylesheet, node);
-  let parent = parents.get(node);
+  const computedStyles = computeOwnStyle(stylesheet, node)
+  let parent = parents.get(node)
   while (parent != null && parent.type !== 'root') {
-    const inheritedStyles = computeOwnStyle(stylesheet, parent);
+    const inheritedStyles = computeOwnStyle(stylesheet, parent)
     for (const [name, computed] of Object.entries(inheritedStyles)) {
       if (
         computedStyles[name] == null &&
@@ -275,10 +277,10 @@ export const computeStyle = (stylesheet, node) => {
         inheritableAttrs.includes(name) === true &&
         presentationNonInheritableGroupAttrs.includes(name) === false
       ) {
-        computedStyles[name] = { ...computed, inherited: true };
+        computedStyles[name] = { ...computed, inherited: true }
       }
     }
-    parent = parents.get(parent);
+    parent = parents.get(parent)
   }
-  return computedStyles;
-};
+  return computedStyles
+}

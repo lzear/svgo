@@ -10,7 +10,7 @@
  * @typedef {import('./types').StringifyOptions} StringifyOptions
  */
 
-import { textElems } from '../plugins/_collections';
+import { textElems } from '../plugins/_collections'
 
 /**
  * @typedef {{
@@ -28,8 +28,8 @@ import { textElems } from '../plugins/_collections';
  * @type {(char: string) => string}
  */
 const encodeEntity = (char) => {
-  return entities[char];
-};
+  return entities[char]
+}
 
 /**
  * @type {Options}
@@ -54,14 +54,14 @@ const defaults = {
   textStart: '',
   textEnd: '',
   indent: 4,
-  regEntities: /[&'"<>]/g,
-  regValEntities: /[&"<>]/g,
-  encodeEntity: encodeEntity,
+  regEntities: /["&'<>]/g,
+  regValEntities: /["&<>]/g,
+  encodeEntity,
   pretty: false,
   useShortTags: true,
   eol: 'lf',
   finalNewline: false,
-};
+}
 
 /**
  * @type {Record<string, string>}
@@ -72,7 +72,7 @@ const entities = {
   '"': '&quot;',
   '>': '&gt;',
   '<': '&lt;',
-};
+}
 
 /**
  * convert XAST to SVG string
@@ -83,13 +83,13 @@ export const stringifySvg = (data, userOptions = {}) => {
   /**
    * @type {Options}
    */
-  const config = { ...defaults, ...userOptions };
-  const indent = config.indent;
-  let newIndent = '    ';
+  const config = { ...defaults, ...userOptions }
+  const indent = config.indent
+  let newIndent = '    '
   if (typeof indent === 'number' && Number.isNaN(indent) === false) {
-    newIndent = indent < 0 ? '\t' : ' '.repeat(indent);
+    newIndent = indent < 0 ? '\t' : ' '.repeat(indent)
   } else if (typeof indent === 'string') {
-    newIndent = indent;
+    newIndent = indent
   }
   /**
    * @type {State}
@@ -98,54 +98,54 @@ export const stringifySvg = (data, userOptions = {}) => {
     indent: newIndent,
     textContext: null,
     indentLevel: 0,
-  };
-  const eol = config.eol === 'crlf' ? '\r\n' : '\n';
+  }
+  const eol = config.eol === 'crlf' ? '\r\n' : '\n'
   if (config.pretty) {
-    config.doctypeEnd += eol;
-    config.procInstEnd += eol;
-    config.commentEnd += eol;
-    config.cdataEnd += eol;
-    config.tagShortEnd += eol;
-    config.tagOpenEnd += eol;
-    config.tagCloseEnd += eol;
-    config.textEnd += eol;
+    config.doctypeEnd += eol
+    config.procInstEnd += eol
+    config.commentEnd += eol
+    config.cdataEnd += eol
+    config.tagShortEnd += eol
+    config.tagOpenEnd += eol
+    config.tagCloseEnd += eol
+    config.textEnd += eol
   }
-  let svg = stringifyNode(data, config, state);
-  if (config.finalNewline && svg.length > 0 && svg[svg.length - 1] !== '\n') {
-    svg += eol;
+  let svg = stringifyNode(data, config, state)
+  if (config.finalNewline && svg.length > 0 && svg.at(-1) !== '\n') {
+    svg += eol
   }
-  return svg;
-};
+  return svg
+}
 
 /**
  * @type {(node: XastParent, config: Options, state: State) => string}
  */
 const stringifyNode = (data, config, state) => {
-  let svg = '';
-  state.indentLevel += 1;
+  let svg = ''
+  state.indentLevel += 1
   for (const item of data.children) {
     if (item.type === 'element') {
-      svg += stringifyElement(item, config, state);
+      svg += stringifyElement(item, config, state)
     }
     if (item.type === 'text') {
-      svg += stringifyText(item, config, state);
+      svg += stringifyText(item, config, state)
     }
     if (item.type === 'doctype') {
-      svg += stringifyDoctype(item, config);
+      svg += stringifyDoctype(item, config)
     }
     if (item.type === 'instruction') {
-      svg += stringifyInstruction(item, config);
+      svg += stringifyInstruction(item, config)
     }
     if (item.type === 'comment') {
-      svg += stringifyComment(item, config);
+      svg += stringifyComment(item, config)
     }
     if (item.type === 'cdata') {
-      svg += stringifyCdata(item, config, state);
+      svg += stringifyCdata(item, config, state)
     }
   }
-  state.indentLevel -= 1;
-  return svg;
-};
+  state.indentLevel -= 1
+  return svg
+}
 
 /**
  * create indent string in accordance with the current node level.
@@ -153,19 +153,19 @@ const stringifyNode = (data, config, state) => {
  * @type {(config: Options, state: State) => string}
  */
 const createIndent = (config, state) => {
-  let indent = '';
+  let indent = ''
   if (config.pretty && state.textContext == null) {
-    indent = state.indent.repeat(state.indentLevel - 1);
+    indent = state.indent.repeat(state.indentLevel - 1)
   }
-  return indent;
-};
+  return indent
+}
 
 /**
  * @type {(node: XastDoctype, config: Options) => string}
  */
 const stringifyDoctype = (node, config) => {
-  return config.doctypeStart + node.data.doctype + config.doctypeEnd;
-};
+  return config.doctypeStart + node.data.doctype + config.doctypeEnd
+}
 
 /**
  * @type {(node: XastInstruction, config: Options) => string}
@@ -173,15 +173,15 @@ const stringifyDoctype = (node, config) => {
 const stringifyInstruction = (node, config) => {
   return (
     config.procInstStart + node.name + ' ' + node.value + config.procInstEnd
-  );
-};
+  )
+}
 
 /**
  * @type {(node: XastComment, config: Options) => string}
  */
 const stringifyComment = (node, config) => {
-  return config.commentStart + node.value + config.commentEnd;
-};
+  return config.commentStart + node.value + config.commentEnd
+}
 
 /**
  * @type {(node: XastCdata, config: Options, state: State) => string}
@@ -192,8 +192,8 @@ const stringifyCdata = (node, config, state) => {
     config.cdataStart +
     node.value +
     config.cdataEnd
-  );
-};
+  )
+}
 
 /**
  * @type {(node: XastElement, config: Options, state: State) => string}
@@ -201,52 +201,46 @@ const stringifyCdata = (node, config, state) => {
 const stringifyElement = (node, config, state) => {
   // empty element and short tag
   if (node.children.length === 0) {
-    if (config.useShortTags) {
-      return (
-        createIndent(config, state) +
-        config.tagShortStart +
-        node.name +
-        stringifyAttributes(node, config) +
-        config.tagShortEnd
-      );
-    } else {
-      return (
-        createIndent(config, state) +
-        config.tagShortStart +
-        node.name +
-        stringifyAttributes(node, config) +
-        config.tagOpenEnd +
-        config.tagCloseStart +
-        node.name +
-        config.tagCloseEnd
-      );
-    }
+    return config.useShortTags
+      ? createIndent(config, state) +
+          config.tagShortStart +
+          node.name +
+          stringifyAttributes(node, config) +
+          config.tagShortEnd
+      : createIndent(config, state) +
+          config.tagShortStart +
+          node.name +
+          stringifyAttributes(node, config) +
+          config.tagOpenEnd +
+          config.tagCloseStart +
+          node.name +
+          config.tagCloseEnd
     // non-empty element
   } else {
-    let tagOpenStart = config.tagOpenStart;
-    let tagOpenEnd = config.tagOpenEnd;
-    let tagCloseStart = config.tagCloseStart;
-    let tagCloseEnd = config.tagCloseEnd;
-    let openIndent = createIndent(config, state);
-    let closeIndent = createIndent(config, state);
+    let tagOpenStart = config.tagOpenStart
+    let tagOpenEnd = config.tagOpenEnd
+    let tagCloseStart = config.tagCloseStart
+    let tagCloseEnd = config.tagCloseEnd
+    let openIndent = createIndent(config, state)
+    let closeIndent = createIndent(config, state)
 
     if (state.textContext) {
-      tagOpenStart = defaults.tagOpenStart;
-      tagOpenEnd = defaults.tagOpenEnd;
-      tagCloseStart = defaults.tagCloseStart;
-      tagCloseEnd = defaults.tagCloseEnd;
-      openIndent = '';
+      tagOpenStart = defaults.tagOpenStart
+      tagOpenEnd = defaults.tagOpenEnd
+      tagCloseStart = defaults.tagCloseStart
+      tagCloseEnd = defaults.tagCloseEnd
+      openIndent = ''
     } else if (textElems.includes(node.name)) {
-      tagOpenEnd = defaults.tagOpenEnd;
-      tagCloseStart = defaults.tagCloseStart;
-      closeIndent = '';
-      state.textContext = node;
+      tagOpenEnd = defaults.tagOpenEnd
+      tagCloseStart = defaults.tagCloseStart
+      closeIndent = ''
+      state.textContext = node
     }
 
-    const children = stringifyNode(node, config, state);
+    const children = stringifyNode(node, config, state)
 
     if (state.textContext === node) {
-      state.textContext = null;
+      state.textContext = null
     }
 
     return (
@@ -260,28 +254,28 @@ const stringifyElement = (node, config, state) => {
       tagCloseStart +
       node.name +
       tagCloseEnd
-    );
+    )
   }
-};
+}
 
 /**
  * @type {(node: XastElement, config: Options) => string}
  */
 const stringifyAttributes = (node, config) => {
-  let attrs = '';
+  let attrs = ''
   for (const [name, value] of Object.entries(node.attributes)) {
     // TODO remove attributes without values support in v3
-    if (value !== undefined) {
+    if (value === undefined) {
+      attrs += ' ' + name
+    } else {
       const encodedValue = value
         .toString()
-        .replace(config.regValEntities, config.encodeEntity);
-      attrs += ' ' + name + config.attrStart + encodedValue + config.attrEnd;
-    } else {
-      attrs += ' ' + name;
+        .replace(config.regValEntities, config.encodeEntity)
+      attrs += ' ' + name + config.attrStart + encodedValue + config.attrEnd
     }
   }
-  return attrs;
-};
+  return attrs
+}
 
 /**
  * @type {(node: XastText, config: Options, state: State) => string}
@@ -292,5 +286,5 @@ const stringifyText = (node, config, state) => {
     config.textStart +
     node.value.replace(config.regEntities, config.encodeEntity) +
     (state.textContext ? '' : config.textEnd)
-  );
-};
+  )
+}

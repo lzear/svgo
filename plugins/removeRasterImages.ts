@@ -1,7 +1,7 @@
-import { detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeRasterImages';
-export const description = 'removes raster images (disabled by default)';
+export const name = 'removeRasterImages'
+export const description = 'removes raster images (disabled by default)'
 
 /**
  * Remove raster images references in <image>.
@@ -21,9 +21,9 @@ export const fn = () => {
           node.attributes['xlink:href'] != null &&
           /(\.|image\/)(jpg|png|gif)/.test(node.attributes['xlink:href'])
         ) {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
       },
     },
-  };
-};
+  }
+}

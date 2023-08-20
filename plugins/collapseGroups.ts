@@ -2,10 +2,10 @@
  * @typedef {import('../lib/types').XastNode} XastNode
  */
 
-import { inheritableAttrs, elemsGroups } from './_collections';
+import { elemsGroups, inheritableAttrs } from './_collections'
 
-export const name = 'collapseGroups';
-export const description = 'collapses useless groups';
+export const name = 'collapseGroups'
+export const description = 'collapses useless groups'
 
 /**
  * @type {(node: XastNode, name: string) => boolean}
@@ -16,16 +16,16 @@ const hasAnimatedAttr = (node, name) => {
       elemsGroups.animation.includes(node.name) &&
       node.attributes.attributeName === name
     ) {
-      return true;
+      return true
     }
     for (const child of node.children) {
       if (hasAnimatedAttr(child, name)) {
-        return true;
+        return true
       }
     }
   }
-  return false;
-};
+  return false
+}
 
 /**
  * Collapse useless groups.
@@ -54,19 +54,19 @@ export const fn = () => {
     element: {
       exit: (node, parentNode) => {
         if (parentNode.type === 'root' || parentNode.name === 'switch') {
-          return;
+          return
         }
         // non-empty groups
         if (node.name !== 'g' || node.children.length === 0) {
-          return;
+          return
         }
 
         // move group attibutes to the single child element
         if (
-          Object.keys(node.attributes).length !== 0 &&
+          Object.keys(node.attributes).length > 0 &&
           node.children.length === 1
         ) {
-          const firstChild = node.children[0];
+          const firstChild = node.children[0]
           // TODO untangle this mess
           if (
             firstChild.type === 'element' &&
@@ -83,22 +83,22 @@ export const fn = () => {
             for (const [name, value] of Object.entries(node.attributes)) {
               // avoid copying to not conflict with animated attribute
               if (hasAnimatedAttr(firstChild, name)) {
-                return;
+                return
               }
               if (firstChild.attributes[name] == null) {
-                firstChild.attributes[name] = value;
+                firstChild.attributes[name] = value
               } else if (name === 'transform') {
                 firstChild.attributes[name] =
-                  value + ' ' + firstChild.attributes[name];
+                  value + ' ' + firstChild.attributes[name]
               } else if (firstChild.attributes[name] === 'inherit') {
-                firstChild.attributes[name] = value;
+                firstChild.attributes[name] = value
               } else if (
                 inheritableAttrs.includes(name) === false &&
                 firstChild.attributes[name] !== value
               ) {
-                return;
+                return
               }
-              delete node.attributes[name];
+              delete node.attributes[name]
             }
           }
         }
@@ -112,21 +112,21 @@ export const fn = () => {
               child.type === 'element' &&
               elemsGroups.animation.includes(child.name)
             ) {
-              return;
+              return
             }
           }
           // replace current node with all its children
-          const index = parentNode.children.indexOf(node);
-          parentNode.children.splice(index, 1, ...node.children);
+          const index = parentNode.children.indexOf(node)
+          parentNode.children.splice(index, 1, ...node.children)
           // TODO remove legacy parentNode in v4
           for (const child of node.children) {
             Object.defineProperty(child, 'parentNode', {
               writable: true,
               value: parentNode,
-            });
+            })
           }
         }
       },
     },
-  };
-};
+  }
+}

@@ -1,7 +1,7 @@
-export const name = 'addAttributesToSVGElement';
-export const description = 'adds attributes to an outer <svg> element';
+export const name = 'addAttributesToSVGElement'
+export const description = 'adds attributes to an outer <svg> element'
 
-var ENOCLS = `Error in plugin "addAttributesToSVGElement": absent parameters.
+const ENOCLS = `Error in plugin "addAttributesToSVGElement": absent parameters.
 It should have a list of "attributes" or one "attribute".
 Config example:
 
@@ -38,7 +38,7 @@ plugins: [
     }
   }
 ]
-`;
+`
 
 /**
  * Add attributes to an outer <svg> element. Example config:
@@ -49,26 +49,27 @@ plugins: [
  */
 export const fn = (root, params) => {
   if (!Array.isArray(params.attributes) && !params.attribute) {
-    console.error(ENOCLS);
-    return null;
+    console.error(ENOCLS)
+    return null
   }
-  const attributes = params.attributes || [params.attribute];
+  const attributes = params.attributes || [params.attribute]
   return {
     element: {
       enter: (node, parentNode) => {
         if (node.name === 'svg' && parentNode.type === 'root') {
           for (const attribute of attributes) {
-            if (typeof attribute === 'string') {
-              if (node.attributes[attribute] == null) {
-                // @ts-ignore disallow explicit nullable attribute value
-                node.attributes[attribute] = undefined;
-              }
+            if (
+              typeof attribute === 'string' &&
+              node.attributes[attribute] == null
+            ) {
+              // @ts-ignore disallow explicit nullable attribute value
+              node.attributes[attribute] = undefined
             }
             if (typeof attribute === 'object') {
               for (const key of Object.keys(attribute)) {
                 if (node.attributes[key] == null) {
                   // @ts-ignore disallow explicit nullable attribute value
-                  node.attributes[key] = attribute[key];
+                  node.attributes[key] = attribute[key]
                 }
               }
             }
@@ -76,5 +77,5 @@ export const fn = (root, params) => {
         }
       },
     },
-  };
-};
+  }
+}

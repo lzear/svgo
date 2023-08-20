@@ -1,5 +1,5 @@
-export const name = 'removeUnusedNS';
-export const description = 'removes unused namespaces declaration';
+export const name = 'removeUnusedNS'
+export const description = 'removes unused namespaces declaration'
 
 /**
  * Remove unused namespaces declaration from svg element
@@ -13,7 +13,7 @@ export const fn = () => {
   /**
    * @type {Set<string>}
    */
-  const unusedNamespaces = new Set();
+  const unusedNamespaces = new Set()
   return {
     element: {
       enter: (node, parentNode) => {
@@ -22,24 +22,24 @@ export const fn = () => {
         if (node.name === 'svg' && parentNode.type === 'root') {
           for (const name of Object.keys(node.attributes)) {
             if (name.startsWith('xmlns:')) {
-              const local = name.slice('xmlns:'.length);
-              unusedNamespaces.add(local);
+              const local = name.slice('xmlns:'.length)
+              unusedNamespaces.add(local)
             }
           }
         }
-        if (unusedNamespaces.size !== 0) {
+        if (unusedNamespaces.size > 0) {
           // preserve namespace used in nested elements names
           if (node.name.includes(':')) {
-            const [ns] = node.name.split(':');
+            const [ns] = node.name.split(':')
             if (unusedNamespaces.has(ns)) {
-              unusedNamespaces.delete(ns);
+              unusedNamespaces.delete(ns)
             }
           }
           // preserve namespace used in nested elements attributes
           for (const name of Object.keys(node.attributes)) {
             if (name.includes(':')) {
-              const [ns] = name.split(':');
-              unusedNamespaces.delete(ns);
+              const [ns] = name.split(':')
+              unusedNamespaces.delete(ns)
             }
           }
         }
@@ -48,10 +48,10 @@ export const fn = () => {
         // remove unused namespace attributes from svg element
         if (node.name === 'svg' && parentNode.type === 'root') {
           for (const name of unusedNamespaces) {
-            delete node.attributes[`xmlns:${name}`];
+            delete node.attributes[`xmlns:${name}`]
           }
         }
       },
     },
-  };
-};
+  }
+}

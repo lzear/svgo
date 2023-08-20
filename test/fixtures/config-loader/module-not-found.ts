@@ -1,2 +1,2 @@
-export * from 'unknown-module';
-export default {};
+export * from 'unknown-module'
+export default {}

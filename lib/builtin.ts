@@ -1,4 +1,3 @@
-import { presetDefault } from '../plugins/preset-default'
 import * as addAttributesToSVGElement from '../plugins/addAttributesToSVGElement'
 import * as addClassesToSVGElement from '../plugins/addClassesToSVGElement'
 import * as cleanupAttrs from '../plugins/cleanupAttrs'
@@ -20,6 +19,7 @@ import * as minifyStyles from '../plugins/minifyStyles'
 import * as moveElemsAttrsToGroup from '../plugins/moveElemsAttrsToGroup'
 import * as moveGroupAttrsToElems from '../plugins/moveGroupAttrsToElems'
 import * as prefixIds from '../plugins/prefixIds'
+import { presetDefault } from '../plugins/preset-default'
 import * as removeAttributesBySelector from '../plugins/removeAttributesBySelector'
 import * as removeAttrs from '../plugins/removeAttrs'
 import * as removeComments from '../plugins/removeComments'
@@ -102,4 +102,4 @@ export const builtin = [
   reusePaths,
   sortAttrs,
   sortDefsChildren,
-];
+]

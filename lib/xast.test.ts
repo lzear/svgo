@@ -3,14 +3,14 @@
  * @typedef {import('./types').XastElement} XastElement
  */
 
-import { visit, visitSkip, detachNodeFromParent } from './xast';
+import { detachNodeFromParent, visit, visitSkip } from './xast'
 
 /**
  * @type {(children: Array<XastElement>) => XastRoot}
  */
 const root = (children) => {
-  return { type: 'root', children };
-};
+  return { type: 'root', children }
+}
 
 /**
  * @type {(
@@ -20,101 +20,101 @@ const root = (children) => {
  * ) => XastElement}
  */
 const x = (name, attrs = null, children = []) => {
-  return { type: 'element', name, attributes: attrs || {}, children };
-};
+  return { type: 'element', name, attributes: attrs || {}, children }
+}
 
 test('visit enters into nodes', () => {
-  const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')]);
+  const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')])
   /**
    * @type {Array<string>}
    */
-  const entered = [];
+  const entered = []
   visit(ast, {
     root: {
       enter: (node) => {
-        entered.push(node.type);
+        entered.push(node.type)
       },
     },
     element: {
       enter: (node) => {
-        entered.push(`${node.type}:${node.name}`);
+        entered.push(`${node.type}:${node.name}`)
       },
     },
-  });
+  })
   expect(entered).toEqual([
     'root',
     'element:g',
     'element:rect',
     'element:circle',
     'element:ellipse',
-  ]);
-});
+  ])
+})
 
 test('visit exits from nodes', () => {
-  const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')]);
+  const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')])
   /**
    * @type {Array<string>}
    */
-  const exited = [];
+  const exited = []
   visit(ast, {
     root: {
       exit: (node) => {
-        exited.push(node.type);
+        exited.push(node.type)
       },
     },
     element: {
       exit: (node) => {
-        exited.push(`${node.type}:${node.name}`);
+        exited.push(`${node.type}:${node.name}`)
       },
     },
-  });
+  })
   expect(exited).toEqual([
     'element:rect',
     'element:circle',
     'element:g',
     'element:ellipse',
     'root',
-  ]);
-});
+  ])
+})
 
 test('visit skips entering children if node is detached', () => {
-  const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')]);
+  const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')])
   /**
    * @type {Array<string>}
    */
-  const entered = [];
+  const entered = []
   visit(ast, {
     element: {
       enter: (node, parentNode) => {
-        entered.push(node.name);
+        entered.push(node.name)
         if (node.name === 'g') {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
       },
     },
-  });
-  expect(entered).toEqual(['g', 'ellipse']);
-  expect(ast).toEqual(root([x('ellipse')]));
-});
+  })
+  expect(entered).toEqual(['g', 'ellipse'])
+  expect(ast).toEqual(root([x('ellipse')]))
+})
 
 test('visit skips entering children when symbol is passed', () => {
-  const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')]);
+  const ast = root([x('g', null, [x('rect'), x('circle')]), x('ellipse')])
   /**
    * @type {Array<string>}
    */
-  const entered = [];
+  const entered = []
   visit(ast, {
     element: {
       enter: (node) => {
-        entered.push(node.name);
+        entered.push(node.name)
         if (node.name === 'g') {
-          return visitSkip;
+          return visitSkip
         }
       },
     },
-  });
-  expect(entered).toEqual(['g', 'ellipse']);
+  })
+  expect(entered).toEqual(['g', 'ellipse'])
   expect(ast).toEqual(
-    root([x('g', null, [x('rect'), x('circle')]), x('ellipse')])
-  );
-});
+    root([x('g', null, [x('rect'), x('circle')]), x('ellipse')]),
+  )
+})

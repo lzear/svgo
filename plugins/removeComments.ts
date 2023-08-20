@@ -1,7 +1,7 @@
-import { detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeComments';
-export const description = 'removes comments';
+export const name = 'removeComments'
+export const description = 'removes comments'
 
 /**
  * Remove comments.
@@ -19,9 +19,9 @@ export const fn = () => {
     comment: {
       enter: (node, parentNode) => {
         if (node.value.charAt(0) !== '!') {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
       },
     },
-  };
-};
+  }
+}

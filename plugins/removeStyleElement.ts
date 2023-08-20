@@ -1,7 +1,7 @@
-import { detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeStyleElement';
-export const description = 'removes <style> element (disabled by default)';
+export const name = 'removeStyleElement'
+export const description = 'removes <style> element (disabled by default)'
 
 /**
  * Remove <style>.
@@ -17,9 +17,9 @@ export const fn = () => {
     element: {
       enter: (node, parentNode) => {
         if (node.name === 'style') {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
       },
     },
-  };
-};
+  }
+}

@@ -1,8 +1,8 @@
-import { querySelectorAll } from '../lib/xast';
+import { querySelectorAll } from '../lib/xast'
 
-export const name = 'removeAttributesBySelector';
+export const name = 'removeAttributesBySelector'
 export const description =
-  'removes attributes of elements that match a css selector';
+  'removes attributes of elements that match a css selector'
 
 /**
  * Removes attributes of elements that match a css selector.
@@ -76,20 +76,20 @@ export const description =
 export const fn = (root, params) => {
   const selectors = Array.isArray(params.selectors)
     ? params.selectors
-    : [params];
+    : [params]
   for (const { selector, attributes } of selectors) {
-    const nodes = querySelectorAll(root, selector);
+    const nodes = querySelectorAll(root, selector)
     for (const node of nodes) {
       if (node.type === 'element') {
         if (Array.isArray(attributes)) {
           for (const name of attributes) {
-            delete node.attributes[name];
+            delete node.attributes[name]
           }
         } else {
-          delete node.attributes[attributes];
+          delete node.attributes[attributes]
         }
       }
     }
   }
-  return {};
-};
+  return {}
+}

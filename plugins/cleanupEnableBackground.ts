@@ -1,10 +1,10 @@
 // @ts-nocheck
 
-import { visit } from '../lib/xast';
+import { visit } from '../lib/xast'
 
-export const name = 'cleanupEnableBackground';
+export const name = 'cleanupEnableBackground'
 export const description =
-  'remove or cleanup enable-background attribute when possible';
+  'remove or cleanup enable-background attribute when possible'
 
 /**
  * Remove or cleanup enable-background attr which coincides with a width/height box.
@@ -22,24 +22,24 @@ export const description =
  */
 export const fn = (root) => {
   const regEnableBackground =
-    /^new\s0\s0\s([-+]?\d*\.?\d+([eE][-+]?\d+)?)\s([-+]?\d*\.?\d+([eE][-+]?\d+)?)$/;
+    /^new\s0\s0\s([+-]?\d*\.?\d+([Ee][+-]?\d+)?)\s([+-]?\d*\.?\d+([Ee][+-]?\d+)?)$/
 
-  let hasFilter = false;
+  let hasFilter = false
   visit(root, {
     element: {
       enter: (node) => {
         if (node.name === 'filter') {
-          hasFilter = true;
+          hasFilter = true
         }
       },
     },
-  });
+  })
 
   return {
     element: {
       enter: (node) => {
         if (node.attributes['enable-background'] == null) {
-          return;
+          return
         }
         if (hasFilter) {
           if (
@@ -50,24 +50,24 @@ export const fn = (root) => {
             node.attributes.height != null
           ) {
             const match =
-              node.attributes['enable-background'].match(regEnableBackground);
+              node.attributes['enable-background'].match(regEnableBackground)
             if (
               match != null &&
               node.attributes.width === match[1] &&
               node.attributes.height === match[3]
             ) {
               if (node.name === 'svg') {
-                delete node.attributes['enable-background'];
+                delete node.attributes['enable-background']
               } else {
-                node.attributes['enable-background'] = 'new';
+                node.attributes['enable-background'] = 'new'
               }
             }
           }
         } else {
           //we don't need 'enable-background' if we have no filters
-          delete node.attributes['enable-background'];
+          delete node.attributes['enable-background']
         }
       },
     },
-  };
-};
+  }
+}

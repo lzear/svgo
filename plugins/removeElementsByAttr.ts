@@ -1,8 +1,8 @@
-import { detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeElementsByAttr';
+export const name = 'removeElementsByAttr'
 export const description =
-  'removes arbitrary elements by ID or className (disabled by default)';
+  'removes arbitrary elements by ID or className (disabled by default)'
 
 /**
  * Remove arbitrary SVG elements by ID or className.
@@ -39,33 +39,35 @@ export const description =
  */
 export const fn = (root, params) => {
   const ids =
-    params.id == null ? [] : Array.isArray(params.id) ? params.id : [params.id];
+    params.id == null ? [] : Array.isArray(params.id) ? params.id : [params.id]
   const classes =
     params.class == null
       ? []
       : Array.isArray(params.class)
       ? params.class
-      : [params.class];
+      : [params.class]
   return {
     element: {
       enter: (node, parentNode) => {
         // remove element if it's `id` matches configured `id` params
-        if (node.attributes.id != null && ids.length !== 0) {
-          if (ids.includes(node.attributes.id)) {
-            detachNodeFromParent(node, parentNode);
-          }
+        if (
+          node.attributes.id != null &&
+          ids.length > 0 &&
+          ids.includes(node.attributes.id)
+        ) {
+          detachNodeFromParent(node, parentNode)
         }
         // remove element if it's `class` contains any of the configured `class` params
-        if (node.attributes.class && classes.length !== 0) {
-          const classList = node.attributes.class.split(' ');
+        if (node.attributes.class && classes.length > 0) {
+          const classList = node.attributes.class.split(' ')
           for (const item of classes) {
             if (classList.includes(item)) {
-              detachNodeFromParent(node, parentNode);
-              break;
+              detachNodeFromParent(node, parentNode)
+              break
             }
           }
         }
       },
     },
-  };
-};
+  }
+}

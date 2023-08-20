@@ -3,9 +3,9 @@
  * @typedef {import('./types').XastElement} XastElement
  */
 
-import { collectStylesheet, computeStyle } from './style';
-import { visit } from './xast';
-import { parseSvg } from './parser';
+import { parseSvg } from './parser'
+import { collectStylesheet, computeStyle } from './style'
+import { visit } from './xast'
 
 /**
  * @type {(node: XastParent, id: string) => XastElement}
@@ -14,21 +14,21 @@ const getElementById = (node, id) => {
   /**
    * @type {null | XastElement}
    */
-  let matched = null;
+  let matched = null
   visit(node, {
     element: {
       enter: (node) => {
         if (node.attributes.id === id) {
-          matched = node;
+          matched = node
         }
       },
     },
-  });
+  })
   if (matched == null) {
-    throw Error('Assert node');
+    throw new Error('Assert node')
   }
-  return matched;
-};
+  return matched
+}
 
 it('collects styles', () => {
   const root = parseSvg(`
@@ -54,36 +54,36 @@ it('collects styles', () => {
           ]]>
         </style>
       </svg>
-    `);
-  const stylesheet = collectStylesheet(root);
+    `)
+  const stylesheet = collectStylesheet(root)
   expect(computeStyle(stylesheet, getElementById(root, 'class'))).toEqual({
     fill: { type: 'static', inherited: false, value: 'red' },
-  });
+  })
   expect(computeStyle(stylesheet, getElementById(root, 'two-classes'))).toEqual(
     {
       fill: { type: 'static', inherited: false, value: 'green' },
       stroke: { type: 'static', inherited: false, value: 'black' },
-    }
-  );
+    },
+  )
   expect(computeStyle(stylesheet, getElementById(root, 'attribute'))).toEqual({
     fill: { type: 'static', inherited: false, value: 'purple' },
-  });
+  })
   expect(
-    computeStyle(stylesheet, getElementById(root, 'inline-style'))
+    computeStyle(stylesheet, getElementById(root, 'inline-style')),
   ).toEqual({
     fill: { type: 'static', inherited: false, value: 'grey' },
-  });
+  })
   expect(computeStyle(stylesheet, getElementById(root, 'inheritance'))).toEqual(
     {
       fill: { type: 'static', inherited: true, value: 'yellow' },
-    }
-  );
+    },
+  )
   expect(
-    computeStyle(stylesheet, getElementById(root, 'nested-inheritance'))
+    computeStyle(stylesheet, getElementById(root, 'nested-inheritance')),
   ).toEqual({
     fill: { type: 'static', inherited: true, value: 'blue' },
-  });
-});
+  })
+})
 
 it('prioritizes different kinds of styles', () => {
   const root = parseSvg(`
@@ -101,37 +101,40 @@ it('prioritizes different kinds of styles', () => {
           <rect id="inline-style-over-style-rule" style="fill: purple;" class="b" />
         </g>
       </svg>
-    `);
-  const stylesheet = collectStylesheet(root);
+    `)
+  const stylesheet = collectStylesheet(root)
   expect(
-    computeStyle(stylesheet, getElementById(root, 'complex-selector'))
+    computeStyle(stylesheet, getElementById(root, 'complex-selector')),
   ).toEqual({
     fill: { type: 'static', inherited: false, value: 'red' },
-  });
+  })
   expect(
-    computeStyle(stylesheet, getElementById(root, 'override-selector'))
+    computeStyle(stylesheet, getElementById(root, 'override-selector')),
   ).toEqual({
     fill: { type: 'static', inherited: false, value: 'blue' },
-  });
-  expect(
-    computeStyle(stylesheet, getElementById(root, 'attribute-over-inheritance'))
-  ).toEqual({
-    fill: { type: 'static', inherited: false, value: 'orange' },
-  });
-  expect(
-    computeStyle(stylesheet, getElementById(root, 'style-rule-over-attribute'))
-  ).toEqual({
-    fill: { type: 'static', inherited: false, value: 'blue' },
-  });
+  })
   expect(
     computeStyle(
       stylesheet,
-      getElementById(root, 'inline-style-over-style-rule')
-    )
+      getElementById(root, 'attribute-over-inheritance'),
+    ),
+  ).toEqual({
+    fill: { type: 'static', inherited: false, value: 'orange' },
+  })
+  expect(
+    computeStyle(stylesheet, getElementById(root, 'style-rule-over-attribute')),
+  ).toEqual({
+    fill: { type: 'static', inherited: false, value: 'blue' },
+  })
+  expect(
+    computeStyle(
+      stylesheet,
+      getElementById(root, 'inline-style-over-style-rule'),
+    ),
   ).toEqual({
     fill: { type: 'static', inherited: false, value: 'purple' },
-  });
-});
+  })
+})
 
 it('prioritizes important styles', () => {
   const root = parseSvg(`
@@ -144,30 +147,30 @@ it('prioritizes important styles', () => {
         <rect id="style-rule-over-inline-style" style="fill: orange;" class="b" />
         <rect id="inline-style-over-style-rule" style="fill: purple !important;" class="b" />
       </svg>
-    `);
-  const stylesheet = collectStylesheet(root);
+    `)
+  const stylesheet = collectStylesheet(root)
   expect(
-    computeStyle(stylesheet, getElementById(root, 'complex-selector'))
+    computeStyle(stylesheet, getElementById(root, 'complex-selector')),
   ).toEqual({
     fill: { type: 'static', inherited: false, value: 'green' },
-  });
+  })
   expect(
     computeStyle(
       stylesheet,
-      getElementById(root, 'style-rule-over-inline-style')
-    )
+      getElementById(root, 'style-rule-over-inline-style'),
+    ),
   ).toEqual({
     fill: { type: 'static', inherited: false, value: 'green' },
-  });
+  })
   expect(
     computeStyle(
       stylesheet,
-      getElementById(root, 'inline-style-over-style-rule')
-    )
+      getElementById(root, 'inline-style-over-style-rule'),
+    ),
   ).toEqual({
     fill: { type: 'static', inherited: false, value: 'purple' },
-  });
-});
+  })
+})
 
 it('treats at-rules and pseudo-classes as dynamic styles', () => {
   const root = parseSvg(`
@@ -188,28 +191,28 @@ it('treats at-rules and pseudo-classes as dynamic styles', () => {
         </g>
         <rect id="static" class="c" style="fill: black" />
       </svg>
-    `);
-  const stylesheet = collectStylesheet(root);
+    `)
+  const stylesheet = collectStylesheet(root)
   expect(computeStyle(stylesheet, getElementById(root, 'media-query'))).toEqual(
     {
       fill: { type: 'dynamic', inherited: false },
-    }
-  );
+    },
+  )
   expect(computeStyle(stylesheet, getElementById(root, 'hover'))).toEqual({
     fill: { type: 'dynamic', inherited: false },
-  });
+  })
   expect(computeStyle(stylesheet, getElementById(root, 'inherited'))).toEqual({
     fill: { type: 'dynamic', inherited: true },
-  });
+  })
   expect(
-    computeStyle(stylesheet, getElementById(root, 'inherited-overriden'))
+    computeStyle(stylesheet, getElementById(root, 'inherited-overriden')),
   ).toEqual({
     fill: { type: 'static', inherited: false, value: 'blue' },
-  });
+  })
   expect(computeStyle(stylesheet, getElementById(root, 'static'))).toEqual({
     fill: { type: 'static', inherited: false, value: 'black' },
-  });
-});
+  })
+})
 
 it('considers <style> media attribute', () => {
   const root = parseSvg(`
@@ -227,22 +230,22 @@ it('considers <style> media attribute', () => {
         <rect id="kinda-static" class="b" />
         <rect id="static" class="c" />
       </svg>
-    `);
-  const stylesheet = collectStylesheet(root);
+    `)
+  const stylesheet = collectStylesheet(root)
   expect(computeStyle(stylesheet, getElementById(root, 'media-query'))).toEqual(
     {
       fill: { type: 'dynamic', inherited: false },
-    }
-  );
+    },
+  )
   expect(
-    computeStyle(stylesheet, getElementById(root, 'kinda-static'))
+    computeStyle(stylesheet, getElementById(root, 'kinda-static')),
   ).toEqual({
     fill: { type: 'dynamic', inherited: false },
-  });
+  })
   expect(computeStyle(stylesheet, getElementById(root, 'static'))).toEqual({
     fill: { type: 'static', inherited: false, value: 'blue' },
-  });
-});
+  })
+})
 
 it('ignores <style> with invalid type', () => {
   const root = parseSvg(`
@@ -260,18 +263,18 @@ it('ignores <style> with invalid type', () => {
         <rect id="empty-type" class="b" />
         <rect id="invalid-type" class="c" />
       </svg>
-    `);
-  const stylesheet = collectStylesheet(root);
+    `)
+  const stylesheet = collectStylesheet(root)
   expect(computeStyle(stylesheet, getElementById(root, 'valid-type'))).toEqual({
     fill: { type: 'static', inherited: false, value: 'red' },
-  });
+  })
   expect(computeStyle(stylesheet, getElementById(root, 'empty-type'))).toEqual({
     fill: { type: 'static', inherited: false, value: 'green' },
-  });
+  })
   expect(
-    computeStyle(stylesheet, getElementById(root, 'invalid-type'))
-  ).toEqual({});
-});
+    computeStyle(stylesheet, getElementById(root, 'invalid-type')),
+  ).toEqual({})
+})
 
 it('ignores keyframes atrule', () => {
   const root = parseSvg(`
@@ -294,13 +297,13 @@ it('ignores keyframes atrule', () => {
         </style>
         <rect id="element" class="a" />
       </svg>
-    `);
-  const stylesheet = collectStylesheet(root);
+    `)
+  const stylesheet = collectStylesheet(root)
   expect(computeStyle(stylesheet, getElementById(root, 'element'))).toEqual({
     animation: {
       type: 'static',
       inherited: false,
       value: 'loading 4s linear infinite',
     },
-  });
-});
+  })
+})

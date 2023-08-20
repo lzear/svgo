@@ -1,4 +1,4 @@
-import { removeLeadingZero } from './svgo/tools';
+import { removeLeadingZero } from './svgo/tools'
 
 /**
  * @typedef {import('./types').PathDataItem} PathDataItem
@@ -28,38 +28,38 @@ const argsCountPerCommand = {
   t: 2,
   A: 7,
   a: 7,
-};
+}
 
 /**
  * @type {(c: string) => c is PathDataCommand}
  */
 const isCommand = (c) => {
-  return c in argsCountPerCommand;
-};
+  return c in argsCountPerCommand
+}
 
 /**
  * @type {(c: string) => boolean}
  */
 const isWsp = (c) => {
-  const codePoint = c.codePointAt(0);
+  const codePoint = c.codePointAt(0)
   return (
     codePoint === 0x20 ||
     codePoint === 0x9 ||
     codePoint === 0xd ||
     codePoint === 0xa
-  );
-};
+  )
+}
 
 /**
  * @type {(c: string) => boolean}
  */
 const isDigit = (c) => {
-  const codePoint = c.codePointAt(0);
+  const codePoint = c.codePointAt(0)
   if (codePoint == null) {
-    return false;
+    return false
   }
-  return 48 <= codePoint && codePoint <= 57;
-};
+  return 48 <= codePoint && codePoint <= 57
+}
 
 /**
  * @typedef {'none' | 'sign' | 'whole' | 'decimal_point' | 'decimal' | 'e' | 'exponent_sign' | 'exponent'} ReadNumberState
@@ -69,68 +69,66 @@ const isDigit = (c) => {
  * @type {(string: string, cursor: number) => [number, number | null]}
  */
 const readNumber = (string, cursor) => {
-  let i = cursor;
-  let value = '';
-  let state = /** @type {ReadNumberState} */ ('none');
+  let i = cursor
+  let value = ''
+  let state = /** @type {ReadNumberState} */ 'none'
   for (; i < string.length; i += 1) {
-    const c = string[i];
+    const c = string[i]
     if (c === '+' || c === '-') {
       if (state === 'none') {
-        state = 'sign';
-        value += c;
-        continue;
+        state = 'sign'
+        value += c
+        continue
       }
       if (state === 'e') {
-        state = 'exponent_sign';
-        value += c;
-        continue;
+        state = 'exponent_sign'
+        value += c
+        continue
       }
     }
     if (isDigit(c)) {
       if (state === 'none' || state === 'sign' || state === 'whole') {
-        state = 'whole';
-        value += c;
-        continue;
+        state = 'whole'
+        value += c
+        continue
       }
       if (state === 'decimal_point' || state === 'decimal') {
-        state = 'decimal';
-        value += c;
-        continue;
+        state = 'decimal'
+        value += c
+        continue
       }
       if (state === 'e' || state === 'exponent_sign' || state === 'exponent') {
-        state = 'exponent';
-        value += c;
-        continue;
+        state = 'exponent'
+        value += c
+        continue
       }
     }
-    if (c === '.') {
-      if (state === 'none' || state === 'sign' || state === 'whole') {
-        state = 'decimal_point';
-        value += c;
-        continue;
-      }
+    if (
+      c === '.' &&
+      (state === 'none' || state === 'sign' || state === 'whole')
+    ) {
+      state = 'decimal_point'
+      value += c
+      continue
     }
-    if (c === 'E' || c == 'e') {
-      if (
-        state === 'whole' ||
-        state === 'decimal_point' ||
-        state === 'decimal'
-      ) {
-        state = 'e';
-        value += c;
-        continue;
-      }
+    if (
+      (c === 'E' || c == 'e') &&
+      (state === 'whole' || state === 'decimal_point' || state === 'decimal')
+    ) {
+      state = 'e'
+      value += c
+      continue
     }
-    break;
+    break
   }
-  const number = Number.parseFloat(value);
+  const number = Number.parseFloat(value)
   if (Number.isNaN(number)) {
-    return [cursor, null];
+    return [cursor, null]
   } else {
     // step back to delegate iteration to parent loop
-    return [i - 1, number];
+    return [i - 1, number]
   }
-};
+}
 
 /**
  * @type {(string: string) => Array<PathDataItem>}
@@ -139,117 +137,118 @@ export const parsePathData = (string) => {
   /**
    * @type {Array<PathDataItem>}
    */
-  const pathData = [];
+  const pathData = []
   /**
    * @type {null | PathDataCommand}
    */
-  let command = null;
-  let args = /** @type {number[]} */ ([]);
-  let argsCount = 0;
-  let canHaveComma = false;
-  let hadComma = false;
+  let command = null
+  let args = /** @type {number[]} */ []
+  let argsCount = 0
+  let canHaveComma = false
+  let hadComma = false
   for (let i = 0; i < string.length; i += 1) {
-    const c = string.charAt(i);
+    const c = string.charAt(i)
     if (isWsp(c)) {
-      continue;
+      continue
     }
     // allow comma only between arguments
     if (canHaveComma && c === ',') {
       if (hadComma) {
-        break;
+        break
       }
-      hadComma = true;
-      continue;
+      hadComma = true
+      continue
     }
     if (isCommand(c)) {
       if (hadComma) {
-        return pathData;
+        return pathData
       }
       if (command == null) {
         // moveto should be leading command
         if (c !== 'M' && c !== 'm') {
-          return pathData;
+          return pathData
         }
       } else {
         // stop if previous command arguments are not flushed
-        if (args.length !== 0) {
-          return pathData;
+        if (args.length > 0) {
+          return pathData
         }
       }
-      command = c;
-      args = [];
-      argsCount = argsCountPerCommand[command];
-      canHaveComma = false;
+      command = c
+      args = []
+      argsCount = argsCountPerCommand[command]
+      canHaveComma = false
       // flush command without arguments
       if (argsCount === 0) {
-        pathData.push({ command, args });
+        pathData.push({ command, args })
       }
-      continue;
+      continue
     }
     // avoid parsing arguments if no command detected
     if (command == null) {
-      return pathData;
+      return pathData
     }
     // read next argument
-    let newCursor = i;
-    let number = null;
+    let newCursor = i
+    let number = null
     if (command === 'A' || command === 'a') {
-      const position = args.length;
-      if (position === 0 || position === 1) {
-        // allow only positive number without sign as first two arguments
-        if (c !== '+' && c !== '-') {
-          [newCursor, number] = readNumber(string, i);
-        }
+      const position = args.length
+      if (
+        (position === 0 || position === 1) && // allow only positive number without sign as first two arguments
+        c !== '+' &&
+        c !== '-'
+      ) {
+        ;[newCursor, number] = readNumber(string, i)
       }
       if (position === 2 || position === 5 || position === 6) {
-        [newCursor, number] = readNumber(string, i);
+        ;[newCursor, number] = readNumber(string, i)
       }
       if (position === 3 || position === 4) {
         // read flags
         if (c === '0') {
-          number = 0;
+          number = 0
         }
         if (c === '1') {
-          number = 1;
+          number = 1
         }
       }
     } else {
-      [newCursor, number] = readNumber(string, i);
+      ;[newCursor, number] = readNumber(string, i)
     }
     if (number == null) {
-      return pathData;
+      return pathData
     }
-    args.push(number);
-    canHaveComma = true;
-    hadComma = false;
-    i = newCursor;
+    args.push(number)
+    canHaveComma = true
+    hadComma = false
+    i = newCursor
     // flush arguments when necessary count is reached
     if (args.length === argsCount) {
-      pathData.push({ command, args });
+      pathData.push({ command, args })
       // subsequent moveto coordinates are threated as implicit lineto commands
       if (command === 'M') {
-        command = 'L';
+        command = 'L'
       }
       if (command === 'm') {
-        command = 'l';
+        command = 'l'
       }
-      args = [];
+      args = []
     }
   }
-  return pathData;
-};
+  return pathData
+}
 
 /**
  * @type {(number: number, precision?: number) => string}
  */
 export const stringifyNumber = (number, precision) => {
   if (precision != null) {
-    const ratio = 10 ** precision;
-    number = Math.round(number * ratio) / ratio;
+    const ratio = 10 ** precision
+    number = Math.round(number * ratio) / ratio
   }
   // remove zero whole from decimal number
-  return removeLeadingZero(number);
-};
+  return removeLeadingZero(number)
+}
 
 /**
  * Elliptical arc large-arc and sweep flags are rendered with spaces
@@ -263,32 +262,31 @@ export const stringifyNumber = (number, precision) => {
  * ) => string}
  */
 const stringifyArgs = (command, args, precision, disableSpaceAfterFlags) => {
-  let result = '';
-  let prev = '';
-  for (let i = 0; i < args.length; i += 1) {
-    const number = args[i];
-    const numberString = stringifyNumber(number, precision);
+  let result = ''
+  let prev = ''
+  for (const [i, number] of args.entries()) {
+    const numberString = stringifyNumber(number, precision)
     if (
       disableSpaceAfterFlags &&
       (command === 'A' || command === 'a') &&
       // consider combined arcs
       (i % 7 === 4 || i % 7 === 5)
     ) {
-      result += numberString;
+      result += numberString
     } else if (i === 0 || numberString.startsWith('-')) {
       // avoid space before first and negative numbers
-      result += numberString;
+      result += numberString
     } else if (prev.includes('.') && numberString.startsWith('.')) {
       // remove space before decimal with zero whole
       // only when previous number is also decimal
-      result += numberString;
+      result += numberString
     } else {
-      result += ` ${numberString}`;
+      result += ` ${numberString}`
     }
-    prev = numberString;
+    prev = numberString
   }
-  return result;
-};
+  return result
+}
 
 /**
  * @typedef {{
@@ -301,25 +299,28 @@ const stringifyArgs = (command, args, precision, disableSpaceAfterFlags) => {
 /**
  * @type {(options: StringifyPathDataOptions) => string}
  */
-export const stringifyPathData = ({ pathData, precision, disableSpaceAfterFlags }) => {
+export const stringifyPathData = ({
+  pathData,
+  precision,
+  disableSpaceAfterFlags,
+}) => {
   // combine sequence of the same commands
-  let combined = [];
-  for (let i = 0; i < pathData.length; i += 1) {
-    const { command, args } = pathData[i];
+  const combined = []
+  for (const [i, { command, args }] of pathData.entries()) {
     if (i === 0) {
-      combined.push({ command, args });
+      combined.push({ command, args })
     } else {
       /**
        * @type {PathDataItem}
        */
-      const last = combined[combined.length - 1];
+      const last = combined.at(-1)
       // match leading moveto with following lineto
       if (i === 1) {
         if (command === 'L') {
-          last.command = 'M';
+          last.command = 'M'
         }
         if (command === 'l') {
-          last.command = 'm';
+          last.command = 'm'
         }
       }
       if (
@@ -330,16 +331,16 @@ export const stringifyPathData = ({ pathData, precision, disableSpaceAfterFlags 
         (last.command === 'M' && command === 'L') ||
         (last.command === 'm' && command === 'l')
       ) {
-        last.args = [...last.args, ...args];
+        last.args = [...last.args, ...args]
       } else {
-        combined.push({ command, args });
+        combined.push({ command, args })
       }
     }
   }
-  let result = '';
+  let result = ''
   for (const { command, args } of combined) {
     result +=
-      command + stringifyArgs(command, args, precision, disableSpaceAfterFlags);
+      command + stringifyArgs(command, args, precision, disableSpaceAfterFlags)
   }
-  return result;
-};
+  return result
+}

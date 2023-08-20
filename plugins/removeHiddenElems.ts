@@ -1,13 +1,17 @@
 // @ts-nocheck
 
-import {detachNodeFromParent, querySelector, visit, visitSkip} from "../lib/xast";
+import { parsePathData } from '../lib/path'
+import { collectStylesheet, computeStyle } from '../lib/style'
+import {
+  detachNodeFromParent,
+  querySelector,
+  visit,
+  visitSkip,
+} from '../lib/xast'
 
-import { collectStylesheet, computeStyle } from '../lib/style';
-import { parsePathData } from '../lib/path';
-
-export const name = 'removeHiddenElems';
+export const name = 'removeHiddenElems'
 export const description =
-  'removes hidden elements (zero sized, with absent attributes)';
+  'removes hidden elements (zero sized, with absent attributes)'
 
 /**
  * Remove hidden elements with disabled rendering:
@@ -43,17 +47,17 @@ export const fn = (root, params) => {
     pathEmptyD = true,
     polylineEmptyPoints = true,
     polygonEmptyPoints = true,
-  } = params;
-  const stylesheet = collectStylesheet(root);
+  } = params
+  const stylesheet = collectStylesheet(root)
 
   visit(root, {
     element: {
       enter: (node, parentNode) => {
         // transparent element inside clipPath still affect clipped elements
         if (node.name === 'clipPath') {
-          return visitSkip;
+          return visitSkip
         }
-        const computedStyle = computeStyle(stylesheet, node);
+        const computedStyle = computeStyle(stylesheet, node)
         // opacity="0"
         //
         // https://www.w3.org/TR/SVG11/masking.html#ObjectAndGroupOpacityProperties
@@ -63,19 +67,19 @@ export const fn = (root, params) => {
           computedStyle.opacity.type === 'static' &&
           computedStyle.opacity.value === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
       },
     },
-  });
+  })
 
   return {
     element: {
       enter: (node, parentNode) => {
         // Removes hidden elements
         // https://www.w3schools.com/cssref/pr_class_visibility.asp
-        const computedStyle = computeStyle(stylesheet, node);
+        const computedStyle = computeStyle(stylesheet, node)
         if (
           isHidden &&
           computedStyle.visibility &&
@@ -84,8 +88,8 @@ export const fn = (root, params) => {
           // keep if any descendant enables visibility
           querySelector(node, '[visibility=visible]') == null
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // display="none"
@@ -101,8 +105,8 @@ export const fn = (root, params) => {
           // markers with display: none still rendered
           node.name !== 'marker'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Circles with zero radius
@@ -117,8 +121,8 @@ export const fn = (root, params) => {
           node.children.length === 0 &&
           node.attributes.r === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Ellipse with zero x-axis radius
@@ -133,8 +137,8 @@ export const fn = (root, params) => {
           node.children.length === 0 &&
           node.attributes.rx === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Ellipse with zero y-axis radius
@@ -149,8 +153,8 @@ export const fn = (root, params) => {
           node.children.length === 0 &&
           node.attributes.ry === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Rectangle with zero width
@@ -165,8 +169,8 @@ export const fn = (root, params) => {
           node.children.length === 0 &&
           node.attributes.width === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Rectangle with zero height
@@ -182,8 +186,8 @@ export const fn = (root, params) => {
           node.children.length === 0 &&
           node.attributes.height === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Pattern with zero width
@@ -197,8 +201,8 @@ export const fn = (root, params) => {
           node.name === 'pattern' &&
           node.attributes.width === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Pattern with zero height
@@ -212,8 +216,8 @@ export const fn = (root, params) => {
           node.name === 'pattern' &&
           node.attributes.height === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Image with zero width
@@ -227,8 +231,8 @@ export const fn = (root, params) => {
           node.name === 'image' &&
           node.attributes.width === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Image with zero height
@@ -242,8 +246,8 @@ export const fn = (root, params) => {
           node.name === 'image' &&
           node.attributes.height === '0'
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Path with empty data
@@ -253,13 +257,13 @@ export const fn = (root, params) => {
         // <path d=""/>
         if (pathEmptyD && node.name === 'path') {
           if (node.attributes.d == null) {
-            detachNodeFromParent(node, parentNode);
-            return;
+            detachNodeFromParent(node, parentNode)
+            return
           }
-          const pathData = parsePathData(node.attributes.d);
+          const pathData = parsePathData(node.attributes.d)
           if (pathData.length === 0) {
-            detachNodeFromParent(node, parentNode);
-            return;
+            detachNodeFromParent(node, parentNode)
+            return
           }
           // keep single point paths for markers
           if (
@@ -267,10 +271,10 @@ export const fn = (root, params) => {
             computedStyle['marker-start'] == null &&
             computedStyle['marker-end'] == null
           ) {
-            detachNodeFromParent(node, parentNode);
-            return;
+            detachNodeFromParent(node, parentNode)
+            return
           }
-          return;
+          return
         }
 
         // Polyline with empty points
@@ -283,8 +287,8 @@ export const fn = (root, params) => {
           node.name === 'polyline' &&
           node.attributes.points == null
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // Polygon with empty points
@@ -297,10 +301,10 @@ export const fn = (root, params) => {
           node.name === 'polygon' &&
           node.attributes.points == null
         ) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
       },
     },
-  };
-};
+  }
+}

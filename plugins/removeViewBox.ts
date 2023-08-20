@@ -1,7 +1,7 @@
-export const name = 'removeViewBox';
-export const description = 'removes viewBox attribute when possible';
+export const name = 'removeViewBox'
+export const description = 'removes viewBox attribute when possible'
 
-const viewBoxElems = ['svg', 'pattern', 'symbol'];
+const viewBoxElems = new Set(['svg', 'pattern', 'symbol'])
 
 /**
  * Remove viewBox attr which coincides with a width/height box.
@@ -22,26 +22,26 @@ export const fn = () => {
     element: {
       enter: (node, parentNode) => {
         if (
-          viewBoxElems.includes(node.name) &&
+          viewBoxElems.has(node.name) &&
           node.attributes.viewBox != null &&
           node.attributes.width != null &&
           node.attributes.height != null
         ) {
           // TODO remove width/height for such case instead
           if (node.name === 'svg' && parentNode.type !== 'root') {
-            return;
+            return
           }
-          const nums = node.attributes.viewBox.split(/[ ,]+/g);
+          const nums = node.attributes.viewBox.split(/[ ,]+/g)
           if (
             nums[0] === '0' &&
             nums[1] === '0' &&
             node.attributes.width.replace(/px$/, '') === nums[2] && // could use parseFloat too
             node.attributes.height.replace(/px$/, '') === nums[3]
           ) {
-            delete node.attributes.viewBox;
+            delete node.attributes.viewBox
           }
         }
       },
     },
-  };
-};
+  }
+}

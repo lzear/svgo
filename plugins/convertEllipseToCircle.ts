@@ -1,5 +1,5 @@
-export const name = 'convertEllipseToCircle';
-export const description = 'converts non-eccentric <ellipse>s to <circle>s';
+export const name = 'convertEllipseToCircle'
+export const description = 'converts non-eccentric <ellipse>s to <circle>s'
 
 /**
  * Converts non-eccentric <ellipse>s to <circle>s.
@@ -15,21 +15,21 @@ export const fn = () => {
     element: {
       enter: (node) => {
         if (node.name === 'ellipse') {
-          const rx = node.attributes.rx || '0';
-          const ry = node.attributes.ry || '0';
+          const rx = node.attributes.rx || '0'
+          const ry = node.attributes.ry || '0'
           if (
             rx === ry ||
             rx === 'auto' ||
             ry === 'auto' // SVG2
           ) {
-            node.name = 'circle';
-            const radius = rx === 'auto' ? ry : rx;
-            delete node.attributes.rx;
-            delete node.attributes.ry;
-            node.attributes.r = radius;
+            node.name = 'circle'
+            const radius = rx === 'auto' ? ry : rx
+            delete node.attributes.rx
+            delete node.attributes.ry
+            node.attributes.r = radius
           }
         }
       },
     },
-  };
-};
+  }
+}

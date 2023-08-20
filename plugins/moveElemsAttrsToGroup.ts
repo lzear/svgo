@@ -1,10 +1,12 @@
 // @ts-nocheck
 
-import { visit } from '../lib/xast';
-import { inheritableAttrs, pathElems } from './_collections';
+import { visit } from '../lib/xast'
 
-export const name = 'moveElemsAttrsToGroup';
-export const description = 'Move common attributes of group children to the group';
+import { inheritableAttrs, pathElems } from './_collections'
+
+export const name = 'moveElemsAttrsToGroup'
+export const description =
+  'Move common attributes of group children to the group'
 
 /**
  * Move common attributes of group children to the group
@@ -30,57 +32,57 @@ export const description = 'Move common attributes of group children to the grou
  */
 export const fn = (root) => {
   // find if any style element is present
-  let deoptimizedWithStyles = false;
+  let deoptimizedWithStyles = false
   visit(root, {
     element: {
       enter: (node) => {
         if (node.name === 'style') {
-          deoptimizedWithStyles = true;
+          deoptimizedWithStyles = true
         }
       },
     },
-  });
+  })
 
   return {
     element: {
       exit: (node) => {
         // process only groups with more than 1 children
         if (node.name !== 'g' || node.children.length <= 1) {
-          return;
+          return
         }
 
         // deoptimize the plugin when style elements are present
         // selectors may rely on id, classes or tag names
         if (deoptimizedWithStyles) {
-          return;
+          return
         }
 
         /**
          * find common attributes in group children
          * @type {Map<string, string>}
          */
-        const commonAttributes = new Map();
-        let initial = true;
-        let everyChildIsPath = true;
+        const commonAttributes = new Map()
+        let initial = true
+        let everyChildIsPath = true
         for (const child of node.children) {
           if (child.type === 'element') {
             if (pathElems.includes(child.name) === false) {
-              everyChildIsPath = false;
+              everyChildIsPath = false
             }
             if (initial) {
-              initial = false;
+              initial = false
               // collect all inheritable attributes from first child element
               for (const [name, value] of Object.entries(child.attributes)) {
                 // consider only inheritable attributes
                 if (inheritableAttrs.includes(name)) {
-                  commonAttributes.set(name, value);
+                  commonAttributes.set(name, value)
                 }
               }
             } else {
               // exclude uncommon attributes from initial list
               for (const [name, value] of commonAttributes) {
                 if (child.attributes[name] !== value) {
-                  commonAttributes.delete(name);
+                  commonAttributes.delete(name)
                 }
               }
             }
@@ -92,25 +94,24 @@ export const fn = (root) => {
           node.attributes['clip-path'] != null ||
           node.attributes.mask != null
         ) {
-          commonAttributes.delete('transform');
+          commonAttributes.delete('transform')
         }
 
         // preserve transform when all children are paths
         // so the transform could be applied to path data by other plugins
         if (everyChildIsPath) {
-          commonAttributes.delete('transform');
+          commonAttributes.delete('transform')
         }
 
         // add common children attributes to group
         for (const [name, value] of commonAttributes) {
           if (name === 'transform') {
-            if (node.attributes.transform != null) {
-              node.attributes.transform = `${node.attributes.transform} ${value}`;
-            } else {
-              node.attributes.transform = value;
-            }
+            node.attributes.transform =
+              node.attributes.transform == null
+                ? value
+                : `${node.attributes.transform} ${value}`
           } else {
-            node.attributes[name] = value;
+            node.attributes[name] = value
           }
         }
 
@@ -118,11 +119,11 @@ export const fn = (root) => {
         for (const child of node.children) {
           if (child.type === 'element') {
             for (const [name] of commonAttributes) {
-              delete child.attributes[name];
+              delete child.attributes[name]
             }
           }
         }
       },
     },
-  };
-};
+  }
+}

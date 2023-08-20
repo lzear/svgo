@@ -89,11 +89,11 @@ export const elemsGroups = {
     'feTile',
     'feTurbulence',
   ],
-};
+}
 
-export const textElems = elemsGroups.textContent.concat('title');
+export const textElems = [...elemsGroups.textContent, 'title']
 
-export const pathElems = ['path', 'glyph', 'missing-glyph'];
+export const pathElems = ['path', 'glyph', 'missing-glyph']
 
 // https://www.w3.org/TR/SVG11/intro.html#Definitions
 /**
@@ -233,7 +233,7 @@ export const attrsGroups = {
     'exponent',
     'offset',
   ],
-};
+}
 
 /**
  * @type {Record<string, Record<string, string>>}
@@ -300,7 +300,7 @@ export const attrsGroupsDefaults = {
     exponent: '1',
     offset: '0',
   },
-};
+}
 
 // https://www.w3.org/TR/SVG11/eltindex.html
 /**
@@ -1859,7 +1859,7 @@ export const elems = {
     attrsGroups: ['core'],
     attrs: ['u1', 'g1', 'u2', 'g2', 'k'],
   },
-};
+}
 
 // https://wiki.inkscape.org/wiki/index.php/Inkscape-specific_XML_attributes
 export const editorNamespaces = [
@@ -1885,7 +1885,7 @@ export const editorNamespaces = [
   'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
   'http://www.serif.com/',
   'http://www.vector.evaxdesign.sk',
-];
+]
 
 // https://www.w3.org/TR/SVG11/linking.html#processingIRI
 export const referencesProps = [
@@ -1899,7 +1899,7 @@ export const referencesProps = [
   'mask',
   'stroke',
   'style',
-];
+]
 
 // https://www.w3.org/TR/SVG11/propidx.html
 export const inheritableAttrs = [
@@ -1948,7 +1948,7 @@ export const inheritableAttrs = [
   'visibility',
   'word-spacing',
   'writing-mode',
-];
+]
 
 export const presentationNonInheritableGroupAttrs = [
   'display',
@@ -1959,7 +1959,7 @@ export const presentationNonInheritableGroupAttrs = [
   'text-decoration',
   'transform',
   'unicode-bidi',
-];
+]
 
 /**
  * https://www.w3.org/TR/SVG11/single-page.html#types-ColorKeywords
@@ -2115,7 +2115,7 @@ export const colorsNames = {
   whitesmoke: '#f5f5f5',
   yellow: '#ff0',
   yellowgreen: '#9acd32',
-};
+}
 
 /**
  * @type {Record<string, string>}
@@ -2153,7 +2153,7 @@ export const colorsShortNames = {
   '#ff6347': 'tomato',
   '#ee82ee': 'violet',
   '#f5deb3': 'wheat',
-};
+}
 
 // https://www.w3.org/TR/SVG11/single-page.html#types-DataTypeColor
 export const colorsProps = [
@@ -2163,4 +2163,4 @@ export const colorsProps = [
   'stop-color',
   'flood-color',
   'lighting-color',
-];
+]

@@ -1,7 +1,7 @@
-import { detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeDoctype';
-export const description = 'removes doctype declaration';
+export const name = 'removeDoctype'
+export const description = 'removes doctype declaration'
 
 /**
  * Remove DOCTYPE declaration.
@@ -31,8 +31,8 @@ export const fn = () => {
   return {
     doctype: {
       enter: (node, parentNode) => {
-        detachNodeFromParent(node, parentNode);
+        detachNodeFromParent(node, parentNode)
       },
     },
-  };
-};
+  }
+}

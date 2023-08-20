@@ -1,7 +1,7 @@
-import { detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeEmptyText';
-export const description = 'removes empty <text> elements';
+export const name = 'removeEmptyText'
+export const description = 'removes empty <text> elements'
 
 /**
  * Remove empty Text elements.
@@ -23,17 +23,17 @@ export const description = 'removes empty <text> elements';
  * @type {import('./plugins-types').Plugin<'removeEmptyText'>}
  */
 export const fn = (root, params) => {
-  const { text = true, tspan = true, tref = true } = params;
+  const { text = true, tspan = true, tref = true } = params
   return {
     element: {
       enter: (node, parentNode) => {
         // Remove empty text element
         if (text && node.name === 'text' && node.children.length === 0) {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
         // Remove empty tspan element
         if (tspan && node.name === 'tspan' && node.children.length === 0) {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
         // Remove tref with empty xlink:href attribute
         if (
@@ -41,9 +41,9 @@ export const fn = (root, params) => {
           node.name === 'tref' &&
           node.attributes['xlink:href'] == null
         ) {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
       },
     },
-  };
-};
+  }
+}

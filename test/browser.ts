@@ -1,7 +1,8 @@
-import fs from 'fs';
-import http from 'http';
-import assert from 'assert';
-import { chromium } from 'playwright';
+import assert from 'node:assert'
+import fs from 'node:fs'
+import http from 'node:http'
+
+import { chromium } from 'playwright'
 
 const fixture = `<svg xmlns="http://www.w3.org/2000/svg">
     <g attr1="val1">
@@ -10,7 +11,7 @@ const fixture = `<svg xmlns="http://www.w3.org/2000/svg">
         </g>
         <path d="..."/>
     </g>
-</svg>`;
+</svg>`
 
 const expected = `<svg xmlns="http://www.w3.org/2000/svg">
   <g attr1="val1">
@@ -20,7 +21,7 @@ const expected = `<svg xmlns="http://www.w3.org/2000/svg">
     <path d="..."/>
   </g>
 </svg>
-`;
+`
 
 const content = `
 <script type="module">
@@ -31,38 +32,38 @@ const result = optimize(${JSON.stringify(fixture)}, {
 });
 globalThis.result = result.data;
 </script>
-`;
+`
 
 const server = http.createServer((req, res) => {
   if (req.url === '/') {
-    res.setHeader('Content-Type', 'text/html');
-    res.end(content);
+    res.setHeader('Content-Type', 'text/html')
+    res.end(content)
   }
   if (req.url === '/svgo.browser') {
-    res.setHeader('Content-Type', 'application/javascript');
-    res.end(fs.readFileSync('./dist/svgo.browser'));
+    res.setHeader('Content-Type', 'application/javascript')
+    res.end(fs.readFileSync('./dist/svgo.browser'))
   }
-  res.end();
-});
+  res.end()
+})
 
 const runTest = async () => {
-  const browser = await chromium.launch();
-  const context = await browser.newContext();
-  const page = await context.newPage();
-  await page.goto('http://localhost:5000');
-  const actual = await page.evaluate(() => globalThis.result);
-  assert.equal(actual, expected);
-  await browser.close();
-};
+  const browser = await chromium.launch()
+  const context = await browser.newContext()
+  const page = await context.newPage()
+  await page.goto('http://localhost:5000')
+  const actual = await page.evaluate(() => globalThis.result)
+  assert.equal(actual, expected)
+  await browser.close()
+}
 
 server.listen(5000, async () => {
   try {
-    await runTest();
-    console.info('Tested successfully');
-    server.close();
+    await runTest()
+    console.info('Tested successfully')
+    server.close()
   } catch (error) {
-    server.close();
-    console.error(error.toString());
-    process.exit(1);
+    server.close()
+    console.error(error.toString())
+    process.exit(1)
   }
-});
+})

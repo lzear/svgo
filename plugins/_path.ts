@@ -3,12 +3,12 @@
  * @typedef {import('../lib/types').PathDataItem} PathDataItem
  */
 
-import { parsePathData, stringifyPathData } from '../lib/path';
+import { parsePathData, stringifyPathData } from '../lib/path'
 
 /**
  * @type {[number, number]}
  */
-var prevCtrlPoint;
+let prevCtrlPoint
 
 /**
  * Convert path string to JS representation.
@@ -17,23 +17,23 @@ var prevCtrlPoint;
  */
 export const path2js = (path) => {
   // @ts-ignore legacy
-  if (path.pathJS) return path.pathJS;
+  if (path.pathJS) return path.pathJS
   /**
    * @type {Array<PathDataItem>}
    */
-  const pathData = []; // JS representation of the path data
-  const newPathData = parsePathData(path.attributes.d);
+  const pathData = [] // JS representation of the path data
+  const newPathData = parsePathData(path.attributes.d)
   for (const { command, args } of newPathData) {
-    pathData.push({ command, args });
+    pathData.push({ command, args })
   }
   // First moveto is actually absolute. Subsequent coordinates were separated above.
-  if (pathData.length && pathData[0].command == 'm') {
-    pathData[0].command = 'M';
+  if (pathData.length > 0 && pathData[0].command == 'm') {
+    pathData[0].command = 'M'
   }
   // @ts-ignore legacy
-  path.pathJS = pathData;
-  return pathData;
-};
+  path.pathJS = pathData
+  return pathData
+}
 
 /**
  * Convert relative Path data to absolute.
@@ -45,129 +45,129 @@ const convertRelativeToAbsolute = (data) => {
   /**
    * @type {Array<PathDataItem>}
    */
-  const newData = [];
-  let start = [0, 0];
-  let cursor = [0, 0];
+  const newData = []
+  const start = [0, 0]
+  const cursor = [0, 0]
 
   for (let { command, args } of data) {
-    args = args.slice();
+    args = [...args]
 
     // moveto (x y)
     if (command === 'm') {
-      args[0] += cursor[0];
-      args[1] += cursor[1];
-      command = 'M';
+      args[0] += cursor[0]
+      args[1] += cursor[1]
+      command = 'M'
     }
     if (command === 'M') {
-      cursor[0] = args[0];
-      cursor[1] = args[1];
-      start[0] = cursor[0];
-      start[1] = cursor[1];
+      cursor[0] = args[0]
+      cursor[1] = args[1]
+      start[0] = cursor[0]
+      start[1] = cursor[1]
     }
 
     // horizontal lineto (x)
     if (command === 'h') {
-      args[0] += cursor[0];
-      command = 'H';
+      args[0] += cursor[0]
+      command = 'H'
     }
     if (command === 'H') {
-      cursor[0] = args[0];
+      cursor[0] = args[0]
     }
 
     // vertical lineto (y)
     if (command === 'v') {
-      args[0] += cursor[1];
-      command = 'V';
+      args[0] += cursor[1]
+      command = 'V'
     }
     if (command === 'V') {
-      cursor[1] = args[0];
+      cursor[1] = args[0]
     }
 
     // lineto (x y)
     if (command === 'l') {
-      args[0] += cursor[0];
-      args[1] += cursor[1];
-      command = 'L';
+      args[0] += cursor[0]
+      args[1] += cursor[1]
+      command = 'L'
     }
     if (command === 'L') {
-      cursor[0] = args[0];
-      cursor[1] = args[1];
+      cursor[0] = args[0]
+      cursor[1] = args[1]
     }
 
     // curveto (x1 y1 x2 y2 x y)
     if (command === 'c') {
-      args[0] += cursor[0];
-      args[1] += cursor[1];
-      args[2] += cursor[0];
-      args[3] += cursor[1];
-      args[4] += cursor[0];
-      args[5] += cursor[1];
-      command = 'C';
+      args[0] += cursor[0]
+      args[1] += cursor[1]
+      args[2] += cursor[0]
+      args[3] += cursor[1]
+      args[4] += cursor[0]
+      args[5] += cursor[1]
+      command = 'C'
     }
     if (command === 'C') {
-      cursor[0] = args[4];
-      cursor[1] = args[5];
+      cursor[0] = args[4]
+      cursor[1] = args[5]
     }
 
     // smooth curveto (x2 y2 x y)
     if (command === 's') {
-      args[0] += cursor[0];
-      args[1] += cursor[1];
-      args[2] += cursor[0];
-      args[3] += cursor[1];
-      command = 'S';
+      args[0] += cursor[0]
+      args[1] += cursor[1]
+      args[2] += cursor[0]
+      args[3] += cursor[1]
+      command = 'S'
     }
     if (command === 'S') {
-      cursor[0] = args[2];
-      cursor[1] = args[3];
+      cursor[0] = args[2]
+      cursor[1] = args[3]
     }
 
     // quadratic Bézier curveto (x1 y1 x y)
     if (command === 'q') {
-      args[0] += cursor[0];
-      args[1] += cursor[1];
-      args[2] += cursor[0];
-      args[3] += cursor[1];
-      command = 'Q';
+      args[0] += cursor[0]
+      args[1] += cursor[1]
+      args[2] += cursor[0]
+      args[3] += cursor[1]
+      command = 'Q'
     }
     if (command === 'Q') {
-      cursor[0] = args[2];
-      cursor[1] = args[3];
+      cursor[0] = args[2]
+      cursor[1] = args[3]
     }
 
     // smooth quadratic Bézier curveto (x y)
     if (command === 't') {
-      args[0] += cursor[0];
-      args[1] += cursor[1];
-      command = 'T';
+      args[0] += cursor[0]
+      args[1] += cursor[1]
+      command = 'T'
     }
     if (command === 'T') {
-      cursor[0] = args[0];
-      cursor[1] = args[1];
+      cursor[0] = args[0]
+      cursor[1] = args[1]
     }
 
     // elliptical arc (rx ry x-axis-rotation large-arc-flag sweep-flag x y)
     if (command === 'a') {
-      args[5] += cursor[0];
-      args[6] += cursor[1];
-      command = 'A';
+      args[5] += cursor[0]
+      args[6] += cursor[1]
+      command = 'A'
     }
     if (command === 'A') {
-      cursor[0] = args[5];
-      cursor[1] = args[6];
+      cursor[0] = args[5]
+      cursor[1] = args[6]
     }
 
     // closepath
     if (command === 'z' || command === 'Z') {
-      cursor[0] = start[0];
-      cursor[1] = start[1];
-      command = 'z';
+      cursor[0] = start[0]
+      cursor[1] = start[1]
+      command = 'z'
     }
 
-    newData.push({ command, args });
+    newData.push({ command, args })
   }
-  return newData;
-};
+  return newData
+}
 
 /**
  * @typedef {{ floatPrecision?: number, noSpaceAfterFlags?: boolean }} Js2PathParams
@@ -180,40 +180,37 @@ const convertRelativeToAbsolute = (data) => {
  */
 export const js2path = function (path, data, params) {
   // @ts-ignore legacy
-  path.pathJS = data;
+  path.pathJS = data
 
-  const pathData = [];
+  const pathData = []
   for (const item of data) {
     // remove moveto commands which are followed by moveto commands
-    if (
-      pathData.length !== 0 &&
-      (item.command === 'M' || item.command === 'm')
-    ) {
-      const last = pathData[pathData.length - 1];
+    if (pathData.length > 0 && (item.command === 'M' || item.command === 'm')) {
+      const last = pathData.at(-1)
       if (last.command === 'M' || last.command === 'm') {
-        pathData.pop();
+        pathData.pop()
       }
     }
     pathData.push({
       command: item.command,
       args: item.args,
-    });
+    })
   }
 
   path.attributes.d = stringifyPathData({
     pathData,
     precision: params.floatPrecision,
     disableSpaceAfterFlags: params.noSpaceAfterFlags,
-  });
-};
+  })
+}
 
 /**
  * @type {(dest: Array<number>, source: Array<number>) => Array<number>}
  */
 function set(dest, source) {
-  dest[0] = source[source.length - 2];
-  dest[1] = source[source.length - 1];
-  return dest;
+  dest[0] = source.at(-2)
+  dest[1] = source.at(-1)
+  return dest
 }
 
 /**
@@ -225,8 +222,8 @@ function set(dest, source) {
  */
 export const intersects = function (path1, path2) {
   // Collect points of every subpath.
-  const points1 = gatherPoints(convertRelativeToAbsolute(path1));
-  const points2 = gatherPoints(convertRelativeToAbsolute(path2));
+  const points1 = gatherPoints(convertRelativeToAbsolute(path1))
+  const points2 = gatherPoints(convertRelativeToAbsolute(path2))
 
   // Axis-aligned bounding box check.
   if (
@@ -241,51 +238,51 @@ export const intersects = function (path1, path2) {
           set2.list[set2.maxX][0] <= set1.list[set1.minX][0] ||
           set1.list[set1.maxY][1] <= set2.list[set2.minY][1] ||
           set2.list[set2.maxY][1] <= set1.list[set1.minY][1]
-        );
-      });
+        )
+      })
     })
   )
-    return false;
+    return false
 
   // Get a convex hull from points of each subpath. Has the most complexity O(n·log n).
-  const hullNest1 = points1.list.map(convexHull);
-  const hullNest2 = points2.list.map(convexHull);
+  const hullNest1 = points1.list.map(convexHull)
+  const hullNest2 = points2.list.map(convexHull)
 
   // Check intersection of every subpath of the first path with every subpath of the second.
   return hullNest1.some(function (hull1) {
-    if (hull1.list.length < 3) return false;
+    if (hull1.list.length < 3) return false
 
     return hullNest2.some(function (hull2) {
-      if (hull2.list.length < 3) return false;
+      if (hull2.list.length < 3) return false
 
-      var simplex = [getSupport(hull1, hull2, [1, 0])], // create the initial simplex
-        direction = minus(simplex[0]); // set the direction to point towards the origin
+      const simplex = [getSupport(hull1, hull2, [1, 0])], // create the initial simplex
+        direction = minus(simplex[0]) // set the direction to point towards the origin
 
-      var iterations = 1e4; // infinite loop protection, 10 000 iterations is more than enough
+      let iterations = 1e4 // infinite loop protection, 10 000 iterations is more than enough
       // eslint-disable-next-line no-constant-condition
       while (true) {
         // eslint-disable-next-line no-constant-condition
         if (iterations-- == 0) {
           console.error(
-            'Error: infinite loop while processing mergePaths plugin.'
-          );
-          return true; // true is the safe value that means “do nothing with paths”
+            'Error: infinite loop while processing mergePaths plugin.',
+          )
+          return true // true is the safe value that means “do nothing with paths”
         }
         // add a new point
-        simplex.push(getSupport(hull1, hull2, direction));
+        simplex.push(getSupport(hull1, hull2, direction))
         // see if the new point was on the correct side of the origin
-        if (dot(direction, simplex[simplex.length - 1]) <= 0) return false;
+        if (dot(direction, simplex.at(-1)) <= 0) return false
         // process the simplex
-        if (processSimplex(simplex, direction)) return true;
+        if (processSimplex(simplex, direction)) return true
       }
-    });
-  });
+    })
+  })
 
   /**
    * @type {(a: Point, b: Point, direction: Array<number>) => Array<number>}
    */
   function getSupport(a, b, direction) {
-    return sub(supportPoint(a, direction), supportPoint(b, minus(direction)));
+    return sub(supportPoint(a, direction), supportPoint(b, minus(direction)))
   }
 
   // Computes farthest polygon point in particular direction.
@@ -295,7 +292,7 @@ export const intersects = function (path1, path2) {
    * @type {(polygon: Point, direction: Array<number>) => Array<number>}
    */
   function supportPoint(polygon, direction) {
-    var index =
+    let index =
         direction[1] >= 0
           ? direction[0] < 0
             ? polygon.maxY
@@ -303,15 +300,15 @@ export const intersects = function (path1, path2) {
           : direction[0] < 0
           ? polygon.minX
           : polygon.minY,
-      max = -Infinity,
-      value;
+      max = Number.NEGATIVE_INFINITY,
+      value
     while ((value = dot(polygon.list[index], direction)) > max) {
-      max = value;
-      index = ++index % polygon.list.length;
+      max = value
+      index = ++index % polygon.list.length
     }
-    return polygon.list[(index || polygon.list.length) - 1];
+    return polygon.list[(index || polygon.list.length) - 1]
   }
-};
+}
 
 /**
  * @type {(simplex: Array<Array<number>>, direction: Array<number>) => boolean}
@@ -320,83 +317,83 @@ function processSimplex(simplex, direction) {
   // we only need to handle to 1-simplex and 2-simplex
   if (simplex.length == 2) {
     // 1-simplex
-    let a = simplex[1],
+    const a = simplex[1],
       b = simplex[0],
       AO = minus(simplex[1]),
-      AB = sub(b, a);
+      AB = sub(b, a)
     // AO is in the same direction as AB
     if (dot(AO, AB) > 0) {
       // get the vector perpendicular to AB facing O
-      set(direction, orth(AB, a));
+      set(direction, orth(AB, a))
     } else {
-      set(direction, AO);
+      set(direction, AO)
       // only A remains in the simplex
-      simplex.shift();
+      simplex.shift()
     }
   } else {
     // 2-simplex
-    let a = simplex[2], // [a, b, c] = simplex
+    const a = simplex[2], // [a, b, c] = simplex
       b = simplex[1],
       c = simplex[0],
       AB = sub(b, a),
       AC = sub(c, a),
       AO = minus(a),
       ACB = orth(AB, AC), // the vector perpendicular to AB facing away from C
-      ABC = orth(AC, AB); // the vector perpendicular to AC facing away from B
+      ABC = orth(AC, AB) // the vector perpendicular to AC facing away from B
 
     if (dot(ACB, AO) > 0) {
       if (dot(AB, AO) > 0) {
         // region 4
-        set(direction, ACB);
-        simplex.shift(); // simplex = [b, a]
+        set(direction, ACB)
+        simplex.shift() // simplex = [b, a]
       } else {
         // region 5
-        set(direction, AO);
-        simplex.splice(0, 2); // simplex = [a]
+        set(direction, AO)
+        simplex.splice(0, 2) // simplex = [a]
       }
     } else if (dot(ABC, AO) > 0) {
       if (dot(AC, AO) > 0) {
         // region 6
-        set(direction, ABC);
-        simplex.splice(1, 1); // simplex = [c, a]
+        set(direction, ABC)
+        simplex.splice(1, 1) // simplex = [c, a]
       } else {
         // region 5 (again)
-        set(direction, AO);
-        simplex.splice(0, 2); // simplex = [a]
+        set(direction, AO)
+        simplex.splice(0, 2) // simplex = [a]
       }
     } // region 7
-    else return true;
+    else return true
   }
-  return false;
+  return false
 }
 
 /**
  * @type {(v: Array<number>) => Array<number>}
  */
 function minus(v) {
-  return [-v[0], -v[1]];
+  return [-v[0], -v[1]]
 }
 
 /**
  * @type {(v1: Array<number>, v2: Array<number>) => Array<number>}
  */
 function sub(v1, v2) {
-  return [v1[0] - v2[0], v1[1] - v2[1]];
+  return [v1[0] - v2[0], v1[1] - v2[1]]
 }
 
 /**
  * @type {(v1: Array<number>, v2: Array<number>) => number}
  */
 function dot(v1, v2) {
-  return v1[0] * v2[0] + v1[1] * v2[1];
+  return v1[0] * v2[0] + v1[1] * v2[1]
 }
 
 /**
  * @type {(v1: Array<number>, v2: Array<number>) => Array<number>}
  */
 function orth(v, from) {
-  var o = [-v[1], v[0]];
-  return dot(o, minus(from)) < 0 ? minus(o) : o;
+  const o = [-v[1], v[0]]
+  return dot(o, minus(from)) < 0 ? minus(o) : o
 }
 
 /**
@@ -426,82 +423,81 @@ function gatherPoints(pathData) {
   /**
    * @type {Points}
    */
-  const points = { list: [], minX: 0, minY: 0, maxX: 0, maxY: 0 };
+  const points = { list: [], minX: 0, minY: 0, maxX: 0, maxY: 0 }
 
   // Writes data about the extreme points on each axle
   /**
    * @type {(path: Point, point: Array<number>) => void}
    */
   const addPoint = (path, point) => {
-    if (!path.list.length || point[1] > path.list[path.maxY][1]) {
-      path.maxY = path.list.length;
-      points.maxY = points.list.length
-        ? Math.max(point[1], points.maxY)
-        : point[1];
+    if (path.list.length === 0 || point[1] > path.list[path.maxY][1]) {
+      path.maxY = path.list.length
+      points.maxY =
+        points.list.length > 0 ? Math.max(point[1], points.maxY) : point[1]
     }
-    if (!path.list.length || point[0] > path.list[path.maxX][0]) {
-      path.maxX = path.list.length;
-      points.maxX = points.list.length
-        ? Math.max(point[0], points.maxX)
-        : point[0];
+    if (path.list.length === 0 || point[0] > path.list[path.maxX][0]) {
+      path.maxX = path.list.length
+      points.maxX =
+        points.list.length > 0 ? Math.max(point[0], points.maxX) : point[0]
     }
-    if (!path.list.length || point[1] < path.list[path.minY][1]) {
-      path.minY = path.list.length;
-      points.minY = points.list.length
-        ? Math.min(point[1], points.minY)
-        : point[1];
+    if (path.list.length === 0 || point[1] < path.list[path.minY][1]) {
+      path.minY = path.list.length
+      points.minY =
+        points.list.length > 0 ? Math.min(point[1], points.minY) : point[1]
     }
-    if (!path.list.length || point[0] < path.list[path.minX][0]) {
-      path.minX = path.list.length;
-      points.minX = points.list.length
-        ? Math.min(point[0], points.minX)
-        : point[0];
+    if (path.list.length === 0 || point[0] < path.list[path.minX][0]) {
+      path.minX = path.list.length
+      points.minX =
+        points.list.length > 0 ? Math.min(point[0], points.minX) : point[0]
     }
-    path.list.push(point);
-  };
+    path.list.push(point)
+  }
 
   for (let i = 0; i < pathData.length; i += 1) {
-    const pathDataItem = pathData[i];
+    const pathDataItem = pathData[i]
     let subPath =
       points.list.length === 0
         ? { list: [], minX: 0, minY: 0, maxX: 0, maxY: 0 }
-        : points.list[points.list.length - 1];
-    let prev = i === 0 ? null : pathData[i - 1];
-    let basePoint =
-      subPath.list.length === 0 ? null : subPath.list[subPath.list.length - 1];
-    let data = pathDataItem.args;
-    let ctrlPoint = basePoint;
+        : points.list.at(-1)
+    const prev = i === 0 ? null : pathData[i - 1]
+    let basePoint = subPath.list.length === 0 ? null : subPath.list.at(-1)
+    const data = pathDataItem.args
+    let ctrlPoint = basePoint
 
     /**
      * @type {(n: number, i: number) => number}
      * TODO fix null hack
      */
-    const toAbsolute = (n, i) => n + (basePoint == null ? 0 : basePoint[i % 2]);
+    const toAbsolute = (n, i) => n + (basePoint == null ? 0 : basePoint[i % 2])
 
     switch (pathDataItem.command) {
-      case 'M':
-        subPath = { list: [], minX: 0, minY: 0, maxX: 0, maxY: 0 };
-        points.list.push(subPath);
-        break;
+      case 'M': {
+        subPath = { list: [], minX: 0, minY: 0, maxX: 0, maxY: 0 }
+        points.list.push(subPath)
+        break
+      }
 
-      case 'H':
+      case 'H': {
         if (basePoint != null) {
-          addPoint(subPath, [data[0], basePoint[1]]);
+          addPoint(subPath, [data[0], basePoint[1]])
         }
-        break;
+        break
+      }
 
-      case 'V':
+      case 'V': {
         if (basePoint != null) {
-          addPoint(subPath, [basePoint[0], data[0]]);
+          addPoint(subPath, [basePoint[0], data[0]])
         }
-        break;
+        break
+      }
 
-      case 'Q':
-        addPoint(subPath, data.slice(0, 2));
-        prevCtrlPoint = [data[2] - data[0], data[3] - data[1]]; // Save control point for shorthand
-        break;
+      case 'Q': {
+        addPoint(subPath, data.slice(0, 2))
+        prevCtrlPoint = [data[2] - data[0], data[3] - data[1]] // Save control point for shorthand
+        break
+      }
 
-      case 'T':
+      case 'T': {
         if (
           basePoint != null &&
           prev != null &&
@@ -510,32 +506,34 @@ function gatherPoints(pathData) {
           ctrlPoint = [
             basePoint[0] + prevCtrlPoint[0],
             basePoint[1] + prevCtrlPoint[1],
-          ];
-          addPoint(subPath, ctrlPoint);
-          prevCtrlPoint = [data[0] - ctrlPoint[0], data[1] - ctrlPoint[1]];
+          ]
+          addPoint(subPath, ctrlPoint)
+          prevCtrlPoint = [data[0] - ctrlPoint[0], data[1] - ctrlPoint[1]]
         }
-        break;
+        break
+      }
 
-      case 'C':
+      case 'C': {
         if (basePoint != null) {
           // Approximate quibic Bezier curve with middle points between control points
           addPoint(subPath, [
             0.5 * (basePoint[0] + data[0]),
             0.5 * (basePoint[1] + data[1]),
-          ]);
+          ])
         }
         addPoint(subPath, [
           0.5 * (data[0] + data[2]),
           0.5 * (data[1] + data[3]),
-        ]);
+        ])
         addPoint(subPath, [
           0.5 * (data[2] + data[4]),
           0.5 * (data[3] + data[5]),
-        ]);
-        prevCtrlPoint = [data[4] - data[2], data[5] - data[3]]; // Save control point for shorthand
-        break;
+        ])
+        prevCtrlPoint = [data[4] - data[2], data[5] - data[3]] // Save control point for shorthand
+        break
+      }
 
-      case 'S':
+      case 'S': {
         if (
           basePoint != null &&
           prev != null &&
@@ -544,60 +542,63 @@ function gatherPoints(pathData) {
           addPoint(subPath, [
             basePoint[0] + 0.5 * prevCtrlPoint[0],
             basePoint[1] + 0.5 * prevCtrlPoint[1],
-          ]);
+          ])
           ctrlPoint = [
             basePoint[0] + prevCtrlPoint[0],
             basePoint[1] + prevCtrlPoint[1],
-          ];
+          ]
         }
         if (ctrlPoint != null) {
           addPoint(subPath, [
             0.5 * (ctrlPoint[0] + data[0]),
             0.5 * (ctrlPoint[1] + data[1]),
-          ]);
+          ])
         }
         addPoint(subPath, [
           0.5 * (data[0] + data[2]),
           0.5 * (data[1] + data[3]),
-        ]);
-        prevCtrlPoint = [data[2] - data[0], data[3] - data[1]];
-        break;
+        ])
+        prevCtrlPoint = [data[2] - data[0], data[3] - data[1]]
+        break
+      }
 
-      case 'A':
+      case 'A': {
         if (basePoint != null) {
           // Convert the arc to bezier curves and use the same approximation
           // @ts-ignore no idea what's going on here
-          var curves = a2c.apply(0, basePoint.concat(data));
+          const curves = a2c.apply(0, basePoint.concat(data))
           for (
             var cData;
-            (cData = curves.splice(0, 6).map(toAbsolute)).length;
+            (cData = curves.splice(0, 6).map(toAbsolute)).length > 0;
 
           ) {
             if (basePoint != null) {
               addPoint(subPath, [
                 0.5 * (basePoint[0] + cData[0]),
                 0.5 * (basePoint[1] + cData[1]),
-              ]);
+              ])
             }
             addPoint(subPath, [
               0.5 * (cData[0] + cData[2]),
               0.5 * (cData[1] + cData[3]),
-            ]);
+            ])
             addPoint(subPath, [
               0.5 * (cData[2] + cData[4]),
               0.5 * (cData[3] + cData[5]),
-            ]);
-            if (curves.length) addPoint(subPath, (basePoint = cData.slice(-2)));
+            ])
+            if (curves.length > 0)
+              addPoint(subPath, (basePoint = cData.slice(-2)))
           }
         }
-        break;
+        break
+      }
     }
 
     // Save final command coordinates
-    if (data.length >= 2) addPoint(subPath, data.slice(-2));
+    if (data.length >= 2) addPoint(subPath, data.slice(-2))
   }
 
-  return points;
+  return points
 }
 
 /**
@@ -608,50 +609,48 @@ function gatherPoints(pathData) {
  */
 function convexHull(points) {
   points.list.sort(function (a, b) {
-    return a[0] == b[0] ? a[1] - b[1] : a[0] - b[0];
-  });
+    return a[0] == b[0] ? a[1] - b[1] : a[0] - b[0]
+  })
 
-  var lower = [],
+  let lower = [],
     minY = 0,
-    bottom = 0;
+    bottom = 0
   for (let i = 0; i < points.list.length; i++) {
     while (
       lower.length >= 2 &&
-      cross(lower[lower.length - 2], lower[lower.length - 1], points.list[i]) <=
-        0
+      cross(lower.at(-2), lower.at(-1), points.list[i]) <= 0
     ) {
-      lower.pop();
+      lower.pop()
     }
     if (points.list[i][1] < points.list[minY][1]) {
-      minY = i;
-      bottom = lower.length;
+      minY = i
+      bottom = lower.length
     }
-    lower.push(points.list[i]);
+    lower.push(points.list[i])
   }
 
-  var upper = [],
+  let upper = [],
     maxY = points.list.length - 1,
-    top = 0;
+    top = 0
   for (let i = points.list.length; i--; ) {
     while (
       upper.length >= 2 &&
-      cross(upper[upper.length - 2], upper[upper.length - 1], points.list[i]) <=
-        0
+      cross(upper.at(-2), upper.at(-1), points.list[i]) <= 0
     ) {
-      upper.pop();
+      upper.pop()
     }
     if (points.list[i][1] > points.list[maxY][1]) {
-      maxY = i;
-      top = upper.length;
+      maxY = i
+      top = upper.length
     }
-    upper.push(points.list[i]);
+    upper.push(points.list[i])
   }
 
   // last points are equal to starting points of the other part
-  upper.pop();
-  lower.pop();
+  upper.pop()
+  lower.pop()
 
-  const hullList = lower.concat(upper);
+  const hullList = [...lower, ...upper]
 
   /**
    * @type {Point}
@@ -662,16 +661,16 @@ function convexHull(points) {
     maxX: lower.length,
     minY: bottom,
     maxY: (lower.length + top) % hullList.length,
-  };
+  }
 
-  return hull;
+  return hull
 }
 
 /**
  * @type {(o: Array<number>, a: Array<number>, b: Array<number>) => number}
  */
 function cross(o, a, b) {
-  return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
 }
 
 /**
@@ -701,88 +700,88 @@ const a2c = (
   sweep_flag,
   x2,
   y2,
-  recursive
+  recursive,
 ) => {
   // for more information of where this Math came from visit:
   // https://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
-  const _120 = (Math.PI * 120) / 180;
-  const rad = (Math.PI / 180) * (+angle || 0);
+  const _120 = (Math.PI * 120) / 180
+  const rad = (Math.PI / 180) * (+angle || 0)
   /**
    * @type {Array<number>}
    */
-  let res = [];
+  let res = []
   /**
    * @type {(x: number, y: number, rad: number) => number}
    */
   const rotateX = (x, y, rad) => {
-    return x * Math.cos(rad) - y * Math.sin(rad);
-  };
+    return x * Math.cos(rad) - y * Math.sin(rad)
+  }
   /**
    * @type {(x: number, y: number, rad: number) => number}
    */
   const rotateY = (x, y, rad) => {
-    return x * Math.sin(rad) + y * Math.cos(rad);
-  };
-  if (!recursive) {
-    x1 = rotateX(x1, y1, -rad);
-    y1 = rotateY(x1, y1, -rad);
-    x2 = rotateX(x2, y2, -rad);
-    y2 = rotateY(x2, y2, -rad);
-    var x = (x1 - x2) / 2,
-      y = (y1 - y2) / 2;
-    var h = (x * x) / (rx * rx) + (y * y) / (ry * ry);
+    return x * Math.sin(rad) + y * Math.cos(rad)
+  }
+  if (recursive) {
+    f1 = recursive[0]
+    f2 = recursive[1]
+    cx = recursive[2]
+    cy = recursive[3]
+  } else {
+    x1 = rotateX(x1, y1, -rad)
+    y1 = rotateY(x1, y1, -rad)
+    x2 = rotateX(x2, y2, -rad)
+    y2 = rotateY(x2, y2, -rad)
+    const x = (x1 - x2) / 2,
+      y = (y1 - y2) / 2
+    let h = (x * x) / (rx * rx) + (y * y) / (ry * ry)
     if (h > 1) {
-      h = Math.sqrt(h);
-      rx = h * rx;
-      ry = h * ry;
+      h = Math.sqrt(h)
+      rx = h * rx
+      ry = h * ry
     }
-    var rx2 = rx * rx;
-    var ry2 = ry * ry;
-    var k =
+    const rx2 = rx * rx
+    const ry2 = ry * ry
+    const k =
       (large_arc_flag == sweep_flag ? -1 : 1) *
       Math.sqrt(
         Math.abs(
-          (rx2 * ry2 - rx2 * y * y - ry2 * x * x) / (rx2 * y * y + ry2 * x * x)
-        )
-      );
-    var cx = (k * rx * y) / ry + (x1 + x2) / 2;
-    var cy = (k * -ry * x) / rx + (y1 + y2) / 2;
-    var f1 = Math.asin(Number(((y1 - cy) / ry).toFixed(9)));
-    var f2 = Math.asin(Number(((y2 - cy) / ry).toFixed(9)));
+          (rx2 * ry2 - rx2 * y * y - ry2 * x * x) / (rx2 * y * y + ry2 * x * x),
+        ),
+      )
+    var cx = (k * rx * y) / ry + (x1 + x2) / 2
+    var cy = (k * -ry * x) / rx + (y1 + y2) / 2
+    var f1 = Math.asin(Number(((y1 - cy) / ry).toFixed(9)))
+    var f2 = Math.asin(Number(((y2 - cy) / ry).toFixed(9)))
 
-    f1 = x1 < cx ? Math.PI - f1 : f1;
-    f2 = x2 < cx ? Math.PI - f2 : f2;
-    f1 < 0 && (f1 = Math.PI * 2 + f1);
-    f2 < 0 && (f2 = Math.PI * 2 + f2);
+    f1 = x1 < cx ? Math.PI - f1 : f1
+    f2 = x2 < cx ? Math.PI - f2 : f2
+    f1 < 0 && (f1 = Math.PI * 2 + f1)
+    f2 < 0 && (f2 = Math.PI * 2 + f2)
     if (sweep_flag && f1 > f2) {
-      f1 = f1 - Math.PI * 2;
+      f1 = f1 - Math.PI * 2
     }
     if (!sweep_flag && f2 > f1) {
-      f2 = f2 - Math.PI * 2;
+      f2 = f2 - Math.PI * 2
     }
-  } else {
-    f1 = recursive[0];
-    f2 = recursive[1];
-    cx = recursive[2];
-    cy = recursive[3];
   }
-  var df = f2 - f1;
+  let df = f2 - f1
   if (Math.abs(df) > _120) {
-    var f2old = f2,
+    const f2old = f2,
       x2old = x2,
-      y2old = y2;
-    f2 = f1 + _120 * (sweep_flag && f2 > f1 ? 1 : -1);
-    x2 = cx + rx * Math.cos(f2);
-    y2 = cy + ry * Math.sin(f2);
+      y2old = y2
+    f2 = f1 + _120 * (sweep_flag && f2 > f1 ? 1 : -1)
+    x2 = cx + rx * Math.cos(f2)
+    y2 = cy + ry * Math.sin(f2)
     res = a2c(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old, [
       f2,
       f2old,
       cx,
       cy,
-    ]);
+    ])
   }
-  df = f2 - f1;
-  var c1 = Math.cos(f1),
+  df = f2 - f1
+  const c1 = Math.cos(f1),
     s1 = Math.sin(f1),
     c2 = Math.cos(f2),
     s2 = Math.sin(f2),
@@ -796,18 +795,18 @@ const a2c = (
       y2 - hy * c2 - y1,
       x2 - x1,
       y2 - y1,
-    ];
+    ]
   if (recursive) {
-    return m.concat(res);
+    return m.concat(res)
   } else {
-    res = m.concat(res);
-    var newres = [];
-    for (var i = 0, n = res.length; i < n; i++) {
+    res = m.concat(res)
+    const newres = []
+    for (let i = 0, n = res.length; i < n; i++) {
       newres[i] =
         i % 2
           ? rotateY(res[i - 1], res[i], rad)
-          : rotateX(res[i], res[i + 1], rad);
+          : rotateX(res[i], res[i + 1], rad)
     }
-    return newres;
+    return newres
   }
-};
+}

@@ -1,16 +1,17 @@
 // @ts-nocheck
 
-import * as collections from './_collections';
+import * as collections from './_collections'
 
-export const name = 'convertColors';
-export const description = 'converts colors: rgb() to #rrggbb and #rrggbb to #rgb';
+export const name = 'convertColors'
+export const description =
+  'converts colors: rgb() to #rrggbb and #rrggbb to #rgb'
 
-const rNumber = '([+-]?(?:\\d*\\.\\d+|\\d+\\.?)%?)';
-const rComma = '\\s*,\\s*';
+const rNumber = '([+-]?(?:\\d*\\.\\d+|\\d+\\.?)%?)'
+const rComma = '\\s*,\\s*'
 const regRGB = new RegExp(
-  '^rgb\\(\\s*' + rNumber + rComma + rNumber + rComma + rNumber + '\\s*\\)$'
-);
-const regHEX = /^#(([a-fA-F0-9])\2){3}$/;
+  '^rgb\\(\\s*' + rNumber + rComma + rNumber + rComma + rNumber + '\\s*\\)$',
+)
+const regHEX = /^#(([\dA-Fa-f])\2){3}$/
 
 /**
  * Convert [r, g, b] to #rrggbb.
@@ -33,11 +34,11 @@ const convertRgbToHex = ([r, g, b]) => {
       8) | // [1][r][0]
       g) << // [1][r][g]
       8) | // [1][r][g][0]
-    b;
+    b
   // serialize [1][r][g][b] to a hex string, and
   // remove the 1 to get the number with 0s intact
-  return '#' + hexNumber.toString(16).slice(1).toUpperCase();
-};
+  return '#' + hexNumber.toString(16).slice(1).toUpperCase()
+}
 
 /**
  * Convert different colors formats in element attributes to hex.
@@ -70,75 +71,73 @@ export const fn = (_root, params) => {
     rgb2hex = true,
     shorthex = true,
     shortname = true,
-  } = params;
+  } = params
 
   return {
     element: {
       enter: (node) => {
         for (const [name, value] of Object.entries(node.attributes)) {
           if (collections.colorsProps.includes(name)) {
-            let val = value;
+            let val = value
 
             // convert colors to currentColor
             if (currentColor) {
-              let matched;
+              let matched
               if (typeof currentColor === 'string') {
-                matched = val === currentColor;
+                matched = val === currentColor
               } else if (currentColor instanceof RegExp) {
-                matched = currentColor.exec(val) != null;
+                matched = currentColor.exec(val) != null
               } else {
-                matched = val !== 'none';
+                matched = val !== 'none'
               }
               if (matched) {
-                val = 'currentColor';
+                val = 'currentColor'
               }
             }
 
             // convert color name keyword to long hex
             if (names2hex) {
-              const colorName = val.toLowerCase();
+              const colorName = val.toLowerCase()
               if (collections.colorsNames[colorName] != null) {
-                val = collections.colorsNames[colorName];
+                val = collections.colorsNames[colorName]
               }
             }
 
             // convert rgb() to long hex
             if (rgb2hex) {
-              let match = val.match(regRGB);
+              const match = val.match(regRGB)
               if (match != null) {
-                let nums = match.slice(1, 4).map((m) => {
-                  let n;
-                  if (m.indexOf('%') > -1) {
-                    n = Math.round(parseFloat(m) * 2.55);
-                  } else {
-                    n = Number(m);
-                  }
-                  return Math.max(0, Math.min(n, 255));
-                });
-                val = convertRgbToHex(nums);
+                const nums = match.slice(1, 4).map((m) => {
+                  let n
+                  n = m.includes('%')
+                    ? Math.round(Number.parseFloat(m) * 2.55)
+                    : Number(m)
+                  return Math.max(0, Math.min(n, 255))
+                })
+                val = convertRgbToHex(nums)
               }
             }
 
             // convert long hex to short hex
             if (shorthex) {
-              let match = val.match(regHEX);
+              const match = val.match(regHEX)
               if (match != null) {
-                val = '#' + match[0][1] + match[0][3] + match[0][5];
+                val = '#' + match[0][1] + match[0][3] + match[0][5]
               }
             }
 
             // convert hex to short name
             if (shortname) {
-              const colorName = val.toLowerCase();
+              const colorName = val.toLowerCase()
               if (collections.colorsShortNames[colorName] != null) {
-                val = collections.colorsShortNames[colorName];
+                val = collections.colorsShortNames[colorName]
               }
             }
 
-            node.attributes[name] = val;
+            node.attributes[name] = val
           }
         }
       },
     },
-  };
-};
+  }
+}

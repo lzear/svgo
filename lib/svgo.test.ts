@@ -2,8 +2,9 @@
  * @typedef {import('../lib/types').Plugin} Plugin
  */
 
-import { optimize } from './svgo';
-import { jest } from '@jest/globals';
+import { jest } from '@jest/globals'
+
+import { optimize } from './svgo'
 
 test('allow to setup default preset', () => {
   const svg = `
@@ -14,18 +15,18 @@ test('allow to setup default preset', () => {
       </desc>
       <circle fill="#ff0000" cx="60" cy="60" r="50"/>
     </svg>
-  `;
+  `
   const { data } = optimize(svg, {
     plugins: ['preset-default'],
     js2svg: { pretty: true, indent: 2 },
-  });
+  })
   expect(data).toMatchInlineSnapshot(`
     "<svg viewBox="0 0 120 120">
       <circle cx="60" cy="60" r="50" fill="red"/>
     </svg>
     "
-  `);
-});
+  `)
+})
 
 test('allow to disable and customize plugins in preset', () => {
   const svg = `
@@ -36,7 +37,7 @@ test('allow to disable and customize plugins in preset', () => {
       </desc>
       <circle fill="#ff0000" cx="60" cy="60" r="50"/>
     </svg>
-  `;
+  `
   const { data } = optimize(svg, {
     plugins: [
       {
@@ -52,7 +53,7 @@ test('allow to disable and customize plugins in preset', () => {
       },
     ],
     js2svg: { pretty: true, indent: 2 },
-  });
+  })
   expect(data).toMatchInlineSnapshot(`
     "<?xml version="1.0" encoding="utf-8"?>
     <svg viewBox="0 0 120 120">
@@ -62,14 +63,14 @@ test('allow to disable and customize plugins in preset', () => {
       <circle cx="60" cy="60" r="50" fill="red"/>
     </svg>
     "
-  `);
-});
+  `)
+})
 
 test('warn when user tries enable plugins in preset', () => {
   const svg = `
     <svg viewBox="0 0 120 120"></svg>
-  `;
-  const warn = jest.spyOn(console, 'warn');
+  `
+  const warn = jest.spyOn(console, 'warn')
   optimize(svg, {
     plugins: [
       {
@@ -82,7 +83,7 @@ test('warn when user tries enable plugins in preset', () => {
       },
     ],
     js2svg: { pretty: true, indent: 2 },
-  });
+  })
   expect(warn)
     .toBeCalledWith(`You are trying to configure cleanupListOfValues which is not part of preset-default.
 Try to put it before or after, for example
@@ -93,9 +94,9 @@ plugins: [
   },
   'cleanupListOfValues'
 ]
-`);
-  warn.mockRestore();
-});
+`)
+  warn.mockRestore()
+})
 
 describe('allow to configure EOL', () => {
   test('should respect EOL set to LF', () => {
@@ -107,15 +108,15 @@ describe('allow to configure EOL', () => {
         </desc>
         <circle fill="#ff0000" cx="60" cy="60" r="50"/>
       </svg>
-    `;
+    `
     const { data } = optimize(svg, {
       js2svg: { eol: 'lf', pretty: true, indent: 2 },
-    });
+    })
     // using toEqual because line endings matter in these tests
     expect(data).toEqual(
-      '<svg viewBox="0 0 120 120">\n  <circle cx="60" cy="60" r="50" fill="red"/>\n</svg>\n'
-    );
-  });
+      '<svg viewBox="0 0 120 120">\n  <circle cx="60" cy="60" r="50" fill="red"/>\n</svg>\n',
+    )
+  })
 
   test('should respect EOL set to CRLF', () => {
     const svg = `
@@ -126,15 +127,15 @@ describe('allow to configure EOL', () => {
         </desc>
         <circle fill="#ff0000" cx="60" cy="60" r="50"/>
       </svg>
-    `;
+    `
     const { data } = optimize(svg, {
       js2svg: { eol: 'crlf', pretty: true, indent: 2 },
-    });
+    })
     // using toEqual because line endings matter in these tests
     expect(data).toEqual(
-      '<svg viewBox="0 0 120 120">\r\n  <circle cx="60" cy="60" r="50" fill="red"/>\r\n</svg>\r\n'
-    );
-  });
+      '<svg viewBox="0 0 120 120">\r\n  <circle cx="60" cy="60" r="50" fill="red"/>\r\n</svg>\r\n',
+    )
+  })
 
   test('should default to LF line break for any other EOL values', () => {
     const svg = `
@@ -145,16 +146,16 @@ describe('allow to configure EOL', () => {
         </desc>
         <circle cx="60" cy="60" fill="#ff0000" r="50"/>
       </svg>
-    `;
+    `
     const { data } = optimize(svg, {
       js2svg: { eol: 'invalid', pretty: true, indent: 2 },
-    });
+    })
     // using toEqual because line endings matter in these tests
     expect(data).toEqual(
-      '<svg viewBox="0 0 120 120">\n  <circle cx="60" cy="60" r="50" fill="red"/>\n</svg>\n'
-    );
-  });
-});
+      '<svg viewBox="0 0 120 120">\n  <circle cx="60" cy="60" r="50" fill="red"/>\n</svg>\n',
+    )
+  })
+})
 
 describe('allow to configure final newline', () => {
   test('should not add final newline when unset', () => {
@@ -166,13 +167,13 @@ describe('allow to configure final newline', () => {
         </desc>
         <circle cx="60" cy="60" r="50" fill="#ff0000"/>
       </svg>
-    `;
-    const { data } = optimize(svg, { js2svg: { eol: 'lf' } });
+    `
+    const { data } = optimize(svg, { js2svg: { eol: 'lf' } })
     // using toEqual because line endings matter in these tests
     expect(data).toEqual(
-      '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="red"/></svg>'
-    );
-  });
+      '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="red"/></svg>',
+    )
+  })
 
   test('should add final newline when set', () => {
     const svg = `
@@ -183,15 +184,15 @@ describe('allow to configure final newline', () => {
         </desc>
         <circle fill="#ff0000" cx="60" cy="60" r="50"/>
       </svg>
-    `;
+    `
     const { data } = optimize(svg, {
       js2svg: { finalNewline: true, eol: 'lf' },
-    });
+    })
     // using toEqual because line endings matter in these tests
     expect(data).toEqual(
-      '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="red"/></svg>\n'
-    );
-  });
+      '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="red"/></svg>\n',
+    )
+  })
 
   test('should not add extra newlines when using pretty: true', () => {
     const svg = `
@@ -202,23 +203,23 @@ describe('allow to configure final newline', () => {
         </desc>
         <circle fill="#ff0000" cx="60" cy="60" r="50"/>
       </svg>
-    `;
+    `
     const { data } = optimize(svg, {
       js2svg: { finalNewline: true, pretty: true, indent: 2, eol: 'lf' },
-    });
+    })
     // using toEqual because line endings matter in these tests
     expect(data).toEqual(
-      '<svg viewBox="0 0 120 120">\n  <circle cx="60" cy="60" r="50" fill="red"/>\n</svg>\n'
-    );
-  });
-});
+      '<svg viewBox="0 0 120 120">\n  <circle cx="60" cy="60" r="50" fill="red"/>\n</svg>\n',
+    )
+  })
+})
 
 test('allow to customize precision for preset', () => {
   const svg = `
     <svg viewBox="0 0 120 120">
       <circle fill="#ff0000" cx="60.444444" cy="60" r="50"/>
     </svg>
-  `;
+  `
   const { data } = optimize(svg, {
     plugins: [
       {
@@ -229,21 +230,21 @@ test('allow to customize precision for preset', () => {
       },
     ],
     js2svg: { pretty: true, indent: 2 },
-  });
+  })
   expect(data).toMatchInlineSnapshot(`
     "<svg viewBox="0 0 120 120">
       <circle cx="60.4444" cy="60" r="50" fill="red"/>
     </svg>
     "
-  `);
-});
+  `)
+})
 
 test('plugin precision should override preset precision', () => {
   const svg = `
     <svg viewBox="0 0 120 120">
       <circle fill="#ff0000" cx="60.444444" cy="60" r="50"/>
     </svg>
-  `;
+  `
   const { data } = optimize(svg, {
     plugins: [
       {
@@ -259,41 +260,41 @@ test('plugin precision should override preset precision', () => {
       },
     ],
     js2svg: { pretty: true, indent: 2 },
-  });
+  })
   expect(data).toMatchInlineSnapshot(`
     "<svg viewBox="0 0 120 120">
       <circle cx="60.44444" cy="60" r="50" fill="red"/>
     </svg>
     "
-  `);
-});
+  `)
+})
 
 test('provides informative error in result', () => {
   const svg = `<svg viewBox="0 0 120 120">
       <circle fill="#ff0000" cx=60.444444" cy="60" r="50"/>
     </svg>
-  `;
+  `
   try {
-    optimize(svg, { path: 'test.svg' });
-    expect(true).toEqual(false);
+    optimize(svg, { path: 'test.svg' })
+    expect(true).toEqual(false)
   } catch (error) {
-    expect(error.name).toEqual('SvgoParserError');
-    expect(error.message).toEqual('test.svg:2:33: Unquoted attribute value');
-    expect(error.reason).toEqual('Unquoted attribute value');
-    expect(error.line).toEqual(2);
-    expect(error.column).toEqual(33);
-    expect(error.source).toEqual(svg);
+    expect(error.name).toEqual('SvgoParserError')
+    expect(error.message).toEqual('test.svg:2:33: Unquoted attribute value')
+    expect(error.reason).toEqual('Unquoted attribute value')
+    expect(error.line).toEqual(2)
+    expect(error.column).toEqual(33)
+    expect(error.source).toEqual(svg)
   }
-});
+})
 
 test('provides code snippet in rendered error', () => {
   const svg = `<svg viewBox="0 0 120 120">
   <circle fill="#ff0000" cx=60.444444" cy="60" r="50"/>
 </svg>
-`;
+`
   try {
-    optimize(svg, { path: 'test.svg' });
-    expect(true).toEqual(false);
+    optimize(svg, { path: 'test.svg' })
+    expect(true).toEqual(false)
   } catch (error) {
     expect(error.toString())
       .toEqual(`SvgoParserError: test.svg:2:29: Unquoted attribute value
@@ -303,9 +304,9 @@ test('provides code snippet in rendered error', () => {
     |                             ^
   3 | </svg>
   4 | 
-`);
+`)
   }
-});
+})
 
 test('supports errors without path', () => {
   const svg = `<svg viewBox="0 0 120 120">
@@ -320,10 +321,10 @@ test('supports errors without path', () => {
   <circle/>
   <circle fill="#ff0000" cx=60.444444" cy="60" r="50"/>
 </svg>
-`;
+`
   try {
-    optimize(svg);
-    expect(true).toEqual(false);
+    optimize(svg)
+    expect(true).toEqual(false)
   } catch (error) {
     expect(error.toString())
       .toEqual(`SvgoParserError: <input>:11:29: Unquoted attribute value
@@ -334,18 +335,18 @@ test('supports errors without path', () => {
      |                             ^
   12 | </svg>
   13 | 
-`);
+`)
   }
-});
+})
 
 test('slices long line in error code snippet', () => {
   const svg = `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" viewBox="0 0 230 120">
   <path d="M318.198 551.135 530.33 918.56l-289.778-77.646 38.823-144.889c77.646-289.778 294.98-231.543 256.156-86.655s178.51 203.124 217.334 58.235q58.234-217.334 250.955 222.534t579.555 155.292z stroke-width="1.5" fill="red" stroke="red" />
 </svg>
-`;
+`
   try {
-    optimize(svg);
-    expect(true).toEqual(false);
+    optimize(svg)
+    expect(true).toEqual(false)
   } catch (error) {
     expect(error.toString())
       .toEqual(`SvgoParserError: <input>:2:211: Invalid attribute name
@@ -355,53 +356,53 @@ test('slices long line in error code snippet', () => {
     |                                                       ^
   3 |  
   4 |  
-`);
+`)
   }
-});
+})
 
 test('multipass option should trigger plugins multiple times', () => {
-  const svg = `<svg id="abcdefghijklmnopqrstuvwxyz"></svg>`;
-  const list = [];
+  const svg = `<svg id="abcdefghijklmnopqrstuvwxyz"></svg>`
+  const list = []
   /**
    * @type {Plugin<void>}
    */
   const testPlugin = {
     name: 'testPlugin',
     fn: (_root, _params, info) => {
-      list.push(info.multipassCount);
+      list.push(info.multipassCount)
       return {
         element: {
           enter: (node) => {
-            node.attributes.id = node.attributes.id.slice(1);
+            node.attributes.id = node.attributes.id.slice(1)
           },
         },
-      };
+      }
     },
-  };
-  const { data } = optimize(svg, { multipass: true, plugins: [testPlugin] });
-  expect(list).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  expect(data).toEqual(`<svg id="klmnopqrstuvwxyz"/>`);
-});
+  }
+  const { data } = optimize(svg, { multipass: true, plugins: [testPlugin] })
+  expect(list).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+  expect(data).toEqual(`<svg id="klmnopqrstuvwxyz"/>`)
+})
 
 test('encode as datauri', () => {
   const input = `
     <svg xmlns="http://www.w3.org/2000/svg">
         <g transform="matrix(0.707 -0.707 0.707 0.707 255.03 111.21) scale(2)"/>
     </svg>
-    `;
+    `
   const { data: dataSinglePass } = optimize(input, {
     datauri: 'enc',
     plugins: ['convertTransform'],
-  });
+  })
   expect(dataSinglePass).toMatchInlineSnapshot(
-    `"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20transform%3D%22scale(2)%20rotate(-45%20130.898%20-126.14)%22%2F%3E%3C%2Fsvg%3E"`
-  );
+    `"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20transform%3D%22scale(2)%20rotate(-45%20130.898%20-126.14)%22%2F%3E%3C%2Fsvg%3E"`,
+  )
   const { data: dataMultiPass } = optimize(input, {
     multipass: true,
     datauri: 'enc',
     plugins: ['convertTransform'],
-  });
+  })
   expect(dataMultiPass).toMatchInlineSnapshot(
-    `"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20transform%3D%22rotate(-45%20261.796%20-252.28)%20scale(2)%22%2F%3E%3C%2Fsvg%3E"`
-  );
-});
+    `"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20transform%3D%22rotate(-45%20261.796%20-252.28)%20scale(2)%22%2F%3E%3C%2Fsvg%3E"`,
+  )
+})

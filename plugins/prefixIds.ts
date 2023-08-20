@@ -1,8 +1,9 @@
-import * as csstree from 'css-tree';
-import { referencesProps } from './_collections';
+import * as csstree from 'css-tree'
 
-export const name = 'prefixIds';
-export const description = 'prefix IDs';
+import { referencesProps } from './_collections'
+
+export const name = 'prefixIds'
+export const description = 'prefix IDs'
 
 /**
  * extract basename from path
@@ -10,20 +11,20 @@ export const description = 'prefix IDs';
  */
 const getBasename = (path) => {
   // extract everything after latest slash or backslash
-  const matched = path.match(/[/\\]?([^/\\]+)$/);
+  const matched = path.match(/[/\\]?([^/\\]+)$/)
   if (matched) {
-    return matched[1];
+    return matched[1]
   }
-  return '';
-};
+  return ''
+}
 
 /**
  * escapes a string for being used as ID
  * @type {(string: string) => string}
  */
 const escapeIdentifierName = (str) => {
-  return str.replace(/[. ]/g, '_');
-};
+  return str.replaceAll(/[ .]/g, '_')
+}
 
 /**
  * @type {(string: string) => string}
@@ -33,10 +34,10 @@ const unquote = (string) => {
     (string.startsWith('"') && string.endsWith('"')) ||
     (string.startsWith("'") && string.endsWith("'"))
   ) {
-    return string.slice(1, -1);
+    return string.slice(1, -1)
   }
-  return string;
-};
+  return string
+}
 
 /**
  * prefix an ID
@@ -44,10 +45,10 @@ const unquote = (string) => {
  */
 const prefixId = (prefix, value) => {
   if (value.startsWith(prefix)) {
-    return value;
+    return value
   }
-  return prefix + value;
-};
+  return prefix + value
+}
 
 /**
  * prefix an #ID
@@ -55,13 +56,13 @@ const prefixId = (prefix, value) => {
  */
 const prefixReference = (prefix, value) => {
   if (value.startsWith('#')) {
-    return '#' + prefixId(prefix, value.slice(1));
+    return '#' + prefixId(prefix, value.slice(1))
   }
-  return null;
-};
+  return null
+}
 
 /** @type {(value: any) => any} */
-const toAny = (value) => value;
+const toAny = (value) => value
 
 /**
  * Prefixes identifiers
@@ -71,7 +72,7 @@ const toAny = (value) => value;
  * @type {import('./plugins-types').Plugin<'prefixIds'>}
  */
 export const fn = (_root, params, info) => {
-  const { delim = '__', prefixIds = true, prefixClassNames = true } = params;
+  const { delim = '__', prefixIds = true, prefixClassNames = true } = params
 
   return {
     element: {
@@ -80,43 +81,43 @@ export const fn = (_root, params, info) => {
          * prefix, from file name or option
          * @type {string}
          */
-        let prefix = 'prefix' + delim;
+        let prefix = 'prefix' + delim
         if (typeof params.prefix === 'function') {
-          prefix = params.prefix(node, info) + delim;
+          prefix = params.prefix(node, info) + delim
         } else if (typeof params.prefix === 'string') {
-          prefix = params.prefix + delim;
+          prefix = params.prefix + delim
         } else if (params.prefix === false) {
-          prefix = '';
+          prefix = ''
         } else if (info.path != null && info.path.length > 0) {
-          prefix = escapeIdentifierName(getBasename(info.path)) + delim;
+          prefix = escapeIdentifierName(getBasename(info.path)) + delim
         }
 
         // prefix id/class selectors and url() references in styles
         if (node.name === 'style') {
           // skip empty <style/> elements
           if (node.children.length === 0) {
-            return;
+            return
           }
 
           // parse styles
-          let cssText = '';
+          let cssText = ''
           if (
             node.children[0].type === 'text' ||
             node.children[0].type === 'cdata'
           ) {
-            cssText = node.children[0].value;
+            cssText = node.children[0].value
           }
           /**
            * @type {null | csstree.CssNode}
            */
-          let cssAst = null;
+          let cssAst = null
           try {
             cssAst = csstree.parse(cssText, {
               parseValue: true,
               parseCustomProperty: false,
-            });
+            })
           } catch {
-            return;
+            return
           }
 
           csstree.walk(cssAst, (node) => {
@@ -125,51 +126,51 @@ export const fn = (_root, params, info) => {
               (prefixIds && node.type === 'IdSelector') ||
               (prefixClassNames && node.type === 'ClassSelector')
             ) {
-              node.name = prefixId(prefix, node.name);
-              return;
+              node.name = prefixId(prefix, node.name)
+              return
             }
             // url(...) references
             // csstree v2 changed this type
             if (node.type === 'Url' && toAny(node.value).length > 0) {
               const prefixed = prefixReference(
                 prefix,
-                unquote(toAny(node.value))
-              );
+                unquote(toAny(node.value)),
+              )
               if (prefixed != null) {
-                toAny(node).value = prefixed;
+                toAny(node).value = prefixed
               }
             }
-          });
+          })
 
           // update styles
           if (
             node.children[0].type === 'text' ||
             node.children[0].type === 'cdata'
           ) {
-            node.children[0].value = csstree.generate(cssAst);
+            node.children[0].value = csstree.generate(cssAst)
           }
-          return;
+          return
         }
 
         // prefix an ID attribute value
         if (
           prefixIds &&
           node.attributes.id != null &&
-          node.attributes.id.length !== 0
+          node.attributes.id.length > 0
         ) {
-          node.attributes.id = prefixId(prefix, node.attributes.id);
+          node.attributes.id = prefixId(prefix, node.attributes.id)
         }
 
         // prefix a class attribute value
         if (
           prefixClassNames &&
           node.attributes.class != null &&
-          node.attributes.class.length !== 0
+          node.attributes.class.length > 0
         ) {
           node.attributes.class = node.attributes.class
             .split(/\s+/)
             .map((name) => prefixId(prefix, name))
-            .join(' ');
+            .join(' ')
         }
 
         // prefix a href attribute value
@@ -177,11 +178,11 @@ export const fn = (_root, params, info) => {
         for (const name of ['href', 'xlink:href']) {
           if (
             node.attributes[name] != null &&
-            node.attributes[name].length !== 0
+            node.attributes[name].length > 0
           ) {
-            const prefixed = prefixReference(prefix, node.attributes[name]);
+            const prefixed = prefixReference(prefix, node.attributes[name])
             if (prefixed != null) {
-              node.attributes[name] = prefixed;
+              node.attributes[name] = prefixed
             }
           }
         }
@@ -190,18 +191,18 @@ export const fn = (_root, params, info) => {
         for (const name of referencesProps) {
           if (
             node.attributes[name] != null &&
-            node.attributes[name].length !== 0
+            node.attributes[name].length > 0
           ) {
-            node.attributes[name] = node.attributes[name].replace(
+            node.attributes[name] = node.attributes[name].replaceAll(
               /url\((.*?)\)/gi,
               (match, url) => {
-                const prefixed = prefixReference(prefix, url);
+                const prefixed = prefixReference(prefix, url)
                 if (prefixed == null) {
-                  return match;
+                  return match
                 }
-                return `url(${prefixed})`;
-              }
-            );
+                return `url(${prefixed})`
+              },
+            )
           }
         }
 
@@ -209,19 +210,19 @@ export const fn = (_root, params, info) => {
         for (const name of ['begin', 'end']) {
           if (
             node.attributes[name] != null &&
-            node.attributes[name].length !== 0
+            node.attributes[name].length > 0
           ) {
             const parts = node.attributes[name].split(/\s*;\s+/).map((val) => {
               if (val.endsWith('.end') || val.endsWith('.start')) {
-                const [id, postfix] = val.split('.');
-                return `${prefixId(prefix, id)}.${postfix}`;
+                const [id, postfix] = val.split('.')
+                return `${prefixId(prefix, id)}.${postfix}`
               }
-              return val;
-            });
-            node.attributes[name] = parts.join('; ');
+              return val
+            })
+            node.attributes[name] = parts.join('; ')
           }
         }
       },
     },
-  };
-};
+  }
+}

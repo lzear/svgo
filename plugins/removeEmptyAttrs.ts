@@ -1,7 +1,7 @@
-import { attrsGroups } from './_collections';
+import { attrsGroups } from './_collections'
 
-export const name = 'removeEmptyAttrs';
-export const description = 'removes empty attributes';
+export const name = 'removeEmptyAttrs'
+export const description = 'removes empty attributes'
 
 /**
  * Remove attributes with empty values.
@@ -20,10 +20,10 @@ export const fn = () => {
             // empty conditional processing attributes prevents elements from rendering
             attrsGroups.conditionalProcessing.includes(name) === false
           ) {
-            delete node.attributes[name];
+            delete node.attributes[name]
           }
         }
       },
     },
-  };
-};
+  }
+}

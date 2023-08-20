@@ -1,10 +1,11 @@
 // @ts-nocheck
 
-import { detachNodeFromParent } from '../lib/xast';
-import { editorNamespaces } from './_collections';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeEditorsNSData';
-export const description = 'removes editors namespaces, elements and attributes';
+import { editorNamespaces } from './_collections'
+
+export const name = 'removeEditorsNSData'
+export const description = 'removes editors namespaces, elements and attributes'
 
 /**
  * Remove editors namespaces, elements and attributes.
@@ -19,14 +20,14 @@ export const description = 'removes editors namespaces, elements and attributes'
  * @type {import('./plugins-types').Plugin<'removeEditorsNSData'>}
  */
 export const fn = (_root, params) => {
-  let namespaces = editorNamespaces;
+  let namespaces = editorNamespaces
   if (Array.isArray(params.additionalNamespaces)) {
-    namespaces = [...editorNamespaces, ...params.additionalNamespaces];
+    namespaces = [...editorNamespaces, ...params.additionalNamespaces]
   }
   /**
    * @type {Array<string>}
    */
-  const prefixes = [];
+  const prefixes = []
   return {
     element: {
       enter: (node, parentNode) => {
@@ -34,9 +35,9 @@ export const fn = (_root, params) => {
         if (node.name === 'svg') {
           for (const [name, value] of Object.entries(node.attributes)) {
             if (name.startsWith('xmlns:') && namespaces.includes(value)) {
-              prefixes.push(name.slice('xmlns:'.length));
+              prefixes.push(name.slice('xmlns:'.length))
               // <svg xmlns:sodipodi="">
-              delete node.attributes[name];
+              delete node.attributes[name]
             }
           }
         }
@@ -44,21 +45,21 @@ export const fn = (_root, params) => {
         // <* sodipodi:*="">
         for (const name of Object.keys(node.attributes)) {
           if (name.includes(':')) {
-            const [prefix] = name.split(':');
+            const [prefix] = name.split(':')
             if (prefixes.includes(prefix)) {
-              delete node.attributes[name];
+              delete node.attributes[name]
             }
           }
         }
         // remove editor elements, for example
         // <sodipodi:*>
         if (node.name.includes(':')) {
-          const [prefix] = node.name.split(':');
+          const [prefix] = node.name.split(':')
           if (prefixes.includes(prefix)) {
-            detachNodeFromParent(node, parentNode);
+            detachNodeFromParent(node, parentNode)
           }
         }
       },
     },
-  };
-};
+  }
+}

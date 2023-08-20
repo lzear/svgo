@@ -1,11 +1,11 @@
 // @ts-nocheck
 
-import { pathElems, referencesProps } from './_collections';
+import { pathElems, referencesProps } from './_collections'
 
-export const name = 'moveGroupAttrsToElems';
-export const description = 'moves some group attributes to the content elements';
+export const name = 'moveGroupAttrsToElems'
+export const description = 'moves some group attributes to the content elements'
 
-const pathElemsWithGroupsAndText = [...pathElems, 'g', 'text'];
+const pathElemsWithGroupsAndText = new Set([...pathElems, 'g', 'text'])
 
 /**
  * Move group attrs to the content elements.
@@ -32,33 +32,32 @@ export const fn = () => {
         // move group transform attr to content's pathElems
         if (
           node.name === 'g' &&
-          node.children.length !== 0 &&
+          node.children.length > 0 &&
           node.attributes.transform != null &&
           Object.entries(node.attributes).some(
             ([name, value]) =>
-              referencesProps.includes(name) && value.includes('url(')
+              referencesProps.includes(name) && value.includes('url('),
           ) === false &&
           node.children.every(
             (child) =>
               child.type === 'element' &&
-              pathElemsWithGroupsAndText.includes(child.name) &&
-              child.attributes.id == null
+              pathElemsWithGroupsAndText.has(child.name) &&
+              child.attributes.id == null,
           )
         ) {
           for (const child of node.children) {
-            const value = node.attributes.transform;
+            const value = node.attributes.transform
             if (child.type === 'element') {
-              if (child.attributes.transform != null) {
-                child.attributes.transform = `${value} ${child.attributes.transform}`;
-              } else {
-                child.attributes.transform = value;
-              }
+              child.attributes.transform =
+                child.attributes.transform == null
+                  ? value
+                  : `${value} ${child.attributes.transform}`
             }
           }
 
-          delete node.attributes.transform;
+          delete node.attributes.transform
         }
       },
     },
-  };
-};
+  }
+}

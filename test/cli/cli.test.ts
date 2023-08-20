@@ -2,11 +2,11 @@
  * @typedef {import('child_process').ChildProcessWithoutNullStreams} ChildProcessWithoutNullStreams
  */
 
-import type { ChildProcessWithoutNullStreams } from 'node:child_process';
-import { spawn } from 'node:child_process';
-import fs from 'node:fs';
-import path from 'node:path';
-import url from 'node:url';
+import type { ChildProcessWithoutNullStreams } from 'node:child_process'
+import { spawn } from 'node:child_process'
+import fs from 'node:fs'
+import path from 'node:path'
+import url from 'node:url'
 
 /**
  * @type {(proc: ChildProcessWithoutNullStreams) => Promise<string>}
@@ -14,10 +14,10 @@ import url from 'node:url';
 const waitStdout = (proc) => {
   return new Promise((resolve) => {
     proc.stdout.on('data', (data) => {
-      resolve(data.toString());
-    });
-  });
-};
+      resolve(data.toString())
+    })
+  })
+}
 
 /**
  * @type {(proc: ChildProcessWithoutNullStreams) => Promise<void>}
@@ -25,10 +25,10 @@ const waitStdout = (proc) => {
 const waitClose = (proc) => {
   return new Promise((resolve) => {
     proc.on('close', () => {
-      resolve();
-    });
-  });
-};
+      resolve()
+    })
+  })
+}
 
 test('shows plugins when flag specified', async () => {
   const proc = spawn(
@@ -45,10 +45,10 @@ test('shows plugins when flag specified', async () => {
       '--show-plugins',
     ],
     { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
-  );
-  const stdout = await waitStdout(proc);
-  expect(stdout).toMatch(/Currently available plugins:/);
-});
+  )
+  const stdout = await waitStdout(proc)
+  expect(stdout).toMatch(/Currently available plugins:/)
+})
 
 test('accepts svg as input stream', async () => {
   const proc = spawn(
@@ -67,15 +67,15 @@ test('accepts svg as input stream', async () => {
     {
       cwd: path.dirname(url.fileURLToPath(import.meta.url)),
     },
-  );
-  proc.stdin.write('<svg><title>stdin</title></svg>');
-  proc.stdin.end();
-  const stdout = await waitStdout(proc);
-  expect(stdout).toEqual('<svg/>');
-});
+  )
+  proc.stdin.write('<svg><title>stdin</title></svg>')
+  proc.stdin.end()
+  const stdout = await waitStdout(proc)
+  expect(stdout).toEqual('<svg/>')
+})
 
 test('accepts svg as string', async () => {
-  const input = '<svg><title>string</title></svg>';
+  const input = '<svg><title>string</title></svg>'
   const proc = spawn(
     'node',
     [
@@ -91,10 +91,10 @@ test('accepts svg as string', async () => {
       input,
     ],
     { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
-  );
-  const stdout = await waitStdout(proc);
-  expect(stdout).toEqual('<svg/>');
-});
+  )
+  const stdout = await waitStdout(proc)
+  expect(stdout).toEqual('<svg/>')
+})
 
 test('accepts svg as filename', async () => {
   const proc = spawn(
@@ -113,17 +113,17 @@ test('accepts svg as filename', async () => {
       'output/single.svg',
     ],
     { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
-  );
-  await waitClose(proc);
+  )
+  await waitClose(proc)
   const output = fs.readFileSync(
     path.join(
       path.dirname(url.fileURLToPath(import.meta.url)),
       'output/single.svg',
     ),
     'utf8',
-  );
-  expect(output).toEqual('<svg/>');
-});
+  )
+  expect(output).toEqual('<svg/>')
+})
 
 test('output as stream when "-" is specified', async () => {
   const proc = spawn(
@@ -142,10 +142,10 @@ test('output as stream when "-" is specified', async () => {
       '-',
     ],
     { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
-  );
-  const stdout = await waitStdout(proc);
-  expect(stdout).toEqual('<svg/>');
-});
+  )
+  const stdout = await waitStdout(proc)
+  expect(stdout).toEqual('<svg/>')
+})
 
 test('should exit with 1 code on syntax error', async () => {
   const proc = spawn(
@@ -164,20 +164,20 @@ test('should exit with 1 code on syntax error', async () => {
     {
       cwd: path.dirname(url.fileURLToPath(import.meta.url)),
     },
-  );
+  )
   const [code, stderr] = await Promise.all([
     new Promise((resolve) => {
       proc.on('close', (code) => {
-        resolve(code);
-      });
+        resolve(code)
+      })
     }),
     new Promise((resolve) => {
       proc.stderr.on('data', (error) => {
-        resolve(error.toString());
-      });
+        resolve(error.toString())
+      })
     }),
-  ]);
-  expect(code).toEqual(1);
+  ])
+  expect(code).toEqual(1)
   expect(stderr)
     .toEqual(`SvgoParserError: invalid.svg:2:27: Unquoted attribute value
 
@@ -187,5 +187,5 @@ test('should exit with 1 code on syntax error', async () => {
   3 | </svg>
   4 | 
 
-`);
-});
+`)
+})

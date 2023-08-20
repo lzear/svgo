@@ -1,7 +1,7 @@
-import { detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeMetadata';
-export const description = 'removes <metadata>';
+export const name = 'removeMetadata'
+export const description = 'removes <metadata>'
 
 /**
  * Remove <metadata>.
@@ -17,9 +17,9 @@ export const fn = () => {
     element: {
       enter: (node, parentNode) => {
         if (node.name === 'metadata') {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
         }
       },
     },
-  };
-};
+  }
+}

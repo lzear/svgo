@@ -3,10 +3,10 @@
  * @typedef {import('../lib/types').XastChild} XastChild
  */
 
-import { visitSkip, detachNodeFromParent } from '../lib/xast';
+import { detachNodeFromParent, visitSkip } from '../lib/xast'
 
-export const name = 'mergeStyles';
-export const description = 'merge multiple style elements into one';
+export const name = 'mergeStyles'
+export const description = 'merge multiple style elements into one'
 
 /**
  * Merge multiple style elements into one.
@@ -19,24 +19,24 @@ export const fn = () => {
   /**
    * @type {null | XastElement}
    */
-  let firstStyleElement = null;
-  let collectedStyles = '';
+  let firstStyleElement = null
+  let collectedStyles = ''
   /**
    * @type {'text' | 'cdata'}
    */
-  let styleContentType = 'text';
+  let styleContentType = 'text'
 
   return {
     element: {
       enter: (node, parentNode) => {
         // skip <foreignObject> content
         if (node.name === 'foreignObject') {
-          return visitSkip;
+          return visitSkip
         }
 
         // collect style elements
         if (node.name !== 'style') {
-          return;
+          return
         }
 
         // skip <style> with invalid type attribute
@@ -45,52 +45,52 @@ export const fn = () => {
           node.attributes.type !== '' &&
           node.attributes.type !== 'text/css'
         ) {
-          return;
+          return
         }
 
         // extract style element content
-        let css = '';
+        let css = ''
         for (const child of node.children) {
           if (child.type === 'text') {
-            css += child.value;
+            css += child.value
           }
           if (child.type === 'cdata') {
-            styleContentType = 'cdata';
-            css += child.value;
+            styleContentType = 'cdata'
+            css += child.value
           }
         }
 
         // remove empty style elements
         if (css.trim().length === 0) {
-          detachNodeFromParent(node, parentNode);
-          return;
+          detachNodeFromParent(node, parentNode)
+          return
         }
 
         // collect css and wrap with media query if present in attribute
         if (node.attributes.media == null) {
-          collectedStyles += css;
+          collectedStyles += css
         } else {
-          collectedStyles += `@media ${node.attributes.media}{${css}}`;
-          delete node.attributes.media;
+          collectedStyles += `@media ${node.attributes.media}{${css}}`
+          delete node.attributes.media
         }
 
         // combine collected styles in the first style element
         if (firstStyleElement == null) {
-          firstStyleElement = node;
+          firstStyleElement = node
         } else {
-          detachNodeFromParent(node, parentNode);
+          detachNodeFromParent(node, parentNode)
           /**
            * @type {XastChild}
            */
-          const child = { type: styleContentType, value: collectedStyles };
+          const child = { type: styleContentType, value: collectedStyles }
           // TODO remove legacy parentNode in v4
           Object.defineProperty(child, 'parentNode', {
             writable: true,
             value: firstStyleElement,
-          });
-          firstStyleElement.children = [child];
+          })
+          firstStyleElement.children = [child]
         }
       },
     },
-  };
-};
+  }
+}

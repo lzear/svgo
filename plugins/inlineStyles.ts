@@ -6,19 +6,18 @@
  * @typedef {import('../lib/types').XastParent} XastParent
  */
 
-import * as csstree from 'css-tree';
-import * as csso from "csso";
+import * as csstree from 'css-tree'
+import * as csso from 'csso'
 
-import {detachNodeFromParent, querySelectorAll, visitSkip} from "../lib/xast";
+import { detachNodeFromParent, querySelectorAll, visitSkip } from '../lib/xast'
 
 const {
   // @ts-ignore not defined in @types/csso
   syntax: { specificity },
-} = csso;
+} = csso
 
-
-export const name = 'inlineStyles';
-export const description = 'inline styles (additional options)';
+export const name = 'inlineStyles'
+export const description = 'inline styles (additional options)'
 
 /**
  * Compares two selector specificities.
@@ -27,20 +26,20 @@ export const description = 'inline styles (additional options)';
  * @type {(a: Specificity, b: Specificity) => number}
  */
 const compareSpecificity = (a, b) => {
-  for (var i = 0; i < 4; i += 1) {
+  for (let i = 0; i < 4; i += 1) {
     if (a[i] < b[i]) {
-      return -1;
+      return -1
     } else if (a[i] > b[i]) {
-      return 1;
+      return 1
     }
   }
-  return 0;
-};
+  return 0
+}
 
 /**
  * @type {(value: any) => any}
  */
-const toAny = (value) => value;
+const toAny = (value) => value
 
 /**
  * Moves + merges styles from style elements to element styles
@@ -71,12 +70,12 @@ export const fn = (root, params) => {
     removeMatchedSelectors = true,
     useMqs = ['', 'screen'],
     usePseudos = [''],
-  } = params;
+  } = params
 
   /**
    * @type {Array<{ node: XastElement, parentNode: XastParent, cssAst: csstree.StyleSheet }>}
    */
-  const styles = [];
+  const styles = []
   /**
    * @type {Array<{
    *   node: csstree.Selector,
@@ -85,18 +84,18 @@ export const fn = (root, params) => {
    *   matchedElements?: Array<XastElement>
    * }>}
    */
-  let selectors = [];
+  const selectors = []
 
   return {
     element: {
       enter: (node, parentNode) => {
         // skip <foreignObject /> content
         if (node.name === 'foreignObject') {
-          return visitSkip;
+          return visitSkip
         }
         // collect only non-empty <style /> elements
         if (node.name !== 'style' || node.children.length === 0) {
-          return;
+          return
         }
         // values other than the empty string or text/css are not used
         if (
@@ -104,51 +103,51 @@ export const fn = (root, params) => {
           node.attributes.type !== '' &&
           node.attributes.type !== 'text/css'
         ) {
-          return;
+          return
         }
         // parse css in style element
-        let cssText = '';
+        let cssText = ''
         for (const child of node.children) {
           if (child.type === 'text' || child.type === 'cdata') {
-            cssText += child.value;
+            cssText += child.value
           }
         }
         /**
          * @type {null | csstree.CssNode}
          */
-        let cssAst = null;
+        let cssAst = null
         try {
           cssAst = csstree.parse(cssText, {
             parseValue: false,
             parseCustomProperty: false,
-          });
+          })
         } catch {
-          return;
+          return
         }
         if (cssAst.type === 'StyleSheet') {
-          styles.push({ node, parentNode, cssAst });
+          styles.push({ node, parentNode, cssAst })
         }
 
         // collect selectors
         csstree.walk(cssAst, {
           visit: 'Selector',
           enter(node, item) {
-            const atrule = this.atrule;
-            const rule = this.rule;
+            const atrule = this.atrule
+            const rule = this.rule
             if (rule == null) {
-              return;
+              return
             }
 
             // skip media queries not included into useMqs param
-            let mq = '';
+            let mq = ''
             if (atrule != null) {
-              mq = atrule.name;
+              mq = atrule.name
               if (atrule.prelude != null) {
-                mq += ` ${csstree.generate(atrule.prelude)}`;
+                mq += ` ${csstree.generate(atrule.prelude)}`
               }
             }
             if (useMqs.includes(mq) === false) {
-              return;
+              return
             }
 
             /**
@@ -157,81 +156,81 @@ export const fn = (root, params) => {
              *   list: csstree.List<csstree.CssNode>
              * }>}
              */
-            const pseudos = [];
+            const pseudos = []
             if (node.type === 'Selector') {
               node.children.forEach((childNode, childItem, childList) => {
                 if (
                   childNode.type === 'PseudoClassSelector' ||
                   childNode.type === 'PseudoElementSelector'
                 ) {
-                  pseudos.push({ item: childItem, list: childList });
+                  pseudos.push({ item: childItem, list: childList })
                 }
-              });
+              })
             }
 
             // skip pseudo classes and pseudo elements not includes into usePseudos param
             const pseudoSelectors = csstree.generate({
               type: 'Selector',
               children: new csstree.List().fromArray(
-                pseudos.map((pseudo) => pseudo.item.data)
+                pseudos.map((pseudo) => pseudo.item.data),
               ),
-            });
+            })
             if (usePseudos.includes(pseudoSelectors) === false) {
-              return;
+              return
             }
 
             // remove pseudo classes and elements to allow querySelector match elements
             // TODO this is not very accurate since some pseudo classes like first-child
             // are used for selection
             for (const pseudo of pseudos) {
-              pseudo.list.remove(pseudo.item);
+              pseudo.list.remove(pseudo.item)
             }
 
-            selectors.push({ node, item, rule });
+            selectors.push({ node, item, rule })
           },
-        });
+        })
       },
     },
 
     root: {
       exit: () => {
         if (styles.length === 0) {
-          return;
+          return
         }
         // stable sort selectors
         const sortedSelectors = [...selectors]
           .sort((a, b) => {
-            const aSpecificity = specificity(a.item.data);
-            const bSpecificity = specificity(b.item.data);
-            return compareSpecificity(aSpecificity, bSpecificity);
+            const aSpecificity = specificity(a.item.data)
+            const bSpecificity = specificity(b.item.data)
+            return compareSpecificity(aSpecificity, bSpecificity)
           })
-          .reverse();
+          .reverse()
 
         for (const selector of sortedSelectors) {
           // match selectors
-          const selectorText = csstree.generate(selector.item.data);
+          const selectorText = csstree.generate(selector.item.data)
           /**
            * @type {Array<XastElement>}
            */
-          const matchedElements = [];
+          const matchedElements = []
           try {
             for (const node of querySelectorAll(root, selectorText)) {
               if (node.type === 'element') {
-                matchedElements.push(node);
+                matchedElements.push(node)
               }
             }
-          } catch (selectError) {
-            continue;
+          } catch {
+            continue
           }
           // nothing selected
           if (matchedElements.length === 0) {
-            continue;
+            continue
           }
 
           // apply styles to matched elements
           // skip selectors that match more than once if option onlyMatchedOnce is enabled
           if (onlyMatchedOnce && matchedElements.length > 1) {
-            continue;
+            continue
           }
 
           // apply <style/> to matched elements
@@ -243,18 +242,18 @@ export const fn = (root, params) => {
               {
                 context: 'declarationList',
                 parseValue: false,
-              }
-            );
+              },
+            )
             if (styleDeclarationList.type !== 'DeclarationList') {
-              continue;
+              continue
             }
-            const styleDeclarationItems = new Map();
+            const styleDeclarationItems = new Map()
             csstree.walk(styleDeclarationList, {
               visit: 'Declaration',
               enter(node, item) {
-                styleDeclarationItems.set(node.property, item);
+                styleDeclarationItems.set(node.property, item)
               },
-            });
+            })
             // merge declarations
             csstree.walk(selector.rule, {
               visit: 'Declaration',
@@ -264,56 +263,55 @@ export const fn = (root, params) => {
                 // inline styles,    external styles same   priority as inline styles,   inline   styles used
                 // inline styles,    external styles higher priority than inline styles, external styles used
                 const matchedItem = styleDeclarationItems.get(
-                  ruleDeclaration.property
-                );
+                  ruleDeclaration.property,
+                )
                 const ruleDeclarationItem =
-                  styleDeclarationList.children.createItem(ruleDeclaration);
+                  styleDeclarationList.children.createItem(ruleDeclaration)
                 if (matchedItem == null) {
-                  styleDeclarationList.children.append(ruleDeclarationItem);
+                  styleDeclarationList.children.append(ruleDeclarationItem)
                 } else if (
                   matchedItem.data.important !== true &&
                   ruleDeclaration.important === true
                 ) {
                   styleDeclarationList.children.replace(
                     matchedItem,
-                    ruleDeclarationItem
-                  );
+                    ruleDeclarationItem,
+                  )
                   styleDeclarationItems.set(
                     ruleDeclaration.property,
-                    ruleDeclarationItem
-                  );
+                    ruleDeclarationItem,
+                  )
                 }
               },
-            });
-            selectedEl.attributes.style =
-              csstree.generate(styleDeclarationList);
+            })
+            selectedEl.attributes.style = csstree.generate(styleDeclarationList)
           }
 
           if (
             removeMatchedSelectors &&
-            matchedElements.length !== 0 &&
+            matchedElements.length > 0 &&
             selector.rule.prelude.type === 'SelectorList'
           ) {
             // clean up matching simple selectors if option removeMatchedSelectors is enabled
-            selector.rule.prelude.children.remove(selector.item);
+            selector.rule.prelude.children.remove(selector.item)
           }
-          selector.matchedElements = matchedElements;
+          selector.matchedElements = matchedElements
         }
 
         // no further processing required
         if (removeMatchedSelectors === false) {
-          return;
+          return
         }
 
         // clean up matched class + ID attribute values
         for (const selector of sortedSelectors) {
           if (selector.matchedElements == null) {
-            continue;
+            continue
           }
 
           if (onlyMatchedOnce && selector.matchedElements.length > 1) {
             // skip selectors that match more than once if option onlyMatchedOnce is enabled
-            continue;
+            continue
           }
 
           for (const selectedEl of selector.matchedElements) {
@@ -321,33 +319,32 @@ export const fn = (root, params) => {
             const classList = new Set(
               selectedEl.attributes.class == null
                 ? null
-                : selectedEl.attributes.class.split(' ')
-            );
+                : selectedEl.attributes.class.split(' '),
+            )
             /**
              * csstree v2 changed this type
              * @type {csstree.CssNode}
              */
-            const firstSubSelector = toAny(selector.node.children.first);
+            const firstSubSelector = toAny(selector.node.children.first)
             if (
               firstSubSelector != null &&
               firstSubSelector.type === 'ClassSelector'
             ) {
-              classList.delete(firstSubSelector.name);
+              classList.delete(firstSubSelector.name)
             }
             if (classList.size === 0) {
-              delete selectedEl.attributes.class;
+              delete selectedEl.attributes.class
             } else {
-              selectedEl.attributes.class = Array.from(classList).join(' ');
+              selectedEl.attributes.class = [...classList].join(' ')
             }
 
             // ID
             if (
               firstSubSelector != null &&
-              firstSubSelector.type === 'IdSelector'
+              firstSubSelector.type === 'IdSelector' &&
+              selectedEl.attributes.id === firstSubSelector.name
             ) {
-              if (selectedEl.attributes.id === firstSubSelector.name) {
-                delete selectedEl.attributes.id;
-              }
+              delete selectedEl.attributes.id
             }
           }
         }
@@ -355,7 +352,7 @@ export const fn = (root, params) => {
         for (const style of styles) {
           csstree.walk(style.cssAst, {
             visit: 'Rule',
-            enter: function (node, item, list) {
+            enter(node, item, list) {
               // clean up <style/> rulesets without any css selectors left
               if (
                 node.type === 'Rule' &&
@@ -363,24 +360,24 @@ export const fn = (root, params) => {
                 // csstree v2 changed this type
                 toAny(node.prelude.children.isEmpty)
               ) {
-                list.remove(item);
+                list.remove(item)
               }
             },
-          });
+          })
 
           // csstree v2 changed this type
           if (toAny(style.cssAst.children.isEmpty)) {
             // remove emtpy style element
-            detachNodeFromParent(style.node, style.parentNode);
+            detachNodeFromParent(style.node, style.parentNode)
           } else {
             // update style element if any styles left
-            const firstChild = style.node.children[0];
+            const firstChild = style.node.children[0]
             if (firstChild.type === 'text' || firstChild.type === 'cdata') {
-              firstChild.value = csstree.generate(style.cssAst);
+              firstChild.value = csstree.generate(style.cssAst)
             }
           }
         }
       },
     },
-  };
-};
+  }
+}

@@ -1,8 +1,9 @@
-import { detachNodeFromParent } from '../lib/xast';
-import { elemsGroups } from './_collections';
+import { detachNodeFromParent } from '../lib/xast'
 
-export const name = 'removeEmptyContainers';
-export const description = 'removes empty container elements';
+import { elemsGroups } from './_collections'
+
+export const name = 'removeEmptyContainers'
+export const description = 'removes empty container elements'
 
 /**
  * Remove empty containers.
@@ -27,28 +28,28 @@ export const fn = () => {
         if (
           node.name === 'svg' ||
           elemsGroups.container.includes(node.name) === false ||
-          node.children.length !== 0
+          node.children.length > 0
         ) {
-          return;
+          return
         }
         // empty patterns may contain reusable configuration
         if (
           node.name === 'pattern' &&
-          Object.keys(node.attributes).length !== 0
+          Object.keys(node.attributes).length > 0
         ) {
-          return;
+          return
         }
         // The <g> may not have content, but the filter may cause a rectangle
         // to be created and filled with pattern.
         if (node.name === 'g' && node.attributes.filter != null) {
-          return;
+          return
         }
         // empty <mask> hides masked element
         if (node.name === 'mask' && node.attributes.id != null) {
-          return;
+          return
         }
-        detachNodeFromParent(node, parentNode);
+        detachNodeFromParent(node, parentNode)
       },
     },
-  };
-};
+  }
+}

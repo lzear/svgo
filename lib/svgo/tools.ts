@@ -9,20 +9,20 @@
  * @type {(str: string, type?: DataUri) => string}
  */
 export const encodeSVGDatauri = (str, type) => {
-  var prefix = 'data:image/svg+xml';
+  let prefix = 'data:image/svg+xml'
   if (!type || type === 'base64') {
     // base64
-    prefix += ';base64,';
-    str = prefix + Buffer.from(str).toString('base64');
+    prefix += ';base64,'
+    str = prefix + Buffer.from(str).toString('base64')
   } else if (type === 'enc') {
     // URI encoded
-    str = prefix + ',' + encodeURIComponent(str);
+    str = prefix + ',' + encodeURIComponent(str)
   } else if (type === 'unenc') {
     // unencoded
-    str = prefix + ',' + str;
+    str = prefix + ',' + str
   }
-  return str;
-};
+  return str
+}
 
 /**
  * Decode SVG Data URI string into plain SVG string.
@@ -30,26 +30,26 @@ export const encodeSVGDatauri = (str, type) => {
  * @type {(str: string) => string}
  */
 export const decodeSVGDatauri = (str) => {
-  var regexp = /data:image\/svg\+xml(;charset=[^;,]*)?(;base64)?,(.*)/;
-  var match = regexp.exec(str);
+  const regexp = /data:image\/svg\+xml(;charset=[^,;]*)?(;base64)?,(.*)/
+  const match = regexp.exec(str)
 
   // plain string
-  if (!match) return str;
+  if (!match) return str
 
-  var data = match[3];
+  const data = match[3]
 
   if (match[2]) {
     // base64
-    str = Buffer.from(data, 'base64').toString('utf8');
+    str = Buffer.from(data, 'base64').toString('utf8')
   } else if (data.charAt(0) === '%') {
     // URI encoded
-    str = decodeURIComponent(data);
+    str = decodeURIComponent(data)
   } else if (data.charAt(0) === '<') {
     // unencoded
-    str = data;
+    str = data
   }
-  return str;
-};
+  return str
+}
 
 /**
  * @typedef {{
@@ -68,25 +68,25 @@ export const decodeSVGDatauri = (str) => {
  * @type {(data: Array<number>, params: CleanupOutDataParams, command?: PathDataCommand) => string}
  */
 export const cleanupOutData = (data, params, command) => {
-  let str = '';
-  let delimiter;
+  let str = ''
+  let delimiter
   /**
    * @type {number}
    */
-  let prev;
+  let prev
 
-  data.forEach((item, i) => {
+  for (const [i, item] of data.entries()) {
     // space delimiter by default
-    delimiter = ' ';
+    delimiter = ' '
 
     // no extra space in front of first number
-    if (i == 0) delimiter = '';
+    if (i == 0) delimiter = ''
 
     // no extra space after 'arcto' command flags(large-arc and sweep flags)
     // a20 60 45 0 1 30 20 → a20 60 45 0130 20
     if (params.noSpaceAfterFlags && (command == 'A' || command == 'a')) {
-      var pos = i % 7;
-      if (pos == 4 || pos == 5) delimiter = '';
+      const pos = i % 7
+      if (pos == 4 || pos == 5) delimiter = ''
     }
 
     // remove floating-point numbers leading zeros
@@ -94,7 +94,7 @@ export const cleanupOutData = (data, params, command) => {
     // -0.5 → -.5
     const itemStr = params.leadingZero
       ? removeLeadingZero(item)
-      : item.toString();
+      : item.toString()
 
     // no extra space in front of negative number or
     // in front of a floating number if a previous number is floating too
@@ -103,14 +103,14 @@ export const cleanupOutData = (data, params, command) => {
       delimiter != '' &&
       (item < 0 || (itemStr.charAt(0) === '.' && prev % 1 !== 0))
     ) {
-      delimiter = '';
+      delimiter = ''
     }
     // save prev item value
-    prev = item;
-    str += delimiter + itemStr;
-  });
-  return str;
-};
+    prev = item
+    str += delimiter + itemStr
+  }
+  return str
+}
 
 /**
  * Remove floating-point numbers leading zero.
@@ -124,12 +124,12 @@ export const cleanupOutData = (data, params, command) => {
  * @type {(num: number) => string}
  */
 export const removeLeadingZero = (num) => {
-  var strNum = num.toString();
+  let strNum = num.toString()
 
   if (0 < num && num < 1 && strNum.charAt(0) === '0') {
-    strNum = strNum.slice(1);
+    strNum = strNum.slice(1)
   } else if (-1 < num && num < 0 && strNum.charAt(1) === '0') {
-    strNum = strNum.charAt(0) + strNum.slice(2);
+    strNum = strNum.charAt(0) + strNum.slice(2)
   }
-  return strNum;
-};
+  return strNum
+}

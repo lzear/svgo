@@ -1,17 +1,21 @@
 // @ts-nocheck
 
-import fs from 'fs';
-import path from 'path';
-import colors from 'picocolors';
-import { loadConfig, optimize } from '../svgo-node';
-import { builtin } from '../builtin';
-import { encodeSVGDatauri, decodeSVGDatauri } from './tools';
+import fs from 'node:fs'
+import path from 'node:path'
 
-const loadJSON = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url)));
+import colors from 'picocolors'
 
-const PKG = loadJSON('../../package.json');
+import { builtin } from '../builtin'
+import { loadConfig, optimize } from '../svgo-node'
 
-const regSVGFile = /\.svg$/i;
+import { decodeSVGDatauri, encodeSVGDatauri } from './tools'
+
+const loadJSON = (path) =>
+  JSON.parse(fs.readFileSync(new URL(path, import.meta.url)))
+
+const PKG = loadJSON('../../package.json')
+
+const regSVGFile = /\.svg$/i
 
 /**
  * Synchronously check if path is a directory. Tolerant to errors like ENOENT.
@@ -19,9 +23,9 @@ const regSVGFile = /\.svg$/i;
  */
 export function checkIsDir(path) {
   try {
-    return fs.lstatSync(path).isDirectory();
-  } catch (e) {
-    return false;
+    return fs.lstatSync(path).isDirectory()
+  } catch {
+    return false
   }
 }
 
@@ -37,105 +41,104 @@ function makeProgram(program) {
     .option('-s, --string <STRING>', 'Input SVG data string')
     .option(
       '-f, --folder <FOLDER>',
-      'Input folder, optimize and rewrite all *.svg files'
+      'Input folder, optimize and rewrite all *.svg files',
     )
     .option(
       '-o, --output <OUTPUT...>',
-      'Output file or folder (by default the same as the input), "-" for STDOUT'
+      'Output file or folder (by default the same as the input), "-" for STDOUT',
     )
     .option(
       '-p, --precision <INTEGER>',
-      'Set number of digits in the fractional part, overrides plugins params'
+      'Set number of digits in the fractional part, overrides plugins params',
     )
     .option('--config <CONFIG>', 'Custom config file, only .js is supported')
     .option(
       '--datauri <FORMAT>',
-      'Output as Data URI string (base64), URI encoded (enc) or unencoded (unenc)'
+      'Output as Data URI string (base64), URI encoded (enc) or unencoded (unenc)',
     )
     .option(
       '--multipass',
-      'Pass over SVGs multiple times to ensure all optimizations are applied'
+      'Pass over SVGs multiple times to ensure all optimizations are applied',
     )
     .option('--pretty', 'Make SVG pretty printed')
     .option('--indent <INTEGER>', 'Indent number when pretty printing SVGs')
     .option(
       '--eol <EOL>',
-      'Line break to use when outputting SVG: lf, crlf. If unspecified, uses platform default.'
+      'Line break to use when outputting SVG: lf, crlf. If unspecified, uses platform default.',
     )
     .option('--final-newline', 'Ensure SVG ends with a line break')
     .option(
       '-r, --recursive',
-      "Use with '--folder'. Optimizes *.svg files in folders recursively."
+      "Use with '--folder'. Optimizes *.svg files in folders recursively.",
     )
     .option(
       '--exclude <PATTERN...>',
-      "Use with '--folder'. Exclude files matching regular expression pattern."
+      "Use with '--folder'. Exclude files matching regular expression pattern.",
     )
     .option(
       '-q, --quiet',
-      'Only output error messages, not regular status messages'
+      'Only output error messages, not regular status messages',
     )
     .option('--show-plugins', 'Show available plugins and exit')
     // used by picocolors internally
     .option('--no-color', 'Output plain text without color')
-    .action(action);
-};
+    .action(action)
+}
 
-export default makeProgram;
+export default makeProgram
 
 async function action(args, opts, command) {
-  var input = opts.input || args;
-  var output = opts.output;
-  var config = {};
+  const input = opts.input || args
+  let output = opts.output
+  let config = {}
 
   if (opts.precision != null) {
-    const number = Number.parseInt(opts.precision, 10);
+    const number = Number.parseInt(opts.precision, 10)
     if (Number.isNaN(number)) {
       console.error(
-        "error: option '-p, --precision' argument must be an integer number"
-      );
-      process.exit(1);
+        "error: option '-p, --precision' argument must be an integer number",
+      )
+      process.exit(1)
     } else {
-      opts.precision = number;
+      opts.precision = number
     }
   }
 
-  if (opts.datauri != null) {
-    if (
-      opts.datauri !== 'base64' &&
-      opts.datauri !== 'enc' &&
-      opts.datauri !== 'unenc'
-    ) {
-      console.error(
-        "error: option '--datauri' must have one of the following values: 'base64', 'enc' or 'unenc'"
-      );
-      process.exit(1);
-    }
+  if (
+    opts.datauri != null &&
+    opts.datauri !== 'base64' &&
+    opts.datauri !== 'enc' &&
+    opts.datauri !== 'unenc'
+  ) {
+    console.error(
+      "error: option '--datauri' must have one of the following values: 'base64', 'enc' or 'unenc'",
+    )
+    process.exit(1)
   }
 
   if (opts.indent != null) {
-    const number = Number.parseInt(opts.indent, 10);
+    const number = Number.parseInt(opts.indent, 10)
     if (Number.isNaN(number)) {
       console.error(
-        "error: option '--indent' argument must be an integer number"
-      );
-      process.exit(1);
+        "error: option '--indent' argument must be an integer number",
+      )
+      process.exit(1)
     } else {
-      opts.indent = number;
+      opts.indent = number
     }
   }
 
   if (opts.eol != null && opts.eol !== 'lf' && opts.eol !== 'crlf') {
     console.error(
-      "error: option '--eol' must have one of the following values: 'lf' or 'crlf'"
-    );
-    process.exit(1);
+      "error: option '--eol' must have one of the following values: 'lf' or 'crlf'",
+    )
+    process.exit(1)
   }
 
   // --show-plugins
   if (opts.showPlugins) {
-    showAvailablePlugins();
-    return;
+    showAvailablePlugins()
+    return
   }
 
   // w/o anything
@@ -146,7 +149,7 @@ async function action(args, opts, command) {
     !opts.folder &&
     process.stdin.isTTY === true
   ) {
-    return command.help();
+    return command.help()
   }
 
   if (
@@ -156,126 +159,128 @@ async function action(args, opts, command) {
     PKG &&
     PKG.engines.node
   ) {
-    var nodeVersion = String(PKG.engines.node).match(/\d*(\.\d+)*/)[0];
-    if (parseFloat(process.versions.node) < parseFloat(nodeVersion)) {
-      throw Error(
-        `${PKG.name} requires Node.js version ${nodeVersion} or higher.`
-      );
+    const nodeVersion = String(PKG.engines.node).match(/\d*(\.\d+)*/)[0]
+    if (
+      Number.parseFloat(process.versions.node) < Number.parseFloat(nodeVersion)
+    ) {
+      throw new Error(
+        `${PKG.name} requires Node.js version ${nodeVersion} or higher.`,
+      )
     }
   }
 
   // --config
-  const loadedConfig = await loadConfig(opts.config);
+  const loadedConfig = await loadConfig(opts.config)
   if (loadedConfig != null) {
-    config = loadedConfig;
+    config = loadedConfig
   }
 
   // --quiet
   if (opts.quiet) {
-    config.quiet = opts.quiet;
+    config.quiet = opts.quiet
   }
 
   // --recursive
   if (opts.recursive) {
-    config.recursive = opts.recursive;
+    config.recursive = opts.recursive
   }
 
   // --exclude
   config.exclude = opts.exclude
-    ? opts.exclude.map((pattern) => RegExp(pattern))
-    : [];
+    ? opts.exclude.map((pattern) => new RegExp(pattern))
+    : []
 
   // --precision
   if (opts.precision != null) {
-    var precision = Math.min(Math.max(0, opts.precision), 20);
-    config.floatPrecision = precision;
+    const precision = Math.min(Math.max(0, opts.precision), 20)
+    config.floatPrecision = precision
   }
 
   // --multipass
   if (opts.multipass) {
-    config.multipass = true;
+    config.multipass = true
   }
 
   // --pretty
   if (opts.pretty) {
-    config.js2svg = config.js2svg || {};
-    config.js2svg.pretty = true;
+    config.js2svg = config.js2svg || {}
+    config.js2svg.pretty = true
     if (opts.indent != null) {
-      config.js2svg.indent = opts.indent;
+      config.js2svg.indent = opts.indent
     }
   }
 
   // --eol
   if (opts.eol) {
-    config.js2svg = config.js2svg || {};
-    config.js2svg.eol = opts.eol;
+    config.js2svg = config.js2svg || {}
+    config.js2svg.eol = opts.eol
   }
 
   // --final-newline
   if (opts.finalNewline) {
-    config.js2svg = config.js2svg || {};
-    config.js2svg.finalNewline = true;
+    config.js2svg = config.js2svg || {}
+    config.js2svg.finalNewline = true
   }
 
   // --output
   if (output) {
-    if (input.length && input[0] != '-') {
+    if (input.length > 0 && input[0] != '-') {
       if (output.length == 1 && checkIsDir(output[0])) {
-        var dir = output[0];
-        for (var i = 0; i < input.length; i++) {
-          output[i] = checkIsDir(input[i])
-            ? input[i]
-            : path.resolve(dir, path.basename(input[i]));
+        const dir = output[0]
+        for (const [i, element] of input.entries()) {
+          output[i] = checkIsDir(element)
+            ? element
+            : path.resolve(dir, path.basename(element))
         }
       } else if (output.length < input.length) {
-        output = output.concat(input.slice(output.length));
+        output = output.concat(input.slice(output.length))
       }
     }
-  } else if (input.length) {
-    output = input;
+  } else if (input.length > 0) {
+    output = input
   } else if (opts.string) {
-    output = '-';
+    output = '-'
   }
 
   if (opts.datauri) {
-    config.datauri = opts.datauri;
+    config.datauri = opts.datauri
   }
 
   // --folder
   if (opts.folder) {
-    var ouputFolder = (output && output[0]) || opts.folder;
-    await optimizeFolder(config, opts.folder, ouputFolder);
+    const ouputFolder = (output && output[0]) || opts.folder
+    await optimizeFolder(config, opts.folder, ouputFolder)
   }
 
   // --input
-  if (input.length !== 0) {
+  if (input.length > 0) {
     // STDIN
     if (input[0] === '-') {
       return new Promise((resolve, reject) => {
-        var data = '',
-          file = output[0];
+        let data = '',
+          file = output[0]
 
         process.stdin
           .on('data', (chunk) => (data += chunk))
           .once('end', () =>
             processSVGData(config, { input: 'string' }, data, file).then(
               resolve,
-              reject
-            )
-          );
-      });
+              reject,
+            ),
+          )
+      })
       // file
     } else {
       await Promise.all(
-        input.map((file, n) => optimizeFile(config, file, output[n]))
-      );
+        input.map((file, n) => optimizeFile(config, file, output[n])),
+      )
     }
 
     // --string
   } else if (opts.string) {
-    var data = decodeSVGDatauri(opts.string);
+    const data = decodeSVGDatauri(opts.string)
 
-    return processSVGData(config, { input: 'string' }, data, output[0]);
+    return processSVGData(config, { input: 'string' }, data, output[0])
   }
 }
 
@@ -288,11 +293,11 @@ async function action(args, opts, command) {
  */
 function optimizeFolder(config, dir, output) {
   if (!config.quiet) {
-    console.log(`Processing directory '${dir}':\n`);
+    console.log(`Processing directory '${dir}':\n`)
   }
   return fs.promises
     .readdir(dir)
-    .then((files) => processDirectory(config, dir, files, output));
+    .then((files) => processDirectory(config, dir, files, output))
 }
 
 /**
@@ -305,21 +310,21 @@ function optimizeFolder(config, dir, output) {
  */
 function processDirectory(config, dir, files, output) {
   // take only *.svg files, recursively if necessary
-  var svgFilesDescriptions = getFilesDescriptions(config, dir, files, output);
+  const svgFilesDescriptions = getFilesDescriptions(config, dir, files, output)
 
-  return svgFilesDescriptions.length
+  return svgFilesDescriptions.length > 0
     ? Promise.all(
         svgFilesDescriptions.map((fileDescription) =>
           optimizeFile(
             config,
             fileDescription.inputPath,
-            fileDescription.outputPath
-          )
-        )
+            fileDescription.outputPath,
+          ),
+        ),
       )
     : Promise.reject(
-        new Error(`No SVG files have been found in '${dir}' directory.`)
-      );
+        new Error(`No SVG files have been found in '${dir}' directory.`),
+      )
 }
 
 /**
@@ -335,12 +340,12 @@ function getFilesDescriptions(config, dir, files, output) {
     .filter(
       (name) =>
         regSVGFile.test(name) &&
-        !config.exclude.some((regExclude) => regExclude.test(name))
+        !config.exclude.some((regExclude) => regExclude.test(name)),
     )
     .map((name) => ({
       inputPath: path.resolve(dir, name),
       outputPath: path.resolve(output, name),
-    }));
+    }))
 
   return config.recursive
     ? [].concat(
@@ -348,19 +353,19 @@ function getFilesDescriptions(config, dir, files, output) {
         files
           .filter((name) => checkIsDir(path.resolve(dir, name)))
           .map((subFolderName) => {
-            const subFolderPath = path.resolve(dir, subFolderName);
-            const subFolderFiles = fs.readdirSync(subFolderPath);
-            const subFolderOutput = path.resolve(output, subFolderName);
+            const subFolderPath = path.resolve(dir, subFolderName)
+            const subFolderFiles = fs.readdirSync(subFolderPath)
+            const subFolderOutput = path.resolve(output, subFolderName)
             return getFilesDescriptions(
               config,
               subFolderPath,
               subFolderFiles,
-              subFolderOutput
-            );
+              subFolderOutput,
+            )
           })
-          .reduce((a, b) => [].concat(a, b), [])
+          .reduce((a, b) => [].concat(a, b), []),
       )
-    : filesInThisFolder;
+    : filesInThisFolder
 }
 
 /**
@@ -374,8 +379,8 @@ function optimizeFile(config, file, output) {
   return fs.promises.readFile(file, 'utf8').then(
     (data) =>
       processSVGData(config, { input: 'file', path: file }, data, output, file),
-    (error) => checkOptimizeFileError(config, file, output, error)
-  );
+    (error) => checkOptimizeFileError(config, file, output, error),
+  )
 }
 
 /**
@@ -387,45 +392,44 @@ function optimizeFile(config, file, output) {
  * @return {Promise}
  */
 function processSVGData(config, info, data, output, input) {
-  var startTime = Date.now(),
-    prevFileSize = Buffer.byteLength(data, 'utf8');
+  const startTime = Date.now(),
+    prevFileSize = Buffer.byteLength(data, 'utf8')
 
-  let result;
+  let result
   try {
-    result = optimize(data, { ...config, ...info });
+    result = optimize(data, { ...config, ...info })
   } catch (error) {
     if (error.name === 'SvgoParserError') {
-      console.error(colors.red(error.toString()));
-      process.exit(1);
+      console.error(colors.red(error.toString()))
+      process.exit(1)
     } else {
-      throw error;
+      throw error
     }
   }
   if (config.datauri) {
-    result.data = encodeSVGDatauri(result.data, config.datauri);
+    result.data = encodeSVGDatauri(result.data, config.datauri)
   }
-  var resultFileSize = Buffer.byteLength(result.data, 'utf8'),
-    processingTime = Date.now() - startTime;
+  const resultFileSize = Buffer.byteLength(result.data, 'utf8'),
+    processingTime = Date.now() - startTime
 
   return writeOutput(input, output, result.data).then(
     function () {
       if (!config.quiet && output != '-') {
         if (input) {
-          console.log(`\n${path.basename(input)}:`);
+          console.log(`\n${path.basename(input)}:`)
         }
-        printTimeInfo(processingTime);
-        printProfitInfo(prevFileSize, resultFileSize);
+        printTimeInfo(processingTime)
+        printProfitInfo(prevFileSize, resultFileSize)
       }
     },
-    (error) =>
-      Promise.reject(
-        new Error(
-          error.code === 'ENOTDIR'
-            ? `Error: output '${output}' is not a directory.`
-            : error
-        )
+    (error) => {
+      throw new Error(
+        error.code === 'ENOTDIR'
+          ? `Error: output '${output}' is not a directory.`
+          : error,
       )
-  );
+    },
+  )
 }
 
 /**
@@ -437,15 +441,15 @@ function processSVGData(config, info, data, output, input) {
  */
 function writeOutput(input, output, data) {
   if (output == '-') {
-    process.stdout.write(data);
-    return Promise.resolve();
+    process.stdout.write(data)
+    return Promise.resolve()
   }
 
-  fs.mkdirSync(path.dirname(output), { recursive: true });
+  fs.mkdirSync(path.dirname(output), { recursive: true })
 
   return fs.promises
     .writeFile(output, data, 'utf8')
-    .catch((error) => checkWriteFileError(input, output, data, error));
+    .catch((error) => checkWriteFileError(input, output, data, error))
 }
 
 /**
@@ -453,7 +457,7 @@ function writeOutput(input, output, data) {
  * @param {number} time time in milliseconds.
  */
 function printTimeInfo(time) {
-  console.log(`Done in ${time} ms!`);
+  console.log(`Done in ${time} ms!`)
 }
 
 /**
@@ -462,7 +466,7 @@ function printTimeInfo(time) {
  * @param {number} outBytes size after optimization.
  */
 function printProfitInfo(inBytes, outBytes) {
-  var profitPercents = 100 - (outBytes * 100) / inBytes;
+  const profitPercents = 100 - (outBytes * 100) / inBytes
 
   console.log(
     Math.round((inBytes / 1024) * 1000) / 1000 +
@@ -471,8 +475,8 @@ function printProfitInfo(inBytes, outBytes) {
       colors.green(Math.abs(Math.round(profitPercents * 10) / 10) + '%') +
       ' = ' +
       Math.round((outBytes / 1024) * 1000) / 1000 +
-      ' KiB'
-  );
+      ' KiB',
+  )
 }
 
 /**
@@ -485,13 +489,13 @@ function printProfitInfo(inBytes, outBytes) {
  */
 function checkOptimizeFileError(config, input, output, error) {
   if (error.code == 'EISDIR') {
-    return optimizeFolder(config, input, output);
+    return optimizeFolder(config, input, output)
   } else if (error.code == 'ENOENT') {
     return Promise.reject(
-      new Error(`Error: no such file or directory '${error.path}'.`)
-    );
+      new Error(`Error: no such file or directory '${error.path}'.`),
+    )
   }
-  return Promise.reject(error);
+  return Promise.reject(error)
 }
 
 /**
@@ -503,15 +507,13 @@ function checkOptimizeFileError(config, input, output, error) {
  * @return {Promise}
  */
 function checkWriteFileError(input, output, data, error) {
-  if (error.code == 'EISDIR' && input) {
-    return fs.promises.writeFile(
-      path.resolve(output, path.basename(input)),
-      data,
-      'utf8'
-    );
-  } else {
-    return Promise.reject(error);
-  }
+  return error.code == 'EISDIR' && input
+    ? fs.promises.writeFile(
+        path.resolve(output, path.basename(input)),
+        data,
+        'utf8',
+      )
+    : Promise.reject(error)
 }
 
 /**
@@ -521,6 +523,6 @@ function showAvailablePlugins() {
   const list = builtin
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((plugin) => ` [ ${colors.green(plugin.name)} ] ${plugin.description}`)
-    .join('\n');
-  console.log('Currently available plugins:\n' + list);
+    .join('\n')
+  console.log('Currently available plugins:\n' + list)
 }

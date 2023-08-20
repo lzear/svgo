@@ -1,76 +1,75 @@
 // @ts-nocheck
 
-import os from 'os';
-import fs from 'fs';
-import { pathToFileURL } from 'url';
-import path from 'path';
-import { optimize as optimizeAgnostic } from './svgo';
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { pathToFileURL } from 'node:url'
+
+import { optimize as optimizeAgnostic } from './svgo'
 
 const importConfig = async (configFile) => {
-  let config;
+  let config
   // at the moment dynamic import may randomly fail with segfault
   // to workaround this for some users .cjs extension is loaded
   // exclusively with require
   if (configFile.endsWith('.cjs')) {
-    config = await import(configFile);
+    config = await import(configFile)
   } else {
     // dynamic import expects file url instead of path and may fail
     // when windows path is provided
-    const { default: imported } = await import(pathToFileURL(configFile));
-    config = imported;
+    const { default: imported } = await import(pathToFileURL(configFile))
+    config = imported
   }
   if (config == null || typeof config !== 'object' || Array.isArray(config)) {
-    throw Error(`Invalid config file "${configFile}"`);
+    throw new Error(`Invalid config file "${configFile}"`)
   }
-  return config;
-};
+  return config
+}
 
 const isFile = async (file) => {
   try {
-    const stats = await fs.promises.stat(file);
-    return stats.isFile();
+    const stats = await fs.promises.stat(file)
+    return stats.isFile()
   } catch {
-    return false;
+    return false
   }
-};
+}
 
 export const loadConfig = async (configFile, cwd = process.cwd()) => {
   if (configFile != null) {
-    if (path.isAbsolute(configFile)) {
-      return await importConfig(configFile);
-    } else {
-      return await importConfig(path.join(cwd, configFile));
-    }
+    return await (path.isAbsolute(configFile)
+      ? importConfig(configFile)
+      : importConfig(path.join(cwd, configFile)))
   }
-  let dir = cwd;
+  let dir = cwd
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const js = path.join(dir, 'svgo.config');
+    const js = path.join(dir, 'svgo.config')
     if (await isFile(js)) {
-      return await importConfig(js);
+      return await importConfig(js)
     }
-    const mjs = path.join(dir, 'svgo.config.mjs');
+    const mjs = path.join(dir, 'svgo.config.mjs')
     if (await isFile(mjs)) {
-      return await importConfig(mjs);
+      return await importConfig(mjs)
     }
-    const cjs = path.join(dir, 'svgo.config.cjs');
+    const cjs = path.join(dir, 'svgo.config.cjs')
     if (await isFile(cjs)) {
-      return await importConfig(cjs);
+      return await importConfig(cjs)
     }
-    const parent = path.dirname(dir);
+    const parent = path.dirname(dir)
     if (dir === parent) {
-      return null;
+      return null
     }
-    dir = parent;
+    dir = parent
   }
-};
+}
 
 export const optimize = (input, config) => {
   if (config == null) {
-    config = {};
+    config = {}
   }
   if (typeof config !== 'object') {
-    throw Error('Config should be an object');
+    throw new TypeError('Config should be an object')
   }
   return optimizeAgnostic(input, {
     ...config,
@@ -79,5 +78,5 @@ export const optimize = (input, config) => {
       eol: os.EOL === '\r\n' ? 'crlf' : 'lf',
       ...config.js2svg,
     },
-  });
-};
+  })
+}
