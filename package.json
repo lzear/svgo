@@ -59,7 +59,7 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --maxWorkers=4 --coverage",
+    "test": "node --loader ts-node/esm --es-module-specifier-resolution=node --experimental-vm-modules --no-warnings ../../node_modules/.bin/jest --config ../../jest.config.cjs --rootDir=./",
     "lint": "eslint --ignore-path .gitignore . && prettier --check \"**/*.js\" --ignore-path .gitignore",
     "fix": "eslint --ignore-path .gitignore --fix . && prettier --write \"**/*.js\" --ignore-path .gitignore",
     "typecheck": "tsc",
@@ -98,11 +98,6 @@
           "jest": true
         }
       }
-    ]
-  },
-  "jest": {
-    "coveragePathIgnorePatterns": [
-      "fixtures"
     ]
   },
   "dependencies": {
