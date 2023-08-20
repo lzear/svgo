@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env TS_NODE_TRANSPILE_ONLY=1 -S node --no-warnings --loader ts-node/esm --es-module-specifier-resolution=node
 
 const colors = require('picocolors');
 const { program } = require('commander');
