@@ -1,6 +1,6 @@
 'use strict';
 
-const { attrsGroups } = require('./_collections.js');
+const { attrsGroups } = require('./_collections');
 
 exports.name = 'removeEmptyAttrs';
 exports.description = 'removes empty attributes';

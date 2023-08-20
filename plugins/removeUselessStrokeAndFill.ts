@@ -1,8 +1,8 @@
 'use strict';
 
-const { visit, visitSkip, detachNodeFromParent } = require('../lib/xast.js');
-const { collectStylesheet, computeStyle } = require('../lib/style.js');
-const { elemsGroups } = require('./_collections.js');
+const { visit, visitSkip, detachNodeFromParent } = require('../lib/xast');
+const { collectStylesheet, computeStyle } = require('../lib/style');
+const { elemsGroups } = require('./_collections');
 
 exports.name = 'removeUselessStrokeAndFill';
 exports.description = 'removes useless stroke and fill attributes';

@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const del = require('del');
 const { Command } = require('commander');
-const svgo = require('../../lib/svgo/coa.js');
+const svgo = require('../../lib/svgo/coa');
 
 const svgFolderPath = path.resolve(__dirname, 'testSvg');
 const svgFolderPathRecursively = path.resolve(__dirname, 'testSvgRecursively');

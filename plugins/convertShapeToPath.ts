@@ -4,8 +4,8 @@
  * @typedef {import('../lib/types').PathDataItem} PathDataItem
  */
 
-const { stringifyPathData } = require('../lib/path.js');
-const { detachNodeFromParent } = require('../lib/xast.js');
+const { stringifyPathData } = require('../lib/path');
+const { detachNodeFromParent } = require('../lib/xast');
 
 exports.name = 'convertShapeToPath';
 exports.description = 'converts basic shapes to more compact path form';

@@ -3,10 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 const colors = require('picocolors');
-const { loadConfig, optimize } = require('../svgo-node.js');
-const { builtin } = require('../builtin.js');
+const { loadConfig, optimize } = require('../svgo-node');
+const { builtin } = require('../builtin');
 const PKG = require('../../package.json');
-const { encodeSVGDatauri, decodeSVGDatauri } = require('./tools.js');
+const { encodeSVGDatauri, decodeSVGDatauri } = require('./tools');
 
 const regSVGFile = /\.svg$/i;
 

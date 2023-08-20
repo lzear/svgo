@@ -6,7 +6,7 @@
 
 const os = require('os');
 const path = require('path');
-const { optimize, loadConfig } = require('./svgo-node.js');
+const { optimize, loadConfig } = require('./svgo-node');
 
 const describeLF = os.EOL === '\r\n' ? describe.skip : describe;
 const describeCRLF = os.EOL === '\r\n' ? describe : describe.skip;
@@ -130,13 +130,13 @@ describe('loadConfig', () => {
   const fixtures = path.join(cwd, './test/fixtures/config-loader');
 
   test('loads by absolute path', async () => {
-    expect(await loadConfig(path.join(fixtures, 'one/two/config.js'))).toEqual({
+    expect(await loadConfig(path.join(fixtures, 'one/two/config'))).toEqual({
       plugins: [],
     });
   });
 
   test('loads by relative path to cwd', async () => {
-    const config = await loadConfig('one/two/config.js', fixtures);
+    const config = await loadConfig('one/two/config', fixtures);
     expect(config).toEqual({ plugins: [] });
   });
 
@@ -166,19 +166,19 @@ describe('loadConfig', () => {
 
   test('fails when exported config not an object', async () => {
     try {
-      await loadConfig(path.join(fixtures, 'invalid-null.js'));
+      await loadConfig(path.join(fixtures, 'invalid-null'));
       expect.fail('Config is loaded successfully');
     } catch (error) {
       expect(error.message).toMatch(/Invalid config file/);
     }
     try {
-      await loadConfig(path.join(fixtures, 'invalid-array.js'));
+      await loadConfig(path.join(fixtures, 'invalid-array'));
       expect.fail('Config is loaded successfully');
     } catch (error) {
       expect(error.message).toMatch(/Invalid config file/);
     }
     try {
-      await loadConfig(path.join(fixtures, 'invalid-string.js'));
+      await loadConfig(path.join(fixtures, 'invalid-string'));
       expect.fail('Config is loaded successfully');
     } catch (error) {
       expect(error.message).toMatch(/Invalid config file/);
@@ -187,7 +187,7 @@ describe('loadConfig', () => {
 
   test('handles runtime errors properly', async () => {
     try {
-      await loadConfig(path.join(fixtures, 'invalid-runtime.js'));
+      await loadConfig(path.join(fixtures, 'invalid-runtime'));
       expect.fail('Config is loaded successfully');
     } catch (error) {
       expect(error.message).toMatch(/plugins is not defined/);
@@ -202,7 +202,7 @@ describe('loadConfig', () => {
 
   test('handles MODULE_NOT_FOUND properly', async () => {
     try {
-      await loadConfig(path.join(fixtures, 'module-not-found.js'));
+      await loadConfig(path.join(fixtures, 'module-not-found'));
       expect.fail('Config is loaded successfully');
     } catch (error) {
       expect(error.message).toMatch(/Cannot find module 'unknown-module'/);

@@ -2,7 +2,7 @@
 
 const FS = require('fs');
 const PATH = require('path');
-const { parseSvg } = require('../../lib/parser.js');
+const { parseSvg } = require('../../lib/parser');
 
 describe('svg2js', function () {
   describe('working svg', function () {

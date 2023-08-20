@@ -1,6 +1,6 @@
 'use strict';
 
-const collections = require('./_collections.js');
+const collections = require('./_collections');
 
 exports.name = 'convertColors';
 exports.description = 'converts colors: rgb() to #rrggbb and #rrggbb to #rgb';

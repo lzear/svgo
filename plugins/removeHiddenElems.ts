@@ -5,9 +5,9 @@ const {
   visitSkip,
   querySelector,
   detachNodeFromParent,
-} = require('../lib/xast.js');
-const { collectStylesheet, computeStyle } = require('../lib/style.js');
-const { parsePathData } = require('../lib/path.js');
+} = require('../lib/xast');
+const { collectStylesheet, computeStyle } = require('../lib/style');
+const { parsePathData } = require('../lib/path');
 
 exports.name = 'removeHiddenElems';
 exports.description =

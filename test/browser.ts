@@ -24,7 +24,7 @@ const expected = `<svg xmlns="http://www.w3.org/2000/svg">
 
 const content = `
 <script type="module">
-import { optimize } from '/svgo.browser.js';
+import { optimize } from '/svgo.browser';
 const result = optimize(${JSON.stringify(fixture)}, {
   plugins : [],
   js2svg  : { pretty: true, indent: 2 }
@@ -38,9 +38,9 @@ const server = http.createServer((req, res) => {
     res.setHeader('Content-Type', 'text/html');
     res.end(content);
   }
-  if (req.url === '/svgo.browser.js') {
+  if (req.url === '/svgo.browser') {
     res.setHeader('Content-Type', 'application/javascript');
-    res.end(fs.readFileSync('./dist/svgo.browser.js'));
+    res.end(fs.readFileSync('./dist/svgo.browser'));
   }
   res.end();
 });

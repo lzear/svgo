@@ -1,6 +1,6 @@
 'use strict';
 
-const { querySelectorAll } = require('../lib/xast.js');
+const { querySelectorAll } = require('../lib/xast');
 
 exports.name = 'removeAttributesBySelector';
 exports.description =

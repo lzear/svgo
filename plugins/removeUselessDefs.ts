@@ -4,8 +4,8 @@
  * @typedef {import('../lib/types').XastElement} XastElement
  */
 
-const { detachNodeFromParent } = require('../lib/xast.js');
-const { elemsGroups } = require('./_collections.js');
+const { detachNodeFromParent } = require('../lib/xast');
+const { elemsGroups } = require('./_collections');
 
 exports.name = 'removeUselessDefs';
 exports.description = 'removes elements in <defs> without id';

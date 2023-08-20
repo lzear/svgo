@@ -15,7 +15,7 @@ const {
   visitSkip,
   querySelectorAll,
   detachNodeFromParent,
-} = require('../lib/xast.js');
+} = require('../lib/xast');
 
 exports.name = 'inlineStyles';
 exports.description = 'inline styles (additional options)';

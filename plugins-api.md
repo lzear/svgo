@@ -19,7 +19,7 @@ export const myPlugin = {
 it currently does nothing but can be used in your svgo.config.js
 
 ```js
-import { myPlugin } from './myPlugin.js';
+import { myPlugin } from './myPlugin';
 
 export default {
   plugins: [

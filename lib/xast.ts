@@ -8,7 +8,7 @@
  */
 
 const { selectAll, selectOne, is } = require('css-select');
-const xastAdaptor = require('./svgo/css-select-adapter.js');
+const xastAdaptor = require('./svgo/css-select-adapter');
 
 const cssSelectOptions = {
   xmlMode: true,

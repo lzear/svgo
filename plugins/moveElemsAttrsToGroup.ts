@@ -1,7 +1,7 @@
 'use strict';
 
-const { visit } = require('../lib/xast.js');
-const { inheritableAttrs, pathElems } = require('./_collections.js');
+const { visit } = require('../lib/xast');
+const { inheritableAttrs, pathElems } = require('./_collections');
 
 exports.name = 'moveElemsAttrsToGroup';
 exports.description = 'Move common attributes of group children to the group';

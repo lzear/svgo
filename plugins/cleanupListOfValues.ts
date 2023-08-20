@@ -1,6 +1,6 @@
 'use strict';
 
-const { removeLeadingZero } = require('../lib/svgo/tools.js');
+const { removeLeadingZero } = require('../lib/svgo/tools');
 
 exports.name = 'cleanupListOfValues';
 exports.description = 'rounds list of values to the fixed precision';

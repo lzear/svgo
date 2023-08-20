@@ -3,9 +3,9 @@ import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
-  input: './lib/svgo.js',
+  input: './lib/svgo',
   output: {
-    file: './dist/svgo.browser.js',
+    file: './dist/svgo.browser',
     format: 'esm',
   },
   onwarn(warning) {

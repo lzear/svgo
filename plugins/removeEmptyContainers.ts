@@ -1,7 +1,7 @@
 'use strict';
 
-const { detachNodeFromParent } = require('../lib/xast.js');
-const { elemsGroups } = require('./_collections.js');
+const { detachNodeFromParent } = require('../lib/xast');
+const { elemsGroups } = require('./_collections');
 
 exports.name = 'removeEmptyContainers';
 exports.description = 'removes empty container elements';

@@ -5,7 +5,7 @@ const PATH = require('path');
 const EOL = require('os').EOL;
 const regEOL = new RegExp(EOL, 'g');
 const regFilename = /^(.*)\.(\d+)\.svg$/;
-const { optimize } = require('../../lib/svgo.js');
+const { optimize } = require('../../lib/svgo');
 
 describe('plugins tests', function () {
   FS.readdirSync(__dirname).forEach(function (file) {

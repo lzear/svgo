@@ -5,7 +5,7 @@
  * @typedef {import('./types').XastElement} XastElement
  */
 
-const { visit, visitSkip, detachNodeFromParent } = require('./xast.js');
+const { visit, visitSkip, detachNodeFromParent } = require('./xast');
 
 /**
  * @type {(children: Array<XastElement>) => XastRoot}

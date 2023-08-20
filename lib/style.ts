@@ -18,12 +18,12 @@ const {
   // @ts-ignore not defined in @types/csso
   syntax: { specificity },
 } = require('csso');
-const { visit, matches } = require('./xast.js');
+const { visit, matches } = require('./xast');
 const {
   attrsGroups,
   inheritableAttrs,
   presentationNonInheritableGroupAttrs,
-} = require('../plugins/_collections.js');
+} = require('../plugins/_collections');
 
 // @ts-ignore not defined in @types/csstree
 const csstreeWalkSkip = csstree.walk.skip;

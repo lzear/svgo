@@ -4,7 +4,7 @@ const os = require('os');
 const fs = require('fs');
 const { pathToFileURL } = require('url');
 const path = require('path');
-const { optimize: optimizeAgnostic } = require('./svgo.js');
+const { optimize: optimizeAgnostic } = require('./svgo');
 
 const importConfig = async (configFile) => {
   let config;
@@ -45,7 +45,7 @@ const loadConfig = async (configFile, cwd = process.cwd()) => {
   let dir = cwd;
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const js = path.join(dir, 'svgo.config.js');
+    const js = path.join(dir, 'svgo.config');
     if (await isFile(js)) {
       return await importConfig(js);
     }

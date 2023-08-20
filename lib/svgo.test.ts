@@ -4,7 +4,7 @@
  * @typedef {import('../lib/types').Plugin} Plugin
  */
 
-const { optimize } = require('./svgo.js');
+const { optimize } = require('./svgo');
 
 test('allow to setup default preset', () => {
   const svg = `

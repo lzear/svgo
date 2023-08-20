@@ -1,7 +1,7 @@
 'use strict';
 
-const { visitSkip, detachNodeFromParent } = require('../lib/xast.js');
-const { collectStylesheet, computeStyle } = require('../lib/style.js');
+const { visitSkip, detachNodeFromParent } = require('../lib/xast');
+const { collectStylesheet, computeStyle } = require('../lib/style');
 const {
   elems,
   attrsGroups,

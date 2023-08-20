@@ -6,7 +6,7 @@ const http = require('http');
 const { chromium } = require('playwright');
 const { PNG } = require('pngjs');
 const pixelmatch = require('pixelmatch');
-const { optimize } = require('../lib/svgo.js');
+const { optimize } = require('../lib/svgo');
 
 const chunkInto = (array, chunksCount) => {
   // take upper bound to include tail

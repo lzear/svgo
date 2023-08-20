@@ -101,7 +101,7 @@ The default preset includes plugins marked with 'Yes' in the [plugin list](#buil
 It's also possible to specify a custom plugin:
 
 ```js
-const anotherCustomPlugin = require('./another-custom-plugin.js');
+const anotherCustomPlugin = require('./another-custom-plugin');
 module.exports = {
   plugins: [
     {
