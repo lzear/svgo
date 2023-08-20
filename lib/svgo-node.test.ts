@@ -7,6 +7,7 @@
 import os from 'os';
 import path from 'path';
 import { optimize, loadConfig } from './svgo-node';
+import url from "node:url";
 
 const describeLF = os.EOL === '\r\n' ? describe.skip : describe;
 const describeCRLF = os.EOL === '\r\n' ? describe : describe.skip;
@@ -127,7 +128,7 @@ describeCRLF('with CRLF line-endings', () => {
 
 describe('loadConfig', () => {
   const cwd = process.cwd();
-  const fixtures = path.join(cwd, './test/fixtures/config-loader');
+  const fixtures = path.join(path.dirname(url.fileURLToPath(import.meta.url)), '../test/fixtures/config-loader');
 
   test('loads by absolute path', async () => {
     expect(await loadConfig(path.join(fixtures, 'one/two/config'))).toEqual({

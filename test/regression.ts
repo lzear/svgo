@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import url from "node:url";
 import http from 'http';
 import { chromium } from 'playwright';
 import { PNG } from 'pngjs';
@@ -89,7 +90,7 @@ const runTests = async ({ list }) => {
       console.error(`${name} is mismatched`);
       if (process.env.NO_DIFF == null) {
         const file = path.join(
-          __dirname,
+          path.dirname(url.fileURLToPath(import.meta.url)),
           'regression-diffs',
           `${name}.diff.png`
         );
@@ -136,7 +137,7 @@ const readdirRecursive = async (absolute, relative = '') => {
 (async () => {
   try {
     const start = process.hrtime.bigint();
-    const fixturesDir = path.join(__dirname, 'regression-fixtures');
+    const fixturesDir = path.join(path.dirname(url.fileURLToPath(import.meta.url)), 'regression-fixtures');
     const list = await readdirRecursive(fixturesDir);
     const originalFiles = new Map();
     const optimizedFiles = new Map();

@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import url from "node:url";
 import { EOL } from 'os';
 import { optimize } from '../../lib/svgo';
 
@@ -12,7 +13,7 @@ const normalize = (file) => {
 };
 
 const parseFixture = async (file) => {
-  const filepath = path.resolve(__dirname, file);
+  const filepath = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), file);
   const content = await fs.promises.readFile(filepath, 'utf-8');
   return normalize(content).split(/\s*@@@\s*/);
 };

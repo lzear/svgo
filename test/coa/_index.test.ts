@@ -2,15 +2,16 @@
 
 import fs from 'fs';
 import path from 'path';
+import url from "node:url";
 import del from 'del';
 import { Command } from 'commander';
 import * as svgo from '../../lib/svgo/coa';
 
-const svgFolderPath = path.resolve(__dirname, 'testSvg');
-const svgFolderPathRecursively = path.resolve(__dirname, 'testSvgRecursively');
+const svgFolderPath = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'testSvg');
+const svgFolderPathRecursively = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'testSvgRecursively');
 const svgFiles = [
-  path.resolve(__dirname, 'testSvg/test.svg'),
-  path.resolve(__dirname, 'testSvg/test.1.svg'),
+  path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'testSvg/test.svg'),
+  path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'testSvg/test.1.svg'),
 ];
 const tempFolder = 'temp';
 const noop = () => {};
@@ -138,7 +139,7 @@ describe('coa', function () {
 
   describe('stdout', () => {
     it('should show message when the folder is empty', async () => {
-      const emptyFolderPath = path.resolve(__dirname, 'testSvgEmpty');
+      const emptyFolderPath = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'testSvgEmpty');
       if (!fs.existsSync(emptyFolderPath)) {
         fs.mkdirSync(emptyFolderPath);
       }
@@ -153,7 +154,7 @@ describe('coa', function () {
       try {
         await runProgram([
           '--folder',
-          path.resolve(__dirname, 'testFolderWithNoSvg'),
+          path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'testFolderWithNoSvg'),
           '--quiet',
         ]);
       } catch (error) {

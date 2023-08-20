@@ -1,12 +1,13 @@
 'use strict';
 
 import FS from 'fs';
-import PATH from 'path';
+import path from 'path';
+import url from "node:url";
 import { parseSvg } from '../../lib/parser';
 
 describe('svg2js', function () {
   describe('working svg', function () {
-    var filepath = PATH.resolve(__dirname, './test.svg'),
+    var filepath = path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), './test.svg'),
       root;
 
     beforeAll(function (done) {

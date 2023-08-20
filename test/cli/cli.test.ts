@@ -46,7 +46,7 @@ test('shows plugins when flag specified', async () => {
       '--no-color',
       '--show-plugins',
     ],
-    { cwd: __dirname },
+    { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
   );
   const stdout = await waitStdout(proc);
   expect(stdout).toMatch(/Currently available plugins:/);
@@ -67,7 +67,7 @@ test('accepts svg as input stream', async () => {
       '-',
     ],
     {
-      cwd: __dirname,
+      cwd: path.dirname(url.fileURLToPath(import.meta.url)),
     },
   );
   proc.stdin.write('<svg><title>stdin</title></svg>');
@@ -92,7 +92,7 @@ test('accepts svg as string', async () => {
       '--string',
       input,
     ],
-    { cwd: __dirname },
+    { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
   );
   const stdout = await waitStdout(proc);
   expect(stdout).toEqual('<svg/>');
@@ -114,12 +114,12 @@ test('accepts svg as filename', async () => {
       '-o',
       'output/single.svg',
     ],
-    { cwd: __dirname },
+    { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
   );
   await waitClose(proc);
   const output = fs.readFileSync(
     path.join(
-      __dirname,
+      path.dirname(url.fileURLToPath(import.meta.url)),
       'output/single.svg',
     ),
     'utf8',
@@ -143,7 +143,7 @@ test('output as stream when "-" is specified', async () => {
       '-o',
       '-',
     ],
-    { cwd: __dirname },
+    { cwd: path.dirname(url.fileURLToPath(import.meta.url)) },
   );
   const stdout = await waitStdout(proc);
   expect(stdout).toEqual('<svg/>');
@@ -164,7 +164,7 @@ test('should exit with 1 code on syntax error', async () => {
       'invalid.svg',
     ],
     {
-      cwd: __dirname,
+      cwd: path.dirname(url.fileURLToPath(import.meta.url)),
     },
   );
   const [code, stderr] = await Promise.all([

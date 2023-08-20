@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import url from "node:url";
 import util from 'util';
 import zlib from 'zlib';
 import stream from 'stream';
@@ -47,7 +48,7 @@ const extractTarGz = async (url, baseDir, include) => {
     console.info('Download W3C SVG 1.1 Test Suite and extract svg files');
     await extractTarGz(
       'https://www.w3.org/Graphics/SVG/Test/20110816/archives/W3C_SVG_11_TestSuite.tar.gz',
-      path.join(__dirname, 'regression-fixtures', 'w3c-svg-11-test-suite'),
+      path.join(path.dirname(url.fileURLToPath(import.meta.url)), 'regression-fixtures', 'w3c-svg-11-test-suite'),
       /^svg\//
     );
   } catch (error) {
