@@ -1,4 +1,8 @@
 {
   "extends": "@ubahnchen/tsconfig/base.json",
-  "include": ["lib/**/*", "plugins/**/*", "test/cli/**/*"]
+  "include": ["lib/**/*", "plugins/**/*", "test/cli/**/*"],
+  "compilerOptions": {
+    "strict": false,
+    "isolatedModules": true
+  }
 }
