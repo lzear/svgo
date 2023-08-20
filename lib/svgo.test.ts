@@ -3,6 +3,7 @@
  */
 
 import { optimize } from './svgo';
+import { jest } from '@jest/globals';
 
 test('allow to setup default preset', () => {
   const svg = `
