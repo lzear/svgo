@@ -5,7 +5,7 @@
  * @typedef {import('../lib/types').XastChild} XastChild
  */
 
-const { visitSkip, detachNodeFromParent } = require('../lib/xast');
+import { visitSkip, detachNodeFromParent } from '../lib/xast';
 
 exports.name = 'mergeStyles';
 exports.description = 'merge multiple style elements into one';

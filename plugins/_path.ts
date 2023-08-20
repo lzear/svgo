@@ -5,7 +5,7 @@
  * @typedef {import('../lib/types').PathDataItem} PathDataItem
  */
 
-const { parsePathData, stringifyPathData } = require('../lib/path');
+import { parsePathData, stringifyPathData } from '../lib/path';
 
 /**
  * @type {[number, number]}

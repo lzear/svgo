@@ -1,9 +1,9 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const { EOL } = require('os');
-const { optimize } = require('../../lib/svgo');
+import fs from 'fs';
+import path from 'path';
+import { EOL } from 'os';
+import { optimize } from '../../lib/svgo';
 
 const regEOL = new RegExp(EOL, 'g');
 

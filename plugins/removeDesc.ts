@@ -1,6 +1,6 @@
 'use strict';
 
-const { detachNodeFromParent } = require('../lib/xast');
+import { detachNodeFromParent } from '../lib/xast';
 
 exports.name = 'removeDesc';
 exports.description = 'removes <desc>';

@@ -4,12 +4,12 @@
  * @typedef {import('../lib//types').PathDataItem} PathDataItem
  */
 
-const { collectStylesheet, computeStyle } = require('../lib/style');
-const { visit } = require('../lib/xast');
-const { pathElems } = require('./_collections');
-const { path2js, js2path } = require('./_path');
-const { applyTransforms } = require('./applyTransforms');
-const { cleanupOutData } = require('../lib/svgo/tools');
+import { collectStylesheet, computeStyle } from '../lib/style';
+import { visit } from '../lib/xast';
+import { pathElems } from './_collections';
+import { path2js, js2path } from './_path';
+import { applyTransforms } from './applyTransforms';
+import { cleanupOutData } from '../lib/svgo/tools';
 
 exports.name = 'convertPathData';
 exports.description =

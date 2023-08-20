@@ -4,9 +4,9 @@
  * @typedef {import('../lib/types').Plugin} Plugin
  */
 
-const os = require('os');
-const path = require('path');
-const { optimize, loadConfig } = require('./svgo-node');
+import os from 'os';
+import path from 'path';
+import { optimize, loadConfig } from './svgo-node';
 
 const describeLF = os.EOL === '\r\n' ? describe.skip : describe;
 const describeCRLF = os.EOL === '\r\n' ? describe : describe.skip;

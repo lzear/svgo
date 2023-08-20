@@ -1,6 +1,6 @@
 'use strict';
 
-const { removeLeadingZero } = require('../lib/svgo/tools');
+import { removeLeadingZero } from '../lib/svgo/tools';
 
 exports.name = 'cleanupNumericValues';
 exports.description =

@@ -101,7 +101,7 @@ The default preset includes plugins marked with 'Yes' in the [plugin list](#buil
 It's also possible to specify a custom plugin:
 
 ```js
-const anotherCustomPlugin = require('./another-custom-plugin');
+import anotherCustomPlugin from './another-custom-plugin';
 module.exports = {
   plugins: [
     {
@@ -125,7 +125,7 @@ SVGO provides a few low level utilities.
 The core of SVGO is `optimize` function.
 
 ```js
-const { optimize } = require('svgo');
+import { optimize } from 'svgo';
 const result = optimize(svgString, {
   // optional but recommended field
   path: 'path-to.svg',
@@ -140,7 +140,7 @@ const optimizedSvgString = result.data;
 If you write a tool on top of SVGO you might need a way to load SVGO config.
 
 ```js
-const { loadConfig } = require('svgo');
+import { loadConfig } from 'svgo';
 const config = await loadConfig();
 ```
 

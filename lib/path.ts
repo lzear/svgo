@@ -1,6 +1,6 @@
 'use strict';
 
-const { removeLeadingZero } = require('./svgo/tools');
+import { removeLeadingZero } from './svgo/tools';
 
 /**
  * @typedef {import('./types').PathDataItem} PathDataItem

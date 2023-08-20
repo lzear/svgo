@@ -4,12 +4,12 @@
  * @typedef {import('../lib/types').XastElement} XastElement
  */
 
-const { cleanupOutData } = require('../lib/svgo/tools');
-const {
+import { cleanupOutData } from '../lib/svgo/tools';
+import {
   transform2js,
   transformsMultiply,
   matrixToTransform,
-} = require('./_transforms');
+} from './_transforms';
 
 exports.name = 'convertTransform';
 exports.description = 'collapses multiple transformations and optimizes it';

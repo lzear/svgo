@@ -1,6 +1,6 @@
 'use strict';
 
-const { visit } = require('../xast');
+import { visit } from '../xast';
 
 /**
  * Plugins engine.

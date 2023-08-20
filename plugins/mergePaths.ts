@@ -1,8 +1,8 @@
 'use strict';
 
-const { detachNodeFromParent } = require('../lib/xast');
-const { collectStylesheet, computeStyle } = require('../lib/style');
-const { path2js, js2path, intersects } = require('./_path');
+import { detachNodeFromParent } from '../lib/xast';
+import { collectStylesheet, computeStyle } from '../lib/style';
+import { path2js, js2path, intersects } from './_path';
 
 exports.name = 'mergePaths';
 exports.description = 'merges multiple paths in one if possible';

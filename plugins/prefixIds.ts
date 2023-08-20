@@ -1,7 +1,7 @@
 'use strict';
 
-const csstree = require('css-tree');
-const { referencesProps } = require('./_collections');
+import * as csstree from 'css-tree';
+import { referencesProps } from './_collections';
 
 exports.name = 'prefixIds';
 exports.description = 'prefix IDs';

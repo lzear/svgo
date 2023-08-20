@@ -1,10 +1,10 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const del = require('del');
-const { Command } = require('commander');
-const svgo = require('../../lib/svgo/coa');
+import fs from 'fs';
+import path from 'path';
+import del from 'del';
+import { Command } from 'commander';
+import * as svgo from '../../lib/svgo/coa';
 
 const svgFolderPath = path.resolve(__dirname, 'testSvg');
 const svgFolderPathRecursively = path.resolve(__dirname, 'testSvgRecursively');
@@ -19,7 +19,7 @@ const { checkIsDir } = svgo;
 
 function runProgram(args) {
   const program = new Command();
-  svgo(program);
+  svgo.default(program);
   // prevent running process.exit
   program.exitOverride(() => {});
   // parser skips first two arguments

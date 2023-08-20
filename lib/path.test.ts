@@ -4,7 +4,7 @@
  * @typedef {import('../lib/types').PathDataItem} PathDataItem
  */
 
-const { parsePathData, stringifyPathData } = require('./path');
+import { parsePathData, stringifyPathData } from './path';
 
 describe('parse path data', () => {
   it('should allow spaces between commands', () => {

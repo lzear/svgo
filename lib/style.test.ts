@@ -5,9 +5,9 @@
  * @typedef {import('./types').XastElement} XastElement
  */
 
-const { collectStylesheet, computeStyle } = require('./style');
-const { visit } = require('./xast');
-const { parseSvg } = require('./parser');
+import { collectStylesheet, computeStyle } from './style';
+import { visit } from './xast';
+import { parseSvg } from './parser';
 
 /**
  * @type {(node: XastParent, id: string) => XastElement}

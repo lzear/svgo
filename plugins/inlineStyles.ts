@@ -6,16 +6,16 @@
  * @typedef {import('../lib/types').XastParent} XastParent
  */
 
-const csstree = require('css-tree');
+import * as csstree from 'css-tree';
+import * as csso from "csso";
+
+import {detachNodeFromParent, querySelectorAll, visitSkip} from "../lib/xast";
+
 const {
   // @ts-ignore not defined in @types/csso
   syntax: { specificity },
-} = require('csso');
-const {
-  visitSkip,
-  querySelectorAll,
-  detachNodeFromParent,
-} = require('../lib/xast');
+} = csso;
+
 
 exports.name = 'inlineStyles';
 exports.description = 'inline styles (additional options)';

@@ -1,6 +1,6 @@
 'use strict';
 
-const { detachNodeFromParent } = require('../lib/xast');
+import { detachNodeFromParent } from '../lib/xast';
 
 exports.name = 'removeStyleElement';
 exports.description = 'removes <style> element (disabled by default)';

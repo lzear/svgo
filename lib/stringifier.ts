@@ -12,7 +12,7 @@
  * @typedef {import('./types').StringifyOptions} StringifyOptions
  */
 
-const { textElems } = require('../plugins/_collections');
+import { textElems } from '../plugins/_collections';
 
 /**
  * @typedef {{

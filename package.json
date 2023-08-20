@@ -2,6 +2,7 @@
   "packageManager": "yarn@2.4.3",
   "name": "svgo",
   "version": "3.0.2",
+  "type": "module",
   "description": "Nodejs-based tool for optimizing SVG vector graphics files",
   "license": "MIT",
   "keywords": [

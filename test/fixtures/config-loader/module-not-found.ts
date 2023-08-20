@@ -1,2 +1,2 @@
-require('unknown-module');
+export * from 'unknown-module';
 module.exports = {};

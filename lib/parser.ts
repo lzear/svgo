@@ -14,8 +14,8 @@
  */
 
 // @ts-ignore sax will be replaced with something else later
-const SAX = require('@trysound/sax');
-const { textElems } = require('../plugins/_collections');
+import SAX from '@trysound/sax';
+import { textElems } from '../plugins/_collections';
 
 class SvgoParserError extends Error {
   /**

@@ -4,8 +4,8 @@
  * @typedef {import('../lib/types').XastElement} XastElement
  */
 
-const { visitSkip } = require('../lib/xast');
-const { referencesProps } = require('./_collections');
+import { visitSkip } from '../lib/xast';
+import { referencesProps } from './_collections';
 
 exports.name = 'cleanupIds';
 exports.description = 'removes unused IDs and minifies used';

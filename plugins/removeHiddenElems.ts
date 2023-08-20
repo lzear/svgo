@@ -1,13 +1,9 @@
 'use strict';
 
-const {
-  visit,
-  visitSkip,
-  querySelector,
-  detachNodeFromParent,
-} = require('../lib/xast');
-const { collectStylesheet, computeStyle } = require('../lib/style');
-const { parsePathData } = require('../lib/path');
+import {detachNodeFromParent, querySelector, visit, visitSkip} from "../lib/xast";
+
+import { collectStylesheet, computeStyle } from '../lib/style';
+import { parsePathData } from '../lib/path';
 
 exports.name = 'removeHiddenElems';
 exports.description =

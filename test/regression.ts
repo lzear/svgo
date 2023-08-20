@@ -1,12 +1,12 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const http = require('http');
-const { chromium } = require('playwright');
-const { PNG } = require('pngjs');
-const pixelmatch = require('pixelmatch');
-const { optimize } = require('../lib/svgo');
+import fs from 'fs';
+import path from 'path';
+import http from 'http';
+import { chromium } from 'playwright';
+import { PNG } from 'pngjs';
+import pixelmatch from 'pixelmatch';
+import { optimize } from '../lib/svgo';
 
 const chunkInto = (array, chunksCount) => {
   // take upper bound to include tail

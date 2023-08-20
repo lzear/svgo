@@ -1,8 +1,8 @@
 'use strict';
 
-const FS = require('fs');
-const PATH = require('path');
-const { parseSvg } = require('../../lib/parser');
+import FS from 'fs';
+import PATH from 'path';
+import { parseSvg } from '../../lib/parser';
 
 describe('svg2js', function () {
   describe('working svg', function () {

@@ -13,17 +13,19 @@
  * @typedef {import('./types').XastChild} XastChild
  */
 
-const csstree = require('css-tree');
+import * as csstree from 'css-tree';
+import * as csso from "csso";
 const {
   // @ts-ignore not defined in @types/csso
   syntax: { specificity },
-} = require('csso');
-const { visit, matches } = require('./xast');
-const {
+} = csso;
+import { visit, matches } from './xast';
+
+import {
   attrsGroups,
   inheritableAttrs,
   presentationNonInheritableGroupAttrs,
-} = require('../plugins/_collections');
+} from '../plugins/_collections';
 
 // @ts-ignore not defined in @types/csstree
 const csstreeWalkSkip = csstree.walk.skip;

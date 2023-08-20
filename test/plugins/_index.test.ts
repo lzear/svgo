@@ -1,11 +1,12 @@
 'use strict';
 
-const FS = require('fs');
-const PATH = require('path');
-const EOL = require('os').EOL;
+import FS from 'fs';
+import PATH from 'path';
 const regEOL = new RegExp(EOL, 'g');
 const regFilename = /^(.*)\.(\d+)\.svg$/;
-const { optimize } = require('../../lib/svgo');
+import { optimize } from '../../lib/svgo';
+
+import {EOL} from "os";
 
 describe('plugins tests', function () {
   FS.readdirSync(__dirname).forEach(function (file) {

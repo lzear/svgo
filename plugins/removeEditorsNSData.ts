@@ -1,7 +1,7 @@
 'use strict';
 
-const { detachNodeFromParent } = require('../lib/xast');
-const { editorNamespaces } = require('./_collections');
+import { detachNodeFromParent } from '../lib/xast';
+import { editorNamespaces } from './_collections';
 
 exports.name = 'removeEditorsNSData';
 exports.description = 'removes editors namespaces, elements and attributes';

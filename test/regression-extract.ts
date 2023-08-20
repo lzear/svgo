@@ -1,12 +1,12 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const util = require('util');
-const zlib = require('zlib');
-const stream = require('stream');
-const fetch = require('node-fetch');
-const tarStream = require('tar-stream');
+import fs from 'fs';
+import path from 'path';
+import util from 'util';
+import zlib from 'zlib';
+import stream from 'stream';
+import fetch from 'node-fetch';
+import tarStream from 'tar-stream';
 
 const pipeline = util.promisify(stream.pipeline);
 

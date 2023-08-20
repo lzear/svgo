@@ -1,10 +1,10 @@
 'use strict';
 
-const { parseSvg } = require('./parser');
-const { stringifySvg } = require('./stringifier');
-const { builtin } = require('./builtin');
-const { invokePlugins } = require('./svgo/plugins');
-const { encodeSVGDatauri } = require('./svgo/tools');
+import { parseSvg } from './parser';
+import { stringifySvg } from './stringifier';
+import { builtin } from './builtin';
+import { invokePlugins } from './svgo/plugins';
+import { encodeSVGDatauri } from './svgo/tools';
 
 const pluginsMap = {};
 for (const plugin of builtin) {

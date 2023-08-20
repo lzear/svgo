@@ -4,7 +4,7 @@
  * @typedef {import('../lib/types').XastElement} XastElement
  */
 
-const csso = require('csso');
+import * as csso from 'csso';
 
 exports.name = 'minifyStyles';
 exports.description =

@@ -7,8 +7,8 @@
  * @typedef {import('./types').Visitor} Visitor
  */
 
-const { selectAll, selectOne, is } = require('css-select');
-const xastAdaptor = require('./svgo/css-select-adapter');
+import { selectAll, selectOne, is } from 'css-select';
+import xastAdaptor from './svgo/css-select-adapter';
 
 const cssSelectOptions = {
   xmlMode: true,

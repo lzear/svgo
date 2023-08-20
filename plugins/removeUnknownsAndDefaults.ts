@@ -1,14 +1,15 @@
 'use strict';
 
-const { visitSkip, detachNodeFromParent } = require('../lib/xast');
-const { collectStylesheet, computeStyle } = require('../lib/style');
-const {
-  elems,
+import { visitSkip, detachNodeFromParent } from '../lib/xast';
+import { collectStylesheet, computeStyle } from '../lib/style';
+import {
   attrsGroups,
-  elemsGroups,
   attrsGroupsDefaults,
-  presentationNonInheritableGroupAttrs,
-} = require('./_collections');
+  elems,
+  elemsGroups,
+  presentationNonInheritableGroupAttrs
+} from "./_collections";
+
 
 exports.name = 'removeUnknownsAndDefaults';
 exports.description =

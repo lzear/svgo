@@ -1,6 +1,6 @@
 'use strict';
 
-const { pathElems, referencesProps } = require('./_collections');
+import { pathElems, referencesProps } from './_collections';
 
 exports.name = 'moveGroupAttrsToElems';
 exports.description = 'moves some group attributes to the content elements';

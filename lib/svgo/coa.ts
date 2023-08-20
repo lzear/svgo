@@ -1,12 +1,12 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const colors = require('picocolors');
-const { loadConfig, optimize } = require('../svgo-node');
-const { builtin } = require('../builtin');
-const PKG = require('../../package.json');
-const { encodeSVGDatauri, decodeSVGDatauri } = require('./tools');
+import fs from 'fs';
+import path from 'path';
+import colors from 'picocolors';
+import { loadConfig, optimize } from '../svgo-node';
+import { builtin } from '../builtin';
+import PKG from '../../package.json';
+import { encodeSVGDatauri, decodeSVGDatauri } from './tools';
 
 const regSVGFile = /\.svg$/i;
 

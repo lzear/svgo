@@ -1,6 +1,6 @@
 'use strict';
 
-const { visit } = require('../lib/xast');
+import { visit } from '../lib/xast';
 
 exports.name = 'cleanupEnableBackground';
 exports.description =

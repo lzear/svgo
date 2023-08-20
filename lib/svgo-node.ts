@@ -1,10 +1,10 @@
 'use strict';
 
-const os = require('os');
-const fs = require('fs');
-const { pathToFileURL } = require('url');
-const path = require('path');
-const { optimize: optimizeAgnostic } = require('./svgo');
+import os from 'os';
+import fs from 'fs';
+import { pathToFileURL } from 'url';
+import path from 'path';
+import { optimize as optimizeAgnostic } from './svgo';
 
 const importConfig = async (configFile) => {
   let config;

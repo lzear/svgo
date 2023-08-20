@@ -4,7 +4,7 @@
  * @typedef {import('../lib/types').XastNode} XastNode
  */
 
-const { inheritableAttrs, elemsGroups } = require('./_collections');
+import { inheritableAttrs, elemsGroups } from './_collections';
 
 exports.name = 'collapseGroups';
 exports.description = 'collapses useless groups';

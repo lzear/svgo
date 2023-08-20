@@ -1,7 +1,7 @@
-const fs = require('fs');
-const http = require('http');
-const assert = require('assert');
-const { chromium } = require('playwright');
+import fs from 'fs';
+import http from 'http';
+import assert from 'assert';
+import { chromium } from 'playwright';
 
 const fixture = `<svg xmlns="http://www.w3.org/2000/svg">
     <g attr1="val1">

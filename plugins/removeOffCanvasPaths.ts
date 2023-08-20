@@ -4,9 +4,9 @@
  * @typedef {import('../lib/types').PathDataItem} PathDataItem
  */
 
-const { visitSkip, detachNodeFromParent } = require('../lib/xast');
-const { parsePathData } = require('../lib/path');
-const { intersects } = require('./_path');
+import { visitSkip, detachNodeFromParent } from '../lib/xast';
+import { parsePathData } from '../lib/path';
+import { intersects } from './_path';
 
 exports.name = 'removeOffCanvasPaths';
 exports.description =

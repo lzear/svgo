@@ -1,10 +1,10 @@
 'use strict';
 
-const {
+import {
   inheritableAttrs,
   attrsGroups,
   presentationNonInheritableGroupAttrs,
-} = require('./_collections');
+} from './_collections';
 
 exports.name = 'removeNonInheritableGroupAttrs';
 exports.description =

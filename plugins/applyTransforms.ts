@@ -5,15 +5,13 @@
  * @typedef {import('../lib/types').XastElement} XastElement
  */
 
-const { collectStylesheet, computeStyle } = require('../lib/style');
-const {
-  transformsMultiply,
-  transform2js,
-  transformArc,
-} = require('./_transforms');
-const { path2js } = require('./_path');
-const { removeLeadingZero } = require('../lib/svgo/tools');
-const { referencesProps, attrsGroupsDefaults } = require('./_collections');
+import { collectStylesheet, computeStyle } from '../lib/style';
+
+import { path2js } from './_path';
+import { removeLeadingZero } from '../lib/svgo/tools';
+import { referencesProps, attrsGroupsDefaults } from './_collections';
+
+import {transform2js, transformArc, transformsMultiply} from "./_transforms";
 
 /**
  * @typedef {Array<PathDataItem>} PathData
