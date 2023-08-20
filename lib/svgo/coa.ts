@@ -3,8 +3,11 @@ import path from 'path';
 import colors from 'picocolors';
 import { loadConfig, optimize } from '../svgo-node';
 import { builtin } from '../builtin';
-import PKG from '../../package.json';
 import { encodeSVGDatauri, decodeSVGDatauri } from './tools';
+
+const loadJSON = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url)));
+
+const PKG = loadJSON('../../package.json');
 
 const regSVGFile = /\.svg$/i;
 
