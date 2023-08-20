@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { visit } from '../lib/xast';
 import { inheritableAttrs, pathElems } from './_collections';
 

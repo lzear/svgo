@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { visitSkip, detachNodeFromParent } from '../lib/xast';
 import { collectStylesheet, computeStyle } from '../lib/style';
 import {

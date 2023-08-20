@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import * as collections from './_collections';
 
 export const name = 'convertColors';

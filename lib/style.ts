@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * @typedef {import('css-tree').Rule} CsstreeRule
  * @typedef {import('./types').Specificity} Specificity

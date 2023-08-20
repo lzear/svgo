@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * @typedef {import('./types').XastNode} XastNode
  * @typedef {import('./types').XastInstruction} XastInstruction

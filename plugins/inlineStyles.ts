@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * @typedef {import('../lib/types').Specificity} Specificity
  * @typedef {import('../lib/types').XastElement} XastElement

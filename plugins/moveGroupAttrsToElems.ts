@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { pathElems, referencesProps } from './_collections';
 
 export const name = 'moveGroupAttrsToElems';

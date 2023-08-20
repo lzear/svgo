@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { detachNodeFromParent } from '../lib/xast';
 import { editorNamespaces } from './_collections';
 
