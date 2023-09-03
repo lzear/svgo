@@ -63,7 +63,7 @@
     "lint": "eslint --ignore-path .gitignore . && prettier --check \"**/*.js\" --ignore-path .gitignore",
     "fix": "eslint --ignore-path .gitignore --fix . && prettier --write \"**/*.js\" --ignore-path .gitignore",
     "typecheck": "tsc",
-    "test-browser": "rollup -c && node ./test/browser.js",
+    "test-browser": "tsup && node --loader ts-node/esm --es-module-specifier-resolution=node --experimental-vm-modules --no-warnings ./test/browser.ts",
     "test-regression": "node ./test/regression-extract.js && NO_DIFF=1 node ./test/regression.js",
     "prepublishOnly": "rm -rf dist && rollup -c"
   },

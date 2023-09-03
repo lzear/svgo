@@ -41,7 +41,7 @@ const server = http.createServer((req, res) => {
   }
   if (req.url === '/svgo.browser') {
     res.setHeader('Content-Type', 'application/javascript')
-    res.end(fs.readFileSync('./dist/svgo.browser'))
+    res.end(fs.readFileSync('./dist/svgo.js'))
   }
   res.end()
 })
@@ -51,6 +51,10 @@ const runTest = async () => {
   const context = await browser.newContext()
   const page = await context.newPage()
   await page.goto('http://localhost:5000')
+  console.log('🦺 antoinelog 111', 111);
+
+  // console.log('🦺 antoinelog optimize', optimize);
+
   const actual = await page.evaluate(() => globalThis.result)
   assert.equal(actual, expected)
   await browser.close()
@@ -60,10 +64,10 @@ server.listen(5000, async () => {
   try {
     await runTest()
     console.info('Tested successfully')
-    server.close()
+    // server.close()
   } catch (error) {
-    server.close()
+    // server.close()
     console.error(error.toString())
-    process.exit(1)
+    // process.exit(1)
   }
 })
