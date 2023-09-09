@@ -1,12 +1,14 @@
+import type { Format } from 'tsup'
 import { defineConfig } from 'tsup'
 
-import { defaultConfig } from '../../tsup.config.base'
-
 export default defineConfig((options) => {
-  return defaultConfig(
-    {
-      entry: ['./lib/svgo.ts'],
-    },
-    options,
-  )
+  return {
+    entry: ['./lib/svgo.ts'],
+    clean: !options.watch,
+    dts: true,
+    minify: !options.watch,
+    target: 'es2015',
+    format: ['esm', 'cjs', 'iife'] as Format[],
+    bundle: true,
+  }
 })
