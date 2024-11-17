@@ -1,7 +1,6 @@
 {
-  "packageManager": "yarn@3.8.2",
-  "name": "svgo",
-  "version": "4.0.0-rc.1",
+  "name": "@ubahnchen/svgo",
+  "version": "0.0.0",
   "description": "SVGO is a Node.js library and command-line application for optimizing vector images.",
   "license": "MIT",
   "type": "module",
@@ -50,18 +49,20 @@
     "type": "opencollective",
     "url": "https://opencollective.com/svgo"
   },
-  "main": "./dist/svgo-node.cjs",
-  "module": "./dist/svgo.browser.js",
-  "types": "./dist/types/lib/svgo-node.d.ts",
+  "main": "./lib/svgo.js",
+  "module": "./lib/svgo.js",
   "bin": "./bin/svgo.js",
+  "types": "./lib/svgo.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/lib/svgo-node.d.ts",
+      "types": "./lib/svgo.d.ts",
+      "source": "./lib/svgo.js",
       "require": "./dist/svgo-node.cjs",
       "import": "./dist/svgo.browser.js"
     },
     "./browser": {
-      "types": "./dist/types/lib/svgo.d.ts",
+      "types": "./lib/svgo.d.ts",
+      "source": "./lib/svgo.js",
       "import": "./dist/svgo.browser.js"
     }
   },
@@ -137,5 +138,8 @@
   },
   "resolutions": {
     "sax@^1.4.1": "patch:sax@npm%3A1.4.1#./.yarn/patches/sax-npm-1.4.1-503b1923cb.patch"
+  },
+  "volta": {
+    "extends": "../../package.json"
   }
 }
