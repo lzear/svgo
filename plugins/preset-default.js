@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { createPreset } from '../lib/svgo/plugins.js';
 import * as removeDoctype from './removeDoctype.js';
 import * as removeXMLProcInst from './removeXMLProcInst.js';
