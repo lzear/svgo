@@ -1,19 +1,16 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import * as fs from 'node:fs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
-
-/**
- * @typedef {import('@rollup/plugin-terser').Options} Options
- */
+import typescript from '@rollup/plugin-typescript';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pkgPath = path.join(__dirname, './package.json');
 const PKG = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
 
-/** @type {Options} */
+/** @type {import('@rollup/plugin-terser').Options} */
 const terserOptions = {
   compress: {
     defaults: false,
@@ -33,33 +30,65 @@ const terserOptions = {
   },
 };
 
-export default [
+/** @type {import('rollup').RollupOptions[]} */
+const config = [
   {
     input: './lib/svgo-node.js',
     output: {
       file: './dist/svgo-node.cjs',
       format: 'cjs',
       exports: 'named',
+      sourcemap: true,
     },
-    external: ['os', 'fs', 'url', 'path', ...Object.keys(PKG.dependencies)],
+    external: [
+      'node:os',
+      'node:fs',
+      'node:url',
+      'node:path',
+      'os',
+      'fs',
+      'url',
+      'path',
+      ...Object.keys(PKG.dependencies),
+    ],
     onwarn(warning) {
       throw Error(warning.toString());
     },
-    plugins: [terser(terserOptions)],
+    plugins: [
+      nodeResolve(),
+      commonjs(),
+      typescript({
+        tsconfig: './tsconfig.json',
+        sourceMap: true,
+        declaration: true,
+        declarationDir: './dist/types',
+        allowJs: true,
+      }),
+      terser(terserOptions),
+    ],
   },
   {
     input: './lib/svgo.js',
     output: {
       file: './dist/svgo.browser.js',
       format: 'esm',
+      sourcemap: true,
     },
     onwarn(warning) {
+      if (warning.code === 'CIRCULAR_DEPENDENCY') return;
       throw Error(warning.toString());
     },
     plugins: [
       nodeResolve({ browser: true, preferBuiltins: false }),
       commonjs(),
+      typescript({
+        tsconfig: './tsconfig.json',
+        sourceMap: true,
+        allowJs: true,
+      }),
       terser(terserOptions),
     ],
   },
 ];
+
+export default config;
