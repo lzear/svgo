@@ -49,24 +49,15 @@
     "type": "opencollective",
     "url": "https://opencollective.com/svgo"
   },
-  "main": "./lib/svgo.js",
   "module": "./lib/svgo.js",
   "bin": "./bin/svgo.js",
   "types": "./lib/svgo.d.ts",
   "exports": {
-    ".": {
-      "types": "./lib/svgo.d.ts",
-      "source": "./lib/svgo.js",
-      "require": "./dist/svgo-node.cjs",
-      "import": "./dist/svgo.browser.js"
-    },
-    "./browser": {
-      "types": "./lib/svgo.d.ts",
-      "source": "./lib/svgo.js",
-      "import": "./dist/svgo.browser.js"
-    }
+    ".": "./lib/svgo.js"
   },
+  "main": "lib/svgo.js",
   "files": [
+    "lib",
     "bin",
     "dist",
     "!**/*.test.{js,ts}"

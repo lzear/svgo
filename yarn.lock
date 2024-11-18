@@ -1399,6 +1399,48 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ubahnchen/svgo@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@ubahnchen/svgo@workspace:."
+  dependencies:
+    "@eslint/js": ^9.3.0
+    "@rollup/plugin-commonjs": ^25.0.7
+    "@rollup/plugin-node-resolve": ^15.2.3
+    "@rollup/plugin-terser": ^0.4.4
+    "@rollup/plugin-typescript": ^11.1.6
+    "@types/css-tree": ^2.3.7
+    "@types/csso": ^5.0.4
+    "@types/jest": ^29.5.12
+    "@types/node": ^20.12.11
+    "@types/sax": ^1.2.7
+    "@typescript-eslint/eslint-plugin": ^7.0.0
+    "@typescript-eslint/parser": ^7.0.0
+    commander: ^11.1.0
+    cross-env: ^7.0.3
+    css-select: ^5.1.0
+    css-tree: ^2.3.1
+    css-what: ^6.1.0
+    csso: ^5.0.5
+    eslint: ^9.3.0
+    globals: ^14.0.0
+    jest: ^29.7.0
+    picocolors: ^1.0.0
+    pixelmatch: ^5.3.0
+    playwright: ^1.44.0
+    pngjs: ^7.0.0
+    prettier: ^3.2.5
+    rimraf: ^5.0.7
+    rollup: ^4.17.2
+    sax: ^1.4.1
+    tar-stream: ^3.1.7
+    ts-jest: ^29.1.2
+    tslib: ^2.6.2
+    typescript: ^5.4.5
+  bin:
+    svgo: ./bin/svgo.js
+  languageName: unknown
+  linkType: soft
+
 "abbrev@npm:^2.0.0":
   version: 2.0.0
   resolution: "abbrev@npm:2.0.0"
@@ -4462,9 +4504,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sax@patch:sax@npm%3A1.4.1#./.yarn/patches/sax-npm-1.4.1-503b1923cb.patch::locator=svgo%40workspace%3A.":
+"sax@patch:sax@npm%3A1.4.1#./.yarn/patches/sax-npm-1.4.1-503b1923cb.patch::locator=%40ubahnchen%2Fsvgo%40workspace%3A.":
   version: 1.4.1
-  resolution: "sax@patch:sax@npm%3A1.4.1#./.yarn/patches/sax-npm-1.4.1-503b1923cb.patch::version=1.4.1&hash=ad106d&locator=svgo%40workspace%3A."
+  resolution: "sax@patch:sax@npm%3A1.4.1#./.yarn/patches/sax-npm-1.4.1-503b1923cb.patch::version=1.4.1&hash=ad106d&locator=%40ubahnchen%2Fsvgo%40workspace%3A."
   checksum: 511be280ca9f1d474466aa165a7e6b50fc70e2de2f263462f60358a9f0661cf36c8f334234813e438d61676374e7aa551a6c81bcecb763e3d3914e2f627a8a51
   languageName: node
   linkType: hard
@@ -4751,48 +4793,6 @@ __metadata:
   checksum: 53b1e247e68e05db7b3808b99b892bd36fb096e6fba213a06da7fab22045e97597db425c724f2bbd6c99a3c295e1e73f3e4de78592289f38431049e1277ca0ae
   languageName: node
   linkType: hard
-
-"svgo@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "svgo@workspace:."
-  dependencies:
-    "@eslint/js": ^9.3.0
-    "@rollup/plugin-commonjs": ^25.0.7
-    "@rollup/plugin-node-resolve": ^15.2.3
-    "@rollup/plugin-terser": ^0.4.4
-    "@rollup/plugin-typescript": ^11.1.6
-    "@types/css-tree": ^2.3.7
-    "@types/csso": ^5.0.4
-    "@types/jest": ^29.5.12
-    "@types/node": ^20.12.11
-    "@types/sax": ^1.2.7
-    "@typescript-eslint/eslint-plugin": ^7.0.0
-    "@typescript-eslint/parser": ^7.0.0
-    commander: ^11.1.0
-    cross-env: ^7.0.3
-    css-select: ^5.1.0
-    css-tree: ^2.3.1
-    css-what: ^6.1.0
-    csso: ^5.0.5
-    eslint: ^9.3.0
-    globals: ^14.0.0
-    jest: ^29.7.0
-    picocolors: ^1.0.0
-    pixelmatch: ^5.3.0
-    playwright: ^1.44.0
-    pngjs: ^7.0.0
-    prettier: ^3.2.5
-    rimraf: ^5.0.7
-    rollup: ^4.17.2
-    sax: ^1.4.1
-    tar-stream: ^3.1.7
-    ts-jest: ^29.1.2
-    tslib: ^2.6.2
-    typescript: ^5.4.5
-  bin:
-    svgo: ./bin/svgo.js
-  languageName: unknown
-  linkType: soft
 
 "tar-stream@npm:^3.1.7":
   version: 3.1.7
