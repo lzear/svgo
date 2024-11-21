@@ -26,6 +26,7 @@ import { RemoveUnknownsAndDefaultsParams } from '../plugins/removeUnknownsAndDef
 import { RemoveUselessStrokeAndFillParams } from '../plugins/removeUselessStrokeAndFill.js';
 import { RemoveXlinkParams } from '../plugins/removeXlink.js';
 import { SortAttrsParams } from '../plugins/sortAttrs.js';
+import type { StatsSummary } from './stats.js';
 
 export type DefaultPlugins = {
   applyTransformsShapes: ApplyTransformsShapesParams;
@@ -349,4 +350,7 @@ export type Config = {
 
 export type Output = {
   data: string;
+  stats: StatsSummary;
 };
+
+export type { StatsSummary };
