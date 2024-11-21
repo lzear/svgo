@@ -10,6 +10,8 @@ import type {
   BuiltinsWithRequiredParams,
   PluginsParams,
 } from '../plugins/plugins-types.js';
+import type { StatsSummary } from './stats.js';
+export type { StatsSummary } from './stats.js';
 
 export type CustomPlugin<T = any> = {
   name: string;
@@ -90,6 +92,7 @@ export type Config = {
 
 export type Output = {
   data: string;
+  stats: StatsSummary;
 };
 
 export declare const _collections: {
