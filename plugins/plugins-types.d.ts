@@ -29,6 +29,13 @@ type DefaultPlugins = {
     convertToPx?: boolean;
   };
   collapseGroups: void;
+  colorReplacer: {
+    mode: 'random' | 'spectrum';
+    saturation?: number;
+    lightness?: number;
+    startHue?: number;
+    seed?: number;
+  };
   convertColors: {
     currentColor?: boolean | string | RegExp;
     names2hex?: boolean;
