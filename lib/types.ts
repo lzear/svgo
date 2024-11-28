@@ -5,6 +5,7 @@ import { CleanupAttrsParams } from '../plugins/cleanupAttrs.js';
 import { CleanupIdsParams } from '../plugins/cleanupIds.js';
 import { CleanupListOfValuesParams } from '../plugins/cleanupListOfValues.js';
 import { CleanupNumericValuesParams } from '../plugins/cleanupNumericValues.js';
+import { ColorReplacerParams } from '../plugins/color-replacer.js';
 import { ConvertColorsParams } from '../plugins/convertColors.js';
 import { ConvertPathDataParams } from '../plugins/convertPathData.js';
 import { ConvertShapeToPathParams } from '../plugins/convertShapeToPath.js';
@@ -35,6 +36,7 @@ export type DefaultPlugins = {
   cleanupIds: CleanupIdsParams;
   cleanupNumericValues: CleanupNumericValuesParams;
   collapseGroups: null;
+  colorReplacer: ColorReplacerParams;
   convertColors: ConvertColorsParams;
   convertEllipseToCircle: null;
   convertPathData: ConvertPathDataParams;
