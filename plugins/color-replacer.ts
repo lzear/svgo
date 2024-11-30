@@ -1,8 +1,7 @@
-import type { Visitor, XastChild, XastRoot } from '../lib/types.js';
+import type { Visitor, XastRoot } from '../lib/types.js';
 
 export const name = 'colorReplacer';
-export const description =
-  'replaces all colors with either random or evenly spaced colors';
+export const description = 'replaces all colors random colors';
 
 type Params = {
   mode: 'random' | 'spectrum';
@@ -14,12 +13,6 @@ type Params = {
 
 // Color attributes to look for
 const colorAttributes = ['fill', 'stroke', 'stop-color', 'color'];
-
-// Helper to generate random number between 0 and 1
-const seededRandom = (seed: number) => {
-  const x = Math.sin(seed++) * 10000;
-  return x - Math.floor(x);
-};
 
 // Convert HSL to hex
 const hslToHex = (h: number, s: number, l: number): string => {
@@ -55,9 +48,8 @@ export const fn = (root: XastRoot, params: Params): Visitor => {
     seed = Date.now(),
   } = params;
 
-  // First pass: find all unique colors and their positions
-  const colorMap = new Map<string, string[]>();
-  let uniqueColorCount = 0;
+  // First pass: count total color attributes
+  let totalColors = 0;
 
   const countVisitor: Visitor = {
     element: {
@@ -72,20 +64,14 @@ export const fn = (root: XastRoot, params: Params): Visitor => {
             value !== 'transparent' &&
             !value.startsWith('url(')
           ) {
-            const key = `${value.toLowerCase()}_${attr}`;
-            if (!colorMap.has(key)) {
-              colorMap.set(key, []);
-              uniqueColorCount++;
-            }
-            colorMap.get(key)?.push(`${(node as any).id || ''}_${attr}`);
+            totalColors++;
           }
         }
       },
     },
   };
 
-  // Count unique colors
-  const processNode = (node: XastChild) => {
+  const processNode = (node: any) => {
     if (node.type === 'element') {
       countVisitor.element?.enter?.(node, root);
       if (node.children) {
@@ -95,25 +81,17 @@ export const fn = (root: XastRoot, params: Params): Visitor => {
   };
   root.children.forEach(processNode);
 
-  // Generate new colors
-  const newColors = new Map<string, string>();
+  // Generate colors
   let currentIndex = 0;
-  let currentSeed = seed;
-
-  colorMap.forEach((_, key) => {
-    let newColor: string;
+  const getNextColor = () => {
     if (mode === 'random') {
-      // Generate random hue using seed
-      const hue = seededRandom(currentSeed++) * 360;
-      newColor = hslToHex(hue / 360, saturation / 100, lightness / 100);
+      const hue = (Math.sin(seed + currentIndex++) * 10000) % 360;
+      return hslToHex(hue / 360, saturation / 100, lightness / 100);
     } else {
-      // Generate evenly spaced color
-      const hue = (startHue + (360 * currentIndex) / uniqueColorCount) % 360;
-      newColor = hslToHex(hue / 360, saturation / 100, lightness / 100);
+      const hue = (startHue + (360 * currentIndex++) / totalColors) % 360;
+      return hslToHex(hue / 360, saturation / 100, lightness / 100);
     }
-    newColors.set(key, newColor);
-    currentIndex++;
-  });
+  };
 
   // Second pass: replace colors
   return {
@@ -129,11 +107,10 @@ export const fn = (root: XastRoot, params: Params): Visitor => {
             value !== 'transparent' &&
             !value.startsWith('url(')
           ) {
-            const key = `${value.toLowerCase()}_${attr}`;
             // Store original color
             node.attributes[`data-original-${attr}`] = value;
-            // Replace with new color
-            node.attributes[attr] = newColors.get(key) || value;
+            // Replace with next color in sequence
+            node.attributes[attr] = getNextColor();
           }
         }
       },
