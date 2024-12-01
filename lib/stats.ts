@@ -14,22 +14,25 @@ type Step = {
 export type StatsSummary = {
   multipassCount: number;
   steps: Step[];
+  stringify: { diff: number; time: number };
   perPlugin: Record<string, { diff: number; time: number }>;
   time: number;
   diff: number;
 };
 
 export class Stats {
-  private readonly steps: Step[];
+  private readonly steps: Step[] = [];
   private multipassCount = 0;
+  private readonly stringifySteps: [Step, null] | [Step, Step];
 
   constructor(input: string, ast: XastRoot) {
     const start = performance.now();
     const before = input.length;
     const after = stringifySvg(ast).length;
     const end = performance.now();
-    this.steps = [
+    this.stringifySteps = [
       { plugin: 'stringify', size: { before, after }, time: end - start },
+      null,
     ];
   }
 
@@ -50,28 +53,33 @@ export class Stats {
     });
   }
 
-  stringify(ast: XastRoot, config?: StringifyOptions) {
+  stringifyEnd(ast: XastRoot, config?: StringifyOptions) {
     const start = performance.now();
     const before = stringifySvg(ast).length;
     const result = stringifySvg(ast, config);
     const after = result.length;
     const end = performance.now();
-    this.steps.push({
+    this.stringifySteps[1] = {
       plugin: 'stringify',
       size: { before, after },
       time: end - start,
-    });
+    };
     return result;
   }
 
   getStatsSummary(): StatsSummary {
     const perPlugin = this.perPlugin();
-    const time = this.steps.reduce((acc, step) => acc + step.time, 0);
-    const diff = Object.values(perPlugin).reduce((a, { diff }) => a + diff, 0);
+    const stringify = this.stringifyScore();
+    const time =
+      this.steps.reduce((acc, step) => acc + step.time, 0) + stringify.time;
+    const diff =
+      Object.values(perPlugin).reduce((a, { diff }) => a + diff, 0) +
+      stringify.diff;
     return {
       multipassCount: this.multipassCount,
       steps: this.steps,
       perPlugin,
+      stringify,
       time,
       diff,
     };
@@ -85,5 +93,18 @@ export class Stats {
         time: (r[step.plugin]?.time ?? 0) + step.time,
       };
     return r;
+  }
+
+  private stringifyScore() {
+    if (!this.stringifySteps[1]) throw new Error('stringifyEnd not called');
+
+    return {
+      diff:
+        this.stringifySteps[1].size.after -
+        this.stringifySteps[1].size.before +
+        this.stringifySteps[0].size.after -
+        this.stringifySteps[0].size.before,
+      time: this.stringifySteps[0].time + this.stringifySteps[1].time,
+    };
   }
 }
