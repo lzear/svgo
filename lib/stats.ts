@@ -1,4 +1,4 @@
-import { stringifySvg } from './stringifier.js';
+import { stringifyAst } from './stringifier.js';
 import type { StringifyOptions, Visitor, XastRoot } from './types.js';
 import { visit } from './xast.js';
 
@@ -28,7 +28,7 @@ export class Stats {
   constructor(input: string, ast: XastRoot) {
     const start = performance.now();
     const before = input.length;
-    const after = stringifySvg(ast).length;
+    const after = stringifyAst(ast).length;
     const end = performance.now();
     this.stringifySteps = [
       { plugin: 'stringify', size: { before, after }, time: end - start },
@@ -42,9 +42,9 @@ export class Stats {
 
   visit(ast: XastRoot, visitor: Visitor, plugin: { name: string }) {
     const start = performance.now();
-    const before = stringifySvg(ast).length;
+    const before = stringifyAst(ast).length;
     visit(ast, visitor);
-    const after = stringifySvg(ast).length;
+    const after = stringifyAst(ast).length;
     const end = performance.now();
     this.steps.push({
       plugin: plugin.name,
@@ -55,8 +55,8 @@ export class Stats {
 
   stringifyEnd(ast: XastRoot, config?: StringifyOptions) {
     const start = performance.now();
-    const before = stringifySvg(ast).length;
-    const result = stringifySvg(ast, config);
+    const before = stringifyAst(ast).length;
+    const result = stringifyAst(ast, config);
     const after = result.length;
     const end = performance.now();
     this.stringifySteps[1] = {

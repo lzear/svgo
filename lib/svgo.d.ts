@@ -11,6 +11,7 @@ import type {
   PluginsParams,
 } from '../plugins/plugins-types.js';
 import type { StatsSummary } from './stats.js';
+export { _formatSvg } from './format-svg.js';
 export type { StatsSummary } from './stats.js';
 
 export type CustomPlugin<T = any> = {
