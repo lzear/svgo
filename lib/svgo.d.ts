@@ -190,3 +190,5 @@ export declare function querySelectorAll(
   node: XastNode,
   selector: string,
 ): XastChild[];
+
+export { PluginsParams };
