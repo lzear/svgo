@@ -39,6 +39,24 @@ const hslToHex = (h: number, s: number, l: number): string => {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 
+// Seeded random number generator
+const createRandom = (seed: number) => {
+  return () => {
+    seed = (seed * 16807) % 2147483647;
+    return (seed - 1) / 2147483646;
+  };
+};
+
+// Fisher-Yates shuffle with seeded random
+const shuffleArray = <T>(array: T[], random: () => number): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 export const fn = (root: XastRoot, params: Params): Visitor => {
   const {
     mode = 'spectrum',
@@ -81,17 +99,21 @@ export const fn = (root: XastRoot, params: Params): Visitor => {
   };
   root.children.forEach(processNode);
 
-  // Generate colors
-  let currentIndex = 0;
-  const getNextColor = () => {
+  // Generate all colors first
+  const colors = Array.from({ length: totalColors }, (_, i) => {
     if (mode === 'random') {
-      const hue = (Math.sin(seed + currentIndex++) * 10000) % 360;
+      const hue = (Math.sin(seed + i) * 10000) % 360;
       return hslToHex(hue / 360, saturation / 100, lightness / 100);
     } else {
-      const hue = (startHue + (360 * currentIndex++) / totalColors) % 360;
+      const hue = (startHue + (360 * i) / totalColors) % 360;
       return hslToHex(hue / 360, saturation / 100, lightness / 100);
     }
-  };
+  });
+
+  // Shuffle the colors
+  const random = createRandom(seed);
+  const shuffledColors = shuffleArray(colors, random);
+  let currentIndex = 0;
 
   // Second pass: replace colors
   return {
@@ -109,8 +131,8 @@ export const fn = (root: XastRoot, params: Params): Visitor => {
           ) {
             // Store original color
             node.attributes[`data-original-${attr}`] = value;
-            // Replace with next color in sequence
-            node.attributes[attr] = getNextColor();
+            // Replace with next shuffled color
+            node.attributes[attr] = shuffledColors[currentIndex++];
           }
         }
       },
