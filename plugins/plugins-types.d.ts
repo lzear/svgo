@@ -152,6 +152,7 @@ type DefaultPlugins = {
 
   moveElemsAttrsToGroup: void;
   moveGroupAttrsToElems: void;
+  pathVisualizer: { pointAttr: unknown; pathAttr: unknown };
   removeComments: {
     preservePatterns: Array<RegExp | string> | false;
   };
