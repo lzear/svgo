@@ -14,6 +14,7 @@ import type { ConvertTransformParams } from '../plugins/convertTransform.js';
 import type { InlineStylesParams } from '../plugins/inlineStyles.js';
 import type { MergePathsParams } from '../plugins/mergePaths.js';
 import type { MinifyStylesParams } from '../plugins/minifyStyles.js';
+import type { PathVisualizerParams } from '../plugins/path-visualizer.js';
 import type { PrefixIdsParams } from '../plugins/prefixIds.js';
 import type { RemoveAttrsParams } from '../plugins/removeAttrs.js';
 import type { RemoveCommentsParams } from '../plugins/removeComments.js';
@@ -48,6 +49,7 @@ export type DefaultPlugins = {
   minifyStyles: MinifyStylesParams;
   moveElemsAttrsToGroup: null;
   moveGroupAttrsToElems: null;
+  pathVisualizer: PathVisualizerParams;
   removeComments: RemoveCommentsParams;
   removeDeprecatedAttrs: RemoveDeprecatedAttrsParams;
   removeDesc: RemoveDescParams;
