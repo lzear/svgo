@@ -215,6 +215,9 @@ type DefaultPlugins = {
     removeNone?: boolean;
   };
   removeXMLProcInst: void;
+  scramble: {
+    distance?: number;
+  };
   sortAttrs: {
     order?: string[];
     xmlnsOrder?: 'front' | 'alphabetical';
