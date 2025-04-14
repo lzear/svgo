@@ -27,6 +27,7 @@ import type { RemoveHiddenElemsParams } from '../plugins/removeHiddenElems.js';
 import type { RemoveUnknownsAndDefaultsParams } from '../plugins/removeUnknownsAndDefaults.js';
 import type { RemoveUselessStrokeAndFillParams } from '../plugins/removeUselessStrokeAndFill.js';
 import type { RemoveXlinkParams } from '../plugins/removeXlink.js';
+import type { ScrambleParams } from '../plugins/scramble.js';
 import type { SortAttrsParams } from '../plugins/sortAttrs.js';
 import type { StatsSummary } from './stats.js';
 
@@ -66,6 +67,7 @@ export type DefaultPlugins = {
   removeUselessDefs: null;
   removeUselessStrokeAndFill: RemoveUselessStrokeAndFillParams;
   removeXMLProcInst: null;
+  scramble: ScrambleParams;
   sortAttrs: SortAttrsParams;
   sortDefsChildren: null;
 };
