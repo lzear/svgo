@@ -47,7 +47,7 @@ jobs:
           cache: yarn
       - run: yarn install
       - run: yarn playwright install --with-deps chromium
-      - run: yarn test
+      - run: yarn test-legacy
       - run: yarn test:bundles
   regression:
     name: Test regressions
