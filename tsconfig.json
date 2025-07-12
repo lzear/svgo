@@ -6,6 +6,7 @@
     "lib": ["es2021"],
     "allowJs": true,
     "checkJs": true,
+    "skipLibCheck": true,
     "strict": true,
     "resolveJsonModule": true
   },

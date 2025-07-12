@@ -214,6 +214,7 @@ const extractTarGz = async (url, baseDir) => {
     throw Error('No body returned when fetching SVGO Test Suite.');
   }
 
+  // @ts-expect-error
   await pipeline(body, zlib.createGunzip(), extract);
 };
 
