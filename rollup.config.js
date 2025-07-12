@@ -69,6 +69,9 @@ const config = [
       sourcemap: true,
     },
     onwarn(warning) {
+      if (warning.code === 'CIRCULAR_DEPENDENCY') {
+        return;
+      }
       throw Error(warning.toString());
     },
     plugins: [
