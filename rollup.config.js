@@ -4,6 +4,7 @@ import * as fs from 'node:fs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pkgPath = path.join(__dirname, './package.json');
@@ -29,13 +30,15 @@ const terserOptions = {
   },
 };
 
-export default [
+/** @type {import('rollup').RollupOptions[]} */
+const config = [
   {
     input: './lib/svgo-node.js',
     output: {
       file: './dist/svgo-node.cjs',
       format: 'cjs',
       exports: 'named',
+      sourcemap: true,
     },
     external: [
       'os',
@@ -47,13 +50,23 @@ export default [
     onwarn(warning) {
       throw Error(warning.toString());
     },
-    plugins: [terser(terserOptions)],
+    plugins: [
+      typescript({
+        tsconfig: './tsconfig.json',
+        sourceMap: true,
+        declaration: true,
+        declarationDir: './dist/types',
+        allowJs: true,
+      }),
+      terser(terserOptions),
+    ],
   },
   {
     input: './lib/svgo.js',
     output: {
       file: './dist/svgo.browser.js',
       format: 'esm',
+      sourcemap: true,
     },
     onwarn(warning) {
       throw Error(warning.toString());
@@ -61,7 +74,14 @@ export default [
     plugins: [
       nodeResolve({ browser: true, preferBuiltins: false }),
       commonjs(),
+      typescript({
+        tsconfig: './tsconfig.json',
+        sourceMap: true,
+        allowJs: true,
+      }),
       terser(terserOptions),
     ],
   },
 ];
+
+export default config;
