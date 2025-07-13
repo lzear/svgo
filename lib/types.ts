@@ -32,6 +32,7 @@ import type { SortAttrsParams } from '../plugins/sortAttrs.js';
 import type { StatsSummary } from './stats.js';
 
 export type DefaultPlugins = {
+  addIds: null;
   applyTransformsShapes: ApplyTransformsShapesParams;
   cleanupAttrs: CleanupAttrsParams;
   cleanupEnableBackground: null;
