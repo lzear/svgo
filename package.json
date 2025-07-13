@@ -1,6 +1,6 @@
 {
   "packageManager": "yarn@3.8.7",
-  "name": "svgo",
+  "name": "@ubahnchen/svgo",
   "version": "4.0.0",
   "description": "SVGO is a Node.js library and command-line application for optimizing vector images.",
   "license": "MIT",
