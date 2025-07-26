@@ -4,6 +4,7 @@ import { applyTransforms } from './applyTransforms.js';
 import { collectStylesheet, computeStyle } from '../lib/style.js';
 import { visit } from '../lib/util/visit.js';
 import { cleanupOutData, toFixed } from '../lib/svgo/tools.js';
+import { stringifyPathData } from '../lib/path.js';
 
 /**
  * @typedef {[number, number]} Point
@@ -203,9 +204,43 @@ export const fn = (root, params) => {
             js2path(node, data, newParams);
           }
         }
+
+        if (
+          floatPrecision !== false &&
+          node.name === 'animate' &&
+          node.attributes.attributeName === 'd' &&
+          node.attributes.values
+        ) {
+          node.attributes.values = node.attributes.values
+            .split(';')
+            .map((d) => convertD(d, floatPrecision))
+            .join(';');
+        }
       },
     },
   };
+};
+
+/**
+ * @param {string} d
+ * @param {number} floatPrecision
+ * @return {string}
+ */
+const convertD = (d, floatPrecision) => {
+  if (typeof d !== 'string') {
+    return d;
+  }
+  /** @type {import('../lib/types.js').XastElement} */
+  const fakePath = {
+    type: 'element',
+    name: 'path',
+    attributes: { d },
+    children: [],
+  };
+  return stringifyPathData({
+    pathData: path2js(fakePath),
+    precision: floatPrecision,
+  });
 };
 
 /**
