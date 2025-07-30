@@ -54,11 +54,11 @@
   "exports": {
     ".": {
       "import": "./lib/svgo-node.js",
-      "require": "./lib/svgo-node.js",
+      "require": "./dist/svgo-node.cjs",
       "types": "./types/lib/svgo-node.d.ts"
     },
     "./browser": {
-      "import": "./lib/svgo.js",
+      "import": "./dist/svgo.browser.js",
       "types": "./types/lib/svgo.d.ts"
     }
   },
