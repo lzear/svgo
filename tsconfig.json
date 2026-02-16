@@ -9,7 +9,8 @@
     "outDir": "./dist",
     "skipLibCheck": true,
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true
   },
   "exclude": [
     ".yarn/",
@@ -19,7 +20,6 @@
     "rollup.config.js",
     "test-d/",
     "test/browser.js",
-    "test/regression.js",
     "test/svgo.cjs"
   ]
 }
