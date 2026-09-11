@@ -74,21 +74,21 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "node scripts/sync-version.js && yarn build:bundles && yarn build:types",
-    "build:bundles": "yarn clean:build && rollup -c",
-    "build:types": "yarn clean:types && tsc && tsc -p tsconfig.build.json",
+    "build": "node scripts/sync-version.js && bun run build:bundles && bun run build:types",
+    "build:bundles": "bun run clean:build && rollup -c",
+    "build:types": "bun run clean:types && tsc && tsc -p tsconfig.build.json",
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint --fix . && prettier --write .",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --maxWorkers=4 --coverage",
-    "test:bundles": "yarn build:bundles && node ./test/svgo.cjs && node ./test/browser.js",
-    "test:types": "yarn build:types && tsc && tsd",
+    "test:bundles": "bun run build:bundles && node ./test/svgo.cjs && node ./test/browser.js",
+    "test:types": "bun run build:types && tsc && tsd",
     "test:regression": "node ./test/regression/extract.js && node ./test/regression/optimize.js && cross-env NO_DIFF=1 node ./test/regression/compare.js",
-    "qa": "yarn lint && yarn test:types && yarn test && yarn test:bundles && yarn test:regression",
-    "clean": "yarn clean:build && yarn clean:types",
+    "qa": "bun run lint && bun run test:types && bun run test && bun run test:bundles && bun run test:regression",
+    "clean": "bun run clean:build && bun run clean:types",
     "clean:build": "rimraf dist",
     "clean:types": "rimraf types",
     "spellcheck": "cspell -u .",
-    "prepublishOnly": "yarn clean && yarn build"
+    "prepublishOnly": "bun run clean && bun run build"
   },
   "jest": {
     "coveragePathIgnorePatterns": [
