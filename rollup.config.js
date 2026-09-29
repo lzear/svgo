@@ -5,6 +5,8 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
+// the plugin may be hoisted next to a newer TypeScript: use svgo's own
+import ts from 'typescript';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pkgPath = path.join(__dirname, './package.json');
@@ -55,6 +57,7 @@ const config = [
     },
     plugins: [
       typescript({
+        typescript: ts,
         tsconfig: './tsconfig.json',
         sourceMap: true,
         declaration: true,
@@ -81,6 +84,7 @@ const config = [
       nodeResolve({ browser: true, preferBuiltins: false }),
       commonjs(),
       typescript({
+        typescript: ts,
         tsconfig: './tsconfig.json',
         sourceMap: true,
         allowJs: true,
