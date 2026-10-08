@@ -12,6 +12,8 @@
     "types": ["node"],
     "resolveJsonModule": true,
     "noUncheckedSideEffectImports": false,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "skipLibCheck": true
   },
   "exclude": [
