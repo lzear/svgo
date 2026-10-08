@@ -75,7 +75,6 @@ const extractTarGz = async (url, baseDir) => {
       recursive: true,
       force: true,
     });
-    // @ts-expect-error Type 'ReadableStream<Uint8Array<ArrayBuffer>>' is missing the following properties from type 'ReadableStream': readable, read, setEncoding, pause, and 22 more
     await pipeline(response.body, zlib.createGunzip(), extract);
     await validateFileLists(svgs);
 

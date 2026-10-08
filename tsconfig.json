@@ -13,8 +13,7 @@
     "resolveJsonModule": true,
     "noUncheckedSideEffectImports": false,
     "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true,
-    "skipLibCheck": true
+    "rewriteRelativeImportExtensions": true
   },
   "exclude": [
     "coverage/",

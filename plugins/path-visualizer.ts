@@ -127,12 +127,12 @@ function extractPathPoints(segments: Array<SVGCommand>): {
       case SVGPathData.HORIZ_LINE_TO:
         endPoints.push({
           x: segment.x,
-          y: endPoints.at(-1)?.y ?? 0,
+          y: endPoints[endPoints.length - 1]?.y ?? 0,
         });
         break;
       case SVGPathData.VERT_LINE_TO:
         endPoints.push({
-          x: endPoints.at(-1)?.x ?? 0,
+          x: endPoints[endPoints.length - 1]?.x ?? 0,
           y: segment.y,
         });
         break;
