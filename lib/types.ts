@@ -17,7 +17,7 @@ import type { MinifyStylesParams } from '../plugins/minifyStyles.js';
 import type { PathVisualizerParams } from '../plugins/path-visualizer.js';
 import type { PrefixIdsParams } from '../plugins/prefixIds.js';
 import type { RemoveAttributesBySelectorParams } from '../plugins/removeAttributesBySelector.js';
-import { RemoveAttrsParams } from '../plugins/removeAttrs.js';
+import type { RemoveAttrsParams } from '../plugins/removeAttrs.js';
 import type { RemoveCommentsParams } from '../plugins/removeComments.js';
 import type { RemoveDeprecatedAttrsParams } from '../plugins/removeDeprecatedAttrs.js';
 import type { RemoveDescParams } from '../plugins/removeDesc.js';

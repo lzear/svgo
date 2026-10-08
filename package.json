@@ -76,29 +76,19 @@
   "scripts": {
     "build": "node scripts/sync-version.js && bun run build:bundles && bun run build:types",
     "build:bundles": "bun run clean:build && rollup -c",
-    "build:types": "bun run clean:types && tsc && tsc -p tsconfig.build.json",
+    "build:types": "bun run clean:types && tsc -p tsconfig.build.json",
     "lint": "eslint . && prettier --check .",
     "lint:fix": "eslint --fix . && prettier --write .",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --maxWorkers=4 --coverage",
+    "typecheck": "tsc",
+    "test": "vitest run",
     "test:bundles": "bun run build:bundles && node ./test/svgo.cjs && node ./test/browser.js",
-    "test:types": "bun run build:types && tsc && tsd",
-    "test:regression": "node ./test/regression/extract.js && node ./test/regression/optimize.js && cross-env NO_DIFF=1 node ./test/regression/compare.js",
-    "qa": "bun run lint && bun run test:types && bun run test && bun run test:bundles && bun run test:regression",
+    "test:regression": "node ./test/regression/extract.js && node ./test/regression/optimize.js && node ./test/regression/compare.js --no-diff",
+    "qa": "bun run lint && bun run typecheck && bun run test && bun run test:bundles && bun run test:regression",
     "clean": "bun run clean:build && bun run clean:types",
     "clean:build": "rimraf dist",
     "clean:types": "rimraf types",
     "spellcheck": "cspell -u .",
     "prepublishOnly": "bun run clean && bun run build"
-  },
-  "jest": {
-    "coveragePathIgnorePatterns": [
-      "fixtures"
-    ],
-    "coverageReporters": [
-      "html",
-      "lcov",
-      "text"
-    ]
   },
   "dependencies": {
     "commander": "^11.1.0",
@@ -133,7 +123,7 @@
     "rollup": "^4.62.4",
     "tar-stream": "^3.2.0",
     "tinypool": "^2.1.0",
-    "typescript": "^7.0.2",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^4.1.10"
   }
 }
