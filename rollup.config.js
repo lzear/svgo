@@ -52,6 +52,10 @@ const config = [
       ...Object.keys(PKG.dependencies),
     ],
     onwarn(warning) {
+      // type errors are `typecheck`'s job, not the bundle's
+      if (warning.plugin === 'typescript') {
+        return;
+      }
       throw Error(warning.toString());
     },
     plugins: [
@@ -74,7 +78,10 @@ const config = [
       sourcemap: true,
     },
     onwarn(warning) {
-      if (warning.code === 'CIRCULAR_DEPENDENCY') {
+      if (
+        warning.code === 'CIRCULAR_DEPENDENCY' ||
+        warning.plugin === 'typescript'
+      ) {
         return;
       }
       throw Error(warning.toString());
