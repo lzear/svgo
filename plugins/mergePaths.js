@@ -18,6 +18,7 @@ export const description = 'merges multiple paths in one if possible';
  * @author Kir Belevich, Lev Solntsev
  *
  * @type {import('../lib/types.js').Plugin<MergePathsParams>}
+ * @since 0.3.0
  */
 export const fn = (root, params) => {
   const {
@@ -34,8 +35,8 @@ export const fn = (root, params) => {
           return;
         }
 
-        /** @type {import('../lib/types.js').XastChild[]} */
-        const elementsToRemove = [];
+        /** @type {Set<import('../lib/types.js').XastChild>} */
+        const elementsToRemove = new Set();
         let prevChild = node.children[0];
         let prevPathData = null;
 
@@ -119,7 +120,7 @@ export const fn = (root, params) => {
 
           if (force || !intersects(prevPathData, currentPathData)) {
             prevPathData.push(...currentPathData);
-            elementsToRemove.push(child);
+            elementsToRemove.add(child);
             continue;
           }
 
@@ -136,7 +137,7 @@ export const fn = (root, params) => {
         }
 
         node.children = node.children.filter(
-          (child) => !elementsToRemove.includes(child),
+          (child) => !elementsToRemove.has(child),
         );
       },
     },

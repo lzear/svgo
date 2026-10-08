@@ -4,7 +4,9 @@
 
 # SVGO [![npm](https://img.shields.io/npm/v/svgo)](https://npmjs.org/package/svgo) [![chat](https://img.shields.io/discord/815166721315831868)](https://discord.gg/z8jX8NYxrE) [![docs](https://img.shields.io/badge/docs-svgo.dev-blue)](https://svgo.dev/)
 
-SVGO, short for **SVG O**ptimizer, is a Node.js library and command-line application for optimizing SVG files.
+SVGO, short for <abbr title="Scalable Vector Graphics">SVG</abbr> Optimizer, is a Node.js library and command-line application for optimizing SVG files.
+
+> 💖 [Sponsor SVGO on Open Collective](https://opencollective.com/svgo) to support continued improvements in stability and performance.
 
 ## Why?
 
@@ -165,12 +167,6 @@ You can also specify a path and customize the current working directory.
 ```js
 const config = await loadConfig(configFile, cwd);
 ```
-
-## Donors
-
-| [<img src="https://sheetjs.com/sketch128.png" width="80">](https://sheetjs.com/) | [<img src="https://raw.githubusercontent.com/fontello/fontello/8.0.0/fontello-image.svg" width="80">](https://fontello.com/) |
-| :------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: |
-|                       [SheetJS LLC](https://sheetjs.com/)                        |                                              [Fontello](https://fontello.com/)                                               |
 
 ## License and Copyright
 

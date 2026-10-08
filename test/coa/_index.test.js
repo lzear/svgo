@@ -1,3 +1,4 @@
+import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import fs from 'fs';
 import path from 'path';
 import { Command } from 'commander';
@@ -36,7 +37,6 @@ describe('coa', function () {
   afterAll(async () => {
     await fs.promises.rm(tempFolder, { force: true, recursive: true });
   });
-
   /**
    * @param {string} folderPath
    * @returns {number}
@@ -56,6 +56,23 @@ describe('coa', function () {
         0,
       );
   }
+
+  it('should generate correct datauri', async () => {
+    const outfilePath = tempFolder + '/test.svg';
+    await runProgram([
+      '-i',
+      path.resolve(__dirname, 'testSvgDatauri') + '/test.svg',
+      '-o',
+      outfilePath,
+      '--datauri',
+      'enc',
+      '--quiet',
+    ]);
+    const outData = fs.readFileSync(outfilePath, 'utf8');
+    expect(outData).toBe(
+      'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ctext%20x%3D%225%22%20y%3D%2215%22%3ETEST%3C%2Ftext%3E%3C%2Fsvg%3E',
+    );
+  });
 
   it('should optimize folder', async () => {
     const initWeight = calcFolderSvgWeight(svgFolderPath);

@@ -68,6 +68,7 @@ let arcTolerance;
  * @author Kir Belevich
  *
  * @type {import('../lib/types.js').Plugin<ConvertPathDataParams>}
+ * @since 0.0.7
  */
 export const fn = (root, params) => {
   const {
@@ -156,13 +157,25 @@ export const fn = (root, params) => {
             computedStyle['stroke-linecap'] &&
             (computedStyle['stroke-linecap'].type === 'dynamic' ||
               computedStyle['stroke-linecap'].value !== 'butt');
-          const maybeHasStrokeAndLinecap = maybeHasStroke && maybeHasLinecap;
           const isSafeToUseZ = maybeHasStroke
             ? computedStyle['stroke-linecap']?.type === 'static' &&
               computedStyle['stroke-linecap'].value === 'round' &&
               computedStyle['stroke-linejoin']?.type === 'static' &&
               computedStyle['stroke-linejoin'].value === 'round'
             : true;
+          const isSafeToRemove = (
+            /** @type {boolean} */ isFirstDraw,
+            /** @type {boolean} */ safeIfNotFirstDraw,
+          ) => {
+            if (!maybeHasStroke) {
+              return true;
+            }
+            if (isFirstDraw) {
+              return !maybeHasLinecap;
+            } else {
+              return safeIfNotFirstDraw;
+            }
+          };
 
           let data = path2js(node);
 
@@ -175,7 +188,7 @@ export const fn = (root, params) => {
 
             data = filters(data, newParams, {
               isSafeToUseZ,
-              maybeHasStrokeAndLinecap,
+              isSafeToRemove,
               hasMarkerMid,
             });
 
@@ -413,14 +426,10 @@ const convertToRelative = (pathData) => {
  *
  * @param {import('../lib/types.js').PathDataItem[]} path
  * @param {InternalParams} params
- * @param {{ isSafeToUseZ: boolean, maybeHasStrokeAndLinecap: boolean, hasMarkerMid: boolean }} param2
+ * @param {{ isSafeToUseZ: boolean, isSafeToRemove: (isFirstDraw: boolean, safeIfNotFirstDraw: boolean) => boolean, hasMarkerMid: boolean }} param2
  * @returns {import('../lib/types.js').PathDataItem[]}
  */
-function filters(
-  path,
-  params,
-  { isSafeToUseZ, maybeHasStrokeAndLinecap, hasMarkerMid },
-) {
+function filters(path, params, { isSafeToUseZ, isSafeToRemove, hasMarkerMid }) {
   const stringify = data2Path.bind(null, params);
   const relSubpoint = [0, 0];
   const pathBase = [0, 0];
@@ -516,7 +525,6 @@ function filters(
         for (
           var j = index;
           (next = path[++j]) && (next.command === 'c' || next.command === 's');
-
         ) {
           let nextData = next.args;
           if (next.command == 's') {
@@ -634,7 +642,7 @@ function filters(
           command === 's' ||
           command === 'c'
         ) {
-          for (let i = data.length; i--; ) {
+          for (let i = data.length; i--;) {
             // @ts-expect-error
             data[i] += item.base[i % 2] - relSubpoint[i % 2];
           }
@@ -697,17 +705,24 @@ function filters(
           } // fix up next curve
           command = 'l';
           data = data.slice(-2);
-        } else if (command === 'q' && isCurveStraightLine(data)) {
-          if (next && next.command == 't') {
+        } else if (
+          (command === 'q' && isCurveStraightLine(data)) ||
+          (command === 't' && prev.command !== 'q' && prev.command !== 't')
+        ) {
+          if (command == 'q' && next && next.command == 't') {
             makeLonghand(next, data);
           } // fix up next curve
-          command = 'l';
-          data = data.slice(-2);
-        } else if (
-          command === 't' &&
-          prev.command !== 'q' &&
-          prev.command !== 't'
-        ) {
+          if (command == 't' && next && next.command == 't') {
+            next.command = 'q';
+            next.args.unshift(
+              // @ts-expect-error
+              // prettier-ignore
+              (2 * item.coords[0] - item.base[0]) - item.coords[0],
+              // @ts-expect-error
+              // prettier-ignore
+              (2 * item.coords[1] - item.base[1]) - item.coords[1],
+            );
+          } // fix up next curve
           command = 'l';
           data = data.slice(-2);
         } else if (
@@ -870,7 +885,10 @@ function filters(
       }
 
       // remove useless non-first path segments
-      if (params.removeUseless && !maybeHasStrokeAndLinecap) {
+      if (
+        params.removeUseless &&
+        isSafeToRemove(prev.command == 'm' || prev.command == 'M', true)
+      ) {
         // l 0,0 / h 0 / v 0 / q 0,0 0,0 / t 0,0 / c 0,0 0,0 0,0 / s 0,0 0,0
         if (
           (command === 'l' ||
@@ -926,7 +944,10 @@ function filters(
     if (
       (command === 'Z' || command === 'z') &&
       params.removeUseless &&
-      isSafeToUseZ &&
+      isSafeToRemove(
+        prev.command == 'm' || prev.command == 'M',
+        isSafeToUseZ,
+      ) &&
       // @ts-expect-error
       Math.abs(item.base[0] - item.coords[0]) < error / 10 &&
       // @ts-expect-error
@@ -988,7 +1009,7 @@ function convertToMixed(path, params) {
       command === 's' ||
       command === 'c'
     ) {
-      for (let i = adata.length; i--; ) {
+      for (let i = adata.length; i--;) {
         // @ts-expect-error
         adata[i] += item.base[i % 2];
       }
@@ -1112,7 +1133,7 @@ function getIntersection(coords) {
  */
 function strongRound(data) {
   const precisionNum = precision || 0;
-  for (let i = data.length; i-- > 0; ) {
+  for (let i = data.length; i-- > 0;) {
     const fixed = toFixed(data[i], precisionNum);
     if (fixed !== data[i]) {
       const rounded = toFixed(data[i], precisionNum - 1);
@@ -1132,7 +1153,7 @@ function strongRound(data) {
  * @returns {number[]}
  */
 function round(data) {
-  for (let i = data.length; i-- > 0; ) {
+  for (let i = data.length; i-- > 0;) {
     data[i] = Math.round(data[i]);
   }
   return data;

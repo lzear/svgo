@@ -16,7 +16,8 @@ import type { MergePathsParams } from '../plugins/mergePaths.js';
 import type { MinifyStylesParams } from '../plugins/minifyStyles.js';
 import type { PathVisualizerParams } from '../plugins/path-visualizer.js';
 import type { PrefixIdsParams } from '../plugins/prefixIds.js';
-import type { RemoveAttrsParams } from '../plugins/removeAttrs.js';
+import type { RemoveAttributesBySelectorParams } from '../plugins/removeAttributesBySelector.js';
+import { RemoveAttrsParams } from '../plugins/removeAttrs.js';
 import type { RemoveCommentsParams } from '../plugins/removeComments.js';
 import type { RemoveDeprecatedAttrsParams } from '../plugins/removeDeprecatedAttrs.js';
 import type { RemoveDescParams } from '../plugins/removeDesc.js';
@@ -109,7 +110,7 @@ export type BuiltinsWithOptionalParams = DefaultPlugins & {
 export type BuiltinsWithRequiredParams = {
   addAttributesToSVGElement: AddAttributesToSVGElementParams;
   addClassesToSVGElement: AddClassesToSVGElementParams;
-  removeAttributesBySelector: any;
+  removeAttributesBySelector: RemoveAttributesBySelectorParams;
   removeAttrs: RemoveAttrsParams;
   removeElementsByAttr: RemoveElementsByAttrParams;
 };
@@ -298,6 +299,7 @@ export type StylesheetRule = {
 export type Stylesheet = {
   rules: StylesheetRule[];
   parents: Map<XastElement, XastParent>;
+  declarationCache: Map<string, StylesheetDeclaration[]>;
 };
 
 export type StaticStyle = {
